@@ -1,0 +1,289 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		378889EA16D2B64400C41C39 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 378889E916D2B64400C41C39 /* UIKit.framework */; };
+		378889EC16D2B64400C41C39 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 378889EB16D2B64400C41C39 /* Foundation.framework */; };
+		378889EE16D2B64400C41C39 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 378889ED16D2B64400C41C39 /* CoreGraphics.framework */; };
+		378889F416D2B64400C41C39 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 378889F216D2B64400C41C39 /* InfoPlist.strings */; };
+		378889F616D2B64400C41C39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 378889F516D2B64400C41C39 /* main.m */; };
+		378889FA16D2B64400C41C39 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 378889F916D2B64400C41C39 /* AppDelegate.m */; };
+		378889FC16D2B64400C41C39 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 378889FB16D2B64400C41C39 /* Default.png */; };
+		378889FE16D2B64400C41C39 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 378889FD16D2B64400C41C39 /* Default@2x.png */; };
+		37888A0016D2B64400C41C39 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 378889FF16D2B64400C41C39 /* Default-568h@2x.png */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		378889E616D2B64400C41C39 /* KongroNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = KongroNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		378889E916D2B64400C41C39 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		378889EB16D2B64400C41C39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		378889ED16D2B64400C41C39 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		378889F116D2B64400C41C39 /* KongroNews-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "KongroNews-Info.plist"; sourceTree = "<group>"; };
+		378889F316D2B64400C41C39 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		378889F516D2B64400C41C39 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		378889F716D2B64400C41C39 /* KongroNews-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KongroNews-Prefix.pch"; sourceTree = "<group>"; };
+		378889F816D2B64400C41C39 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		378889F916D2B64400C41C39 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		378889FB16D2B64400C41C39 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
+		378889FD16D2B64400C41C39 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default@2x.png"; sourceTree = "<group>"; };
+		378889FF16D2B64400C41C39 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		378889E316D2B64400C41C39 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				378889EA16D2B64400C41C39 /* UIKit.framework in Frameworks */,
+				378889EC16D2B64400C41C39 /* Foundation.framework in Frameworks */,
+				378889EE16D2B64400C41C39 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		378889DD16D2B64400C41C39 = {
+			isa = PBXGroup;
+			children = (
+				378889EF16D2B64400C41C39 /* KongroNews */,
+				378889E816D2B64400C41C39 /* Frameworks */,
+				378889E716D2B64400C41C39 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		378889E716D2B64400C41C39 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				378889E616D2B64400C41C39 /* KongroNews.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		378889E816D2B64400C41C39 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				378889E916D2B64400C41C39 /* UIKit.framework */,
+				378889EB16D2B64400C41C39 /* Foundation.framework */,
+				378889ED16D2B64400C41C39 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		378889EF16D2B64400C41C39 /* KongroNews */ = {
+			isa = PBXGroup;
+			children = (
+				378889F816D2B64400C41C39 /* AppDelegate.h */,
+				378889F916D2B64400C41C39 /* AppDelegate.m */,
+				378889F016D2B64400C41C39 /* Supporting Files */,
+			);
+			path = KongroNews;
+			sourceTree = "<group>";
+		};
+		378889F016D2B64400C41C39 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				378889F116D2B64400C41C39 /* KongroNews-Info.plist */,
+				378889F216D2B64400C41C39 /* InfoPlist.strings */,
+				378889F516D2B64400C41C39 /* main.m */,
+				378889F716D2B64400C41C39 /* KongroNews-Prefix.pch */,
+				378889FB16D2B64400C41C39 /* Default.png */,
+				378889FD16D2B64400C41C39 /* Default@2x.png */,
+				378889FF16D2B64400C41C39 /* Default-568h@2x.png */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		378889E516D2B64400C41C39 /* KongroNews */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 37888A0316D2B64400C41C39 /* Build configuration list for PBXNativeTarget "KongroNews" */;
+			buildPhases = (
+				378889E216D2B64400C41C39 /* Sources */,
+				378889E316D2B64400C41C39 /* Frameworks */,
+				378889E416D2B64400C41C39 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = KongroNews;
+			productName = KongroNews;
+			productReference = 378889E616D2B64400C41C39 /* KongroNews.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		378889DE16D2B64400C41C39 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+				ORGANIZATIONNAME = "Kent Robin Haugen";
+			};
+			buildConfigurationList = 378889E116D2B64400C41C39 /* Build configuration list for PBXProject "KongroNews" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 378889DD16D2B64400C41C39;
+			productRefGroup = 378889E716D2B64400C41C39 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				378889E516D2B64400C41C39 /* KongroNews */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		378889E416D2B64400C41C39 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				378889F416D2B64400C41C39 /* InfoPlist.strings in Resources */,
+				378889FC16D2B64400C41C39 /* Default.png in Resources */,
+				378889FE16D2B64400C41C39 /* Default@2x.png in Resources */,
+				37888A0016D2B64400C41C39 /* Default-568h@2x.png in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		378889E216D2B64400C41C39 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				378889F616D2B64400C41C39 /* main.m in Sources */,
+				378889FA16D2B64400C41C39 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		378889F216D2B64400C41C39 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				378889F316D2B64400C41C39 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		37888A0116D2B64400C41C39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		37888A0216D2B64400C41C39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		37888A0416D2B64400C41C39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "KongroNews/KongroNews-Prefix.pch";
+				INFOPLIST_FILE = "KongroNews/KongroNews-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		37888A0516D2B64400C41C39 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "KongroNews/KongroNews-Prefix.pch";
+				INFOPLIST_FILE = "KongroNews/KongroNews-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		378889E116D2B64400C41C39 /* Build configuration list for PBXProject "KongroNews" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37888A0116D2B64400C41C39 /* Debug */,
+				37888A0216D2B64400C41C39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		37888A0316D2B64400C41C39 /* Build configuration list for PBXNativeTarget "KongroNews" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				37888A0416D2B64400C41C39 /* Debug */,
+				37888A0516D2B64400C41C39 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 378889DE16D2B64400C41C39 /* Project object */;
+}
