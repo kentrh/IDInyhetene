@@ -16,5 +16,7 @@
 + (CAGradientLayer *)greenGradientWithFrame:(CGRect) rect;
 
 + (UIColor *)lightBlue;
++ (UIColor *)orange;
++ (UIColor *)green;
 
 @end

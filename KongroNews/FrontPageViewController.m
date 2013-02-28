@@ -13,9 +13,8 @@
 #import "NewsParser.h"
 #import "Constants.h"
 #import "TopStoriesViewController.h"
-
-
-#define TEST_STRING @"Dette er en teststring for å sjekke hvor langt opp og ned titlelabelen går. Og den må faktisk kanskje bli ennå litt lengre. Kanskje til og med ennå lengre."
+#import "SKBounceAnimation.h"
+#import "HelpMethods.h"
 
 @interface FrontPageViewController ()
 
@@ -37,16 +36,41 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self setUpUi];
+    [self setStartPositionForAnimation];
+    [self addGestureRecognizer];
+}
+
+- (void)setStartPositionForAnimation
+{
+    
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    frame.origin.y = frame.size.height;
+    self.view.frame = frame;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     _parentScrollView.scrollEnabled = YES;
-    CGRect rect = CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height);
-    self.view.frame = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
-    [UIView animateWithDuration:0.3f animations:^{
-        self.view.frame = rect;
-    }];
+    [self setStartPositionForAnimation];
+    [self startBounceInAnimation];
+}
+
+- (void)startBounceInAnimation
+{
+    NSString *keyPath = @"position.y";
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    CGPoint center = CGPointMake(frame.size.width/2, frame.size.height/2);
+    id finalValue = [NSNumber numberWithFloat:center.y];
+    
+    SKBounceAnimation *bounceAnimation = [SKBounceAnimation animationWithKeyPath:keyPath];
+    bounceAnimation.fromValue = [NSNumber numberWithFloat:self.view.center.y];
+    bounceAnimation.toValue = finalValue;
+    bounceAnimation.duration = ANIMATION_DURATION;
+    bounceAnimation.numberOfBounces = ANIMATION_NUMBER_OF_BOUNCES;
+    bounceAnimation.shouldOvershoot = ANIMATION_SHOULD_OVERSHOOT;
+    
+    [self.view.layer addAnimation:bounceAnimation forKey:@"someKey"];
+    [self.view.layer setValue:finalValue forKeyPath:keyPath];
 }
 
 - (void)addGradientToBackground
@@ -58,6 +82,7 @@
 
 - (void)setUpUi
 {
+    
     NSArray *newsArray = [NewsParser newsList:URL_TOP_STORIES];
     News *news = [newsArray objectAtIndex:0];
     
@@ -98,6 +123,14 @@
     [_timeSinceLabel sizeToFit];
 }
 
+- (void)addGestureRecognizer
+{
+    UISwipeGestureRecognizer *swiper = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showTopStories)];
+    [swiper setDirection:UISwipeGestureRecognizerDirectionDown];
+    [swiper setNumberOfTouchesRequired:1];
+    [self.view addGestureRecognizer:swiper];
+}
+
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -105,7 +138,13 @@
 }
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender {
-    NSLog(@"Headline was clicked");
+    [self showTopStories];
+}
+
+- (void)showTopStories
+{
+    NSString *status = [HelpMethods randomLoadText];
+    [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     _parentScrollView.scrollEnabled = NO;
     CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
     [UIView animateWithDuration:0.3f animations:^{

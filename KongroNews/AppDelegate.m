@@ -8,16 +8,26 @@
 
 #import "AppDelegate.h"
 #import "RootViewController.h"
+#import "TestFlight.h"
 
 @implementation AppDelegate{
     RootViewController *rootViewController;
 }
 
+
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     // Override point for customization after application launch.
+    
     self.window.backgroundColor = [UIColor clearColor];
+    
+//#define TESTING 1
+//#ifdef TESTING
+//    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+//#endif
+//    [TestFlight takeOff:@"3bcb0a18465d380946152965f06b5b22_MTMyMDgxMjAxMi0wOS0xNCAwODo0NDozMi4zMTIxNzc"];
     
     rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
     

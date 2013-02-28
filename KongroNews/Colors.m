@@ -84,4 +84,13 @@
     return [UIColor colorWithRed:0.0f/255.0f green:153.0f/255.0f blue:255.0f/255.0f alpha:0.5f];
 }
 
++ (UIColor *)orange
+{
+    return [UIColor colorWithRed:255.0f/255.0f green:102.0f/255.0f blue:0.0f/255.0f alpha:0.5f];
+}
+
++ (UIColor *)green
+{
+    return [UIColor colorWithRed:0.0f/255.0f green:204.0f/255.0f blue:51.0f/255.0f alpha:0.5f];
+}
 @end

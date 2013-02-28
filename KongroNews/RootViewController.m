@@ -64,10 +64,8 @@
 - (void)addFrontPageViewAndCategoriesView
 {
     frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
-    frontPageViewController.view.frame = CGRectMake(self.view.frame.origin.x, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
     frontPageViewController.parentScrollView = _rootScrollView;
     categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
-    categoriesViewController.view.frame = CGRectMake(frontPageViewController.view.frame.size.width, 0, self.view.frame.size.width, self.view.frame.size.height);
     categoriesViewController.parentScrollView = _rootScrollView;
     
     [_rootScrollView addSubview:frontPageViewController.view];

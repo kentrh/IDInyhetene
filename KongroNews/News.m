@@ -25,6 +25,28 @@
     return self;
 }
 
+- (id)initWithCoder:(NSCoder *)decoder
+{
+    if(self = [super init])
+    {
+        _title = [decoder decodeObjectForKey:@"title"];
+        _leadText = [decoder decodeObjectForKey:@"leadText"];
+        _link = [decoder decodeObjectForKey:@"link"];
+        _pubDate = [decoder decodeObjectForKey:@"pubDate"];
+        _imageType = [decoder decodeObjectForKey:@"imageType"];
+        _imageUrl = [decoder decodeObjectForKey:@"imageUrl"];
+    }
+    return self;
+}
 
+- (void)encodeWithCoder:(NSCoder *)encoder
+{
+    [encoder encodeObject:_title forKey:@"title"];
+    [encoder encodeObject:_leadText forKey:@"leadText"];
+    [encoder encodeObject:_link forKey:@"link"];
+    [encoder encodeObject:_pubDate forKey:@"pubDate"];
+    [encoder encodeObject:_imageType forKey:@"imageType"];
+    [encoder encodeObject:_imageUrl forKey:@"imageUrl"];
+}
 
 @end

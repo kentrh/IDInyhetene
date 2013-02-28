@@ -8,6 +8,7 @@
 
 #import "NewsParser.h"
 #import "News.h"
+#import "NSString+HTML.h"
 
 @implementation NewsParser
 
@@ -52,7 +53,8 @@ static NSString *currentQuery;
                     continue;
                 }
                 NSURL *link = [NSURL URLWithString:tempLink];
-                NSLog(@"%@", title);
+                title = [title stringByConvertingHTMLToPlainText];
+                leadText = [leadText stringByConvertingHTMLToPlainText];
                 
                 //2013-02-22T08:49+01:00
                 //2013-02-22T08:49:00+01:00
@@ -69,7 +71,19 @@ static NSString *currentQuery;
                 else if (date.length == 25){
                     [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
                     [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZ"];
-                    date = [date stringByReplacingOccurrencesOfString:@"+02:00" withString:@"+01:00"];
+//                    date = [date stringByReplacingOccurrencesOfString:@"+02:00" withString:@"+01:00"];
+                }
+                else if (date.length == 16){
+                    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
+                    [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+                }
+                else if (date.length == 29){
+                    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
+                    [formatter setDateFormat:@"EEE, d MMM y HH:mm:ss Z"];
+                }
+                else if (date.length == 19){
+                    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
+                    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                 }
                 else {
                     NSLog(@"%@",title);
