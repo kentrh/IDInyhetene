@@ -14,6 +14,7 @@
 #import "SKBounceAnimation.h"
 #import "CategoriesViewController.h"
 #import "HelpMethods.h"
+#import "SVPullToRefresh.h"
 
 #define ADMOB_PUBLISHER_ID @"a1512b63e1b9dcd"
 
@@ -43,7 +44,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-    [self initNewsArray];
+    [self initNewsArrayAndUpdate:NO];
     _singleNewsVCs = [[NSMutableArray alloc] initWithCapacity:newsArray.count];
     
     [self setUpScrollView];
@@ -52,33 +53,13 @@
     [self setUpAdBanner];
 }
 
-- (void)initNewsArray
+- (void)initNewsArrayAndUpdate:(BOOL)shouldUpdate
 {
-    switch (_categoryTag) {
-        case CATEGORY_TAG_TECHNOLOGY:
-            newsArray = [NewsParser newsList:URL_TECHNOLOGY];
-            break;
-        case CATEGORY_TAG_SCIENCE:
-            newsArray = [NewsParser newsList:URL_SCIENCE];
-            break;
-        case CATEGORY_TAG_SPORT:
-            newsArray = [NewsParser newsList:URL_SPORT];
-            break;
-        case CATEGORY_TAG_ECONOMY:
-            newsArray = [NewsParser newsList:URL_ECONOMY];
-            break;
-        case CATEGORY_TAG_ENTERTAINMENT:
-            newsArray = [NewsParser newsList:URL_ENTERTAINMENT];
-            break;
-        case CATEGORY_TAG_ENGINE:
-            newsArray = [NewsParser newsList:URL_ENGINE];
-            break;
-        case CATEGORY_TAG_FAVORITES:
-            [self loadFavorites];
-            break;
-        default:
-            newsArray = [NewsParser newsList:URL_TOP_STORIES];
-            break;
+    if (_categoryTag == -1) {
+        [self loadFavorites];
+    }
+    else {
+        newsArray = [NewsParser newsList:_queryUrl shouldUpdate:shouldUpdate];
     }
     startLoadIndex = 0;
     stopLoadIndex = NUMBER_OF_NEWS_TO_GET < newsArray.count ? NUMBER_OF_NEWS_TO_GET : newsArray.count;
@@ -123,12 +104,52 @@
 - (void)setUpScrollView
 {
     _rootScrollView.delegate = self;
+    __weak TopStoriesViewController *tsvc = self;
+    [_rootScrollView addPullToRefreshWithActionHandler:^{
+        [tsvc updateNews];
+    }];
+    [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
+    [_rootScrollView addInfiniteScrollingWithActionHandler:^{
+        [tsvc performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
+    }];
+    [_rootScrollView.infiniteScrollingView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
     [_rootScrollView setCanCancelContentTouches:NO];
     _rootScrollView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
     _rootScrollView.clipsToBounds = YES;
     _rootScrollView.scrollEnabled = YES;
     _rootScrollView.pagingEnabled = YES;
     _rootScrollView.directionalLockEnabled = YES;
+}
+
+- (void)updateNews
+{
+    NSLog(@"Update was triggered");
+    dispatch_async(dispatch_get_main_queue(), ^(void) {
+        [self initNewsArrayAndUpdate:YES];
+        if([[[[[_singleNewsVCs objectAtIndex:0] newsArticle] link] absoluteString] isEqualToString:[[[newsArray objectAtIndex:0] link]absoluteString]]){
+            startLoadIndex = _singleNewsVCs.count;
+            stopLoadIndex = _singleNewsVCs.count + NUMBER_OF_NEWS_TO_GET < newsArray.count ? _singleNewsVCs.count + NUMBER_OF_NEWS_TO_GET : newsArray.count;
+            [_rootScrollView.pullToRefreshView stopAnimating];
+            return;
+        }
+        for (SingleNewsViewController *snvc in _singleNewsVCs) {
+            [snvc.view removeFromSuperview];
+        }
+        [_singleNewsVCs removeAllObjects];
+        for (int i=startLoadIndex; i<stopLoadIndex; i++) {
+            SingleNewsViewController *singleNewsController = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+            [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
+            [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
+            [singleNewsController setShouldAnimate:NO];
+            [singleNewsController setParentScrollView:_rootScrollView];
+            [_singleNewsVCs addObject:singleNewsController];
+            [_rootScrollView addSubview:singleNewsController.view];
+        }
+        [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
+        startLoadIndex = stopLoadIndex;
+        stopLoadIndex = stopLoadIndex + NUMBER_OF_NEWS_TO_GET < newsArray.count ? stopLoadIndex + NUMBER_OF_NEWS_TO_GET : newsArray.count;
+        [_rootScrollView.pullToRefreshView stopAnimating];
+    });
 }
 
 - (void)addSwipeUpGestureRecognizer
@@ -177,12 +198,24 @@
             [singleNewsController setShouldAnimate:NO];
             [singleNewsController setParentScrollView:_rootScrollView];
             [_singleNewsVCs addObject:singleNewsController];
-            [_rootScrollView addSubview:singleNewsController.view];
+            if (i==startLoadIndex){
+                CGRect frame = singleNewsController.view.frame;
+                frame.origin.x += frame.size.width;
+                singleNewsController.view.frame = frame;
+                [_rootScrollView addSubview:singleNewsController.view];
+                frame.origin.x -= frame.size.width;
+                [UIView animateWithDuration:0.3f animations:^{
+                    singleNewsController.view.frame = frame;
+                }];
+            }
+            else {
+                [_rootScrollView addSubview:singleNewsController.view];
+            }
         }
         [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
         startLoadIndex = stopLoadIndex;
         stopLoadIndex = stopLoadIndex + NUMBER_OF_NEWS_TO_GET < newsArray.count ? stopLoadIndex + NUMBER_OF_NEWS_TO_GET : newsArray.count;
-        [SVProgressHUD dismiss];
+        [_rootScrollView.infiniteScrollingView stopAnimating];
     });
 }
 
@@ -225,6 +258,22 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    for (SingleNewsViewController *snvc in _singleNewsVCs) {
+        [snvc.view removeFromSuperview];
+    }
+    [_singleNewsVCs removeAllObjects];
+    for (int i=0; i<NUMBER_OF_NEWS_TO_GET; i++) {
+        SingleNewsViewController *singleNewsController = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+        [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
+        [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
+        [singleNewsController setShouldAnimate:NO];
+        [singleNewsController setParentScrollView:_rootScrollView];
+        [_singleNewsVCs addObject:singleNewsController];
+        [_rootScrollView addSubview:singleNewsController.view];
+    }
+    [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
+    startLoadIndex = 0;
+    stopLoadIndex = NUMBER_OF_NEWS_TO_GET < newsArray.count ? NUMBER_OF_NEWS_TO_GET : newsArray.count;
 }
 
 #pragma mark - UIScrollViewDelegate methods
@@ -233,18 +282,19 @@
 {
     if (startLoadIndex == stopLoadIndex)
     {
+        [_rootScrollView setShowsInfiniteScrolling:NO];
         return;
     }
-    float scrollViewWidth = scrollView.frame.size.width;
-    float scrollContentSizeWidth = scrollView.contentSize.width;
-    float scrollOffset = scrollView.contentOffset.x;
-    
-    if (scrollOffset + scrollViewWidth == scrollContentSizeWidth)
-    {
-        NSString *status = [HelpMethods randomLoadText];
-        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
-        [self performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
-    }
+//    float scrollViewWidth = scrollView.frame.size.width;
+//    float scrollContentSizeWidth = scrollView.contentSize.width;
+//    float scrollOffset = scrollView.contentOffset.x;
+//    
+//    if (scrollOffset + scrollViewWidth == scrollContentSizeWidth)
+//    {
+//        NSString *status = [HelpMethods randomLoadText];
+//        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
+//        [self performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
+//    }
 }
 
 @end

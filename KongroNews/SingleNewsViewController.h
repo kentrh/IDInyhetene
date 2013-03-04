@@ -21,4 +21,5 @@
 @property (assign, nonatomic) BOOL shouldAnimate;
 @property (strong, nonatomic) UIScrollView *parentScrollView;
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
+@property (strong, nonatomic) IBOutlet UILabel *providerLabel;
 @end

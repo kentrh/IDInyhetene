@@ -10,6 +10,7 @@
 #import "FrontPageViewController.h"
 #import "CategoriesViewController.h"
 #import "Constants.h"
+#import "HelpMethods.h"
 
 @interface RootViewController (){
     FrontPageViewController *frontPageViewController;
@@ -35,7 +36,8 @@
     // Do any additional setup after loading the view from its nib.
     [self addBackground];
     [self setUpScrollView];
-    [self addFrontPageViewAndCategoriesView];
+    [self addRefreshGesture];
+    [self performSelectorInBackground:@selector(addFrontPageViewAndCategoriesView) withObject:nil];
 }
 
 - (void)setUpScrollView
@@ -46,8 +48,6 @@
     _rootScrollView.pagingEnabled = YES;
     _rootScrollView.scrollEnabled = YES;
     [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * 2, _rootScrollView.frame.size.height)];
-    
-    
 }
 
 - (void)addBackground
@@ -63,13 +63,34 @@
 
 - (void)addFrontPageViewAndCategoriesView
 {
-    frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
-    frontPageViewController.parentScrollView = _rootScrollView;
-    categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
-    categoriesViewController.parentScrollView = _rootScrollView;
+    [SVProgressHUD showWithStatus:[HelpMethods randomLoadText] maskType:SVProgressHUDMaskTypeBlack];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
+        frontPageViewController.parentScrollView = _rootScrollView;
+        categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
+        categoriesViewController.parentScrollView = _rootScrollView;
+        
+        [_rootScrollView addSubview:frontPageViewController.view];
+        [_rootScrollView addSubview:categoriesViewController.view];
+        [SVProgressHUD dismiss];
+    });
+}
+
+- (void)refreshMainPages
+{
+    [categoriesViewController.view removeFromSuperview];
+    categoriesViewController = nil;
+    [frontPageViewController.view removeFromSuperview];
+    frontPageViewController = nil;
+    [self addFrontPageViewAndCategoriesView];
     
-    [_rootScrollView addSubview:frontPageViewController.view];
-    [_rootScrollView addSubview:categoriesViewController.view];
+}
+
+- (void)addRefreshGesture
+{
+    UILongPressGestureRecognizer *doubletouch = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(refreshMainPages)];
+    doubletouch.numberOfTouchesRequired = 2;
+    [self.view addGestureRecognizer:doubletouch];
 }
 
 - (void)didReceiveMemoryWarning

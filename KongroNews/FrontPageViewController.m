@@ -15,8 +15,13 @@
 #import "TopStoriesViewController.h"
 #import "SKBounceAnimation.h"
 #import "HelpMethods.h"
+#import "NewsCategory.h"
+#import "NSDate+TimeSince.h"
 
-@interface FrontPageViewController ()
+@interface FrontPageViewController (){
+    News *frontPageNewsArticle;
+    NewsCategory *topStoriesCategory;
+}
 
 @end
 
@@ -53,6 +58,22 @@
     _parentScrollView.scrollEnabled = YES;
     [self setStartPositionForAnimation];
     [self startBounceInAnimation];
+    
+    if (!frontPageNewsArticle) {
+        [self triggerNoNetworkMode];
+    }
+}
+
+- (void)triggerNoNetworkMode
+{
+    _headlineButton.enabled = NO;
+    for (UIGestureRecognizer *gr in self.view.gestureRecognizers) {
+        [self.view removeGestureRecognizer:gr];
+    }
+    [_parentScrollView setScrollEnabled:NO];
+    [_parentScrollView setPagingEnabled:NO];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Ingen nyheter kunne bli hentet, mest sannsynlig på grunn av en nettverksfeil. Sjekk at nettverk er tilgjengelig og start applikasjonen på nytt, eller hold 2 fingre nede på startskjermen for å laste inn på nytt!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+    [alertView show];
 }
 
 - (void)startBounceInAnimation
@@ -82,11 +103,16 @@
 
 - (void)setUpUi
 {
+    NSArray *categories = [NewsParser categories];
+    for (NewsCategory *cat in categories) {
+        if (cat.tag == CATEGORY_TAG_TOP_STORIES) {
+            topStoriesCategory = cat;
+        }
+    }
+    NSArray *newsArray = [NewsParser newsList:topStoriesCategory.url shouldUpdate:NO];
+    frontPageNewsArticle = [newsArray objectAtIndex:0];
     
-    NSArray *newsArray = [NewsParser newsList:URL_TOP_STORIES];
-    News *news = [newsArray objectAtIndex:0];
-    
-    [_headlineButton setTitle:news.title forState:UIControlStateNormal];
+    [_headlineButton setTitle:frontPageNewsArticle.title forState:UIControlStateNormal];
     [_headlineButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [_headlineButton setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
     [_headlineButton.titleLabel setLineBreakMode:NSLineBreakByTruncatingTail];
@@ -96,29 +122,8 @@
     [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d",newsArray.count]];
     [_numberOfNewsLabel sizeToFit];
     
-    NSTimeInterval timeDiff = [[NSDate date] timeIntervalSinceDate:news.pubDate];
-    int time = (int) timeDiff;
-    int minutes = ((time / 60) % 60);
-    int hours = (time / 3600);
     
-    NSString *entallFlertallMinutter = minutes == 1 ? @"minutt" : @"minutter";
-    NSString *entallFlertallTimer = hours == 1 ? @"time" : @"timer";
-    
-    NSString *timeSinceText;
-    if (hours == 0) {
-        timeSinceText = [NSString stringWithFormat:@"%d %@ siden", minutes, entallFlertallMinutter];
-    }
-    else if (hours == 1 || hours == 2) {
-        timeSinceText = [NSString stringWithFormat:@"%d %@ og %d %@ siden", hours, entallFlertallTimer, minutes, entallFlertallMinutter];
-    }
-    else if (hours > 2) {
-        timeSinceText = [NSString stringWithFormat:@"%d %@ siden", hours, entallFlertallTimer];
-    }
-    else if (hours > 23) {
-        timeSinceText = [NSString stringWithFormat:@"Mer enn én dag siden"];
-    }
-    
-    [_timeSinceLabel setText:timeSinceText];
+    [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
 }
@@ -151,6 +156,7 @@
         self.view.frame = rect;
     } completion:^(BOOL finished) {
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
+        [topStoriesViewController setQueryUrl:topStoriesCategory.url];
         [self presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
 }

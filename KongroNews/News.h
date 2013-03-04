@@ -16,7 +16,8 @@
 @property (nonatomic, strong) NSDate *pubDate;
 @property (nonatomic, strong) NSString *imageType;
 @property (nonatomic, strong) NSURL *imageUrl;
+@property (nonatomic, strong) NSString *publisher;
 
-- (id)initWithTitle:(NSString *)title leadText:(NSString *)leadText link:(NSURL *)link pubDate:(NSDate *)pubDate imageType:(NSString *)imageType imageUrl:(NSURL *)imageUrl;
+- (id)initWithTitle:(NSString *)title leadText:(NSString *)leadText link:(NSURL *)link pubDate:(NSDate *)pubDate imageType:(NSString *)imageType imageUrl:(NSURL *)imageUrl publisher:(NSString *)publisher;
 
 @end

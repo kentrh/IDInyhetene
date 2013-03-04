@@ -10,6 +10,8 @@
 
 @interface NewsParser : NSObject
 
-+ (NSArray *) newsList:(NSString *)queryString;
++ (NSArray *) newsList:(NSString *)queryString shouldUpdate:(BOOL)shouldUpdate;
+
++ (NSArray *) categories;
 
 @end

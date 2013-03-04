@@ -12,6 +12,7 @@
 #import "SKBounceAnimation.h"
 #import "Constants.h"
 #import "HelpMethods.h"
+#import "NSDate+TimeSince.h"
 
 #define kIndexTwitter 0
 #define kIndexFavorite 1
@@ -145,31 +146,11 @@
         [_imageView insertSubview:filterView belowSubview:_titleLabel];
     }
     
-    NSTimeInterval timeDiff = [[NSDate date] timeIntervalSinceDate:_newsArticle.pubDate];
-    int time = (int) timeDiff;
-    int minutes = ((time / 60) % 60);
-    int hours = (time / 3600);
-    
-    NSString *entallFlertallMinutter = minutes == 1 ? @"minutt" : @"minutter";
-    NSString *entallFlertallTimer = hours == 1 ? @"time" : @"timer";
-    
-    NSString *timeSinceText;
-    if (hours == 0) {
-        timeSinceText = [NSString stringWithFormat:@"%d %@ siden", minutes, entallFlertallMinutter];
-    }
-    else if (hours == 1 || hours == 2) {
-        timeSinceText = [NSString stringWithFormat:@"%d %@ og %d %@ siden", hours, entallFlertallTimer, minutes, entallFlertallMinutter];
-    }
-    else if (hours > 2) {
-        timeSinceText = [NSString stringWithFormat:@"%d %@ siden", hours, entallFlertallTimer];
-    }
-    else if (hours > 23) {
-        timeSinceText = [NSString stringWithFormat:@"Mer enn én dag siden"];
-    }
-    
-    [_timeSinceLabel setText:timeSinceText];
+    [_timeSinceLabel setText:[_newsArticle.pubDate timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
+    
+    _providerLabel.text = _newsArticle.publisher;
 }
 
 - (void)initShareFlower
@@ -343,6 +324,7 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    _imageView = nil;
 }
 
 @end

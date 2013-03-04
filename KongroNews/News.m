@@ -10,7 +10,7 @@
 
 @implementation News
 
-- (id)initWithTitle:(NSString *)title leadText:(NSString *)leadText link:(NSURL *)link pubDate:(NSDate *)pubDate imageType:(NSString *)imageType imageUrl:(NSURL *)imageUrl
+- (id)initWithTitle:(NSString *)title leadText:(NSString *)leadText link:(NSURL *)link pubDate:(NSDate *)pubDate imageType:(NSString *)imageType imageUrl:(NSURL *)imageUrl publisher:(NSString *)publisher
 {
     self = [super init];
     if (self)
@@ -21,6 +21,7 @@
         _pubDate = pubDate;
         _imageType = imageType;
         _imageUrl = imageUrl;
+        _publisher = publisher;
     }
     return self;
 }
@@ -35,6 +36,7 @@
         _pubDate = [decoder decodeObjectForKey:@"pubDate"];
         _imageType = [decoder decodeObjectForKey:@"imageType"];
         _imageUrl = [decoder decodeObjectForKey:@"imageUrl"];
+        _publisher = [decoder decodeObjectForKey:@"publisher"];
     }
     return self;
 }
@@ -47,6 +49,7 @@
     [encoder encodeObject:_pubDate forKey:@"pubDate"];
     [encoder encodeObject:_imageType forKey:@"imageType"];
     [encoder encodeObject:_imageUrl forKey:@"imageUrl"];
+    [encoder encodeObject:_publisher forKey:@"publisher"];
 }
 
 @end

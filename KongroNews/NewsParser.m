@@ -9,16 +9,20 @@
 #import "NewsParser.h"
 #import "News.h"
 #import "NSString+HTML.h"
+#import <Parse/Parse.h>
+#import "NewsCategory.h"
 
 @implementation NewsParser
 
 static NSArray *newsList;
 static NSString *currentQuery;
+static NSArray *categoryList;
 
-+ (NSArray *) newsList:(NSString *)queryString
++ (NSArray *) newsList:(NSString *)queryString shouldUpdate:(BOOL)shouldUpdate
 {
-    if (!newsList || newsList.count == 0 || ![queryString isEqualToString:currentQuery])
+    if (!newsList || newsList.count == 0 || ![queryString isEqualToString:currentQuery] || shouldUpdate)
     {
+        newsList = nil;
         NSURL *url = [NSURL URLWithString:queryString];
         NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
         NSURLResponse *response;
@@ -43,22 +47,20 @@ static NSString *currentQuery;
                 NSString *leadText = [singleNews objectForKey:@"description"];
                 NSString *tempLink = [singleNews objectForKey:@"link"];
                 NSString *date = [singleNews objectForKey:@"pubDate"];
-                if (!title || !leadText || !link || !date)
+                NSString *publisher = [singleNews objectForKey:@"author"];
+                if (!title || !leadText || !link || !date || !publisher)
                 {
                     continue;
                     
                 }
                 
-                if ([title isEqual:[NSNull null]] || [leadText isEqual:[NSNull null]] || [date isEqual:[NSNull null]] || [tempLink isEqual:[NSNull null]]) {
+                if ([title isEqual:[NSNull null]] || [leadText isEqual:[NSNull null]] || [date isEqual:[NSNull null]] || [tempLink isEqual:[NSNull null]] || [publisher isEqual:[NSNull null]]) {
                     continue;
                 }
                 NSURL *link = [NSURL URLWithString:tempLink];
                 title = [title stringByConvertingHTMLToPlainText];
                 leadText = [leadText stringByConvertingHTMLToPlainText];
                 
-                //2013-02-22T08:49+01:00
-                //2013-02-22T08:49:00+01:00
-                //Thu, 21 Feb 2013 23:07:00 +0100
                 NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
                 if (date.length == 31){
                     [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
@@ -85,13 +87,22 @@ static NSString *currentQuery;
                     [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
                     [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
                 }
+                else if (date.length == 21){
+                    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
+                    [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.S"];
+                }
+                else if (date.length == 30){
+                    //Sun, 3 Mar 2013 16:35:45 +0100
+                    [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
+                    [formatter setDateFormat:@"EEE, d MMM y HH:mm:ss Z"];
+                }
                 else {
                     NSLog(@"%@",title);
                 }
                 NSDate *pubDate = [formatter dateFromString:date];
-                [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-                NSString *tempDate = [formatter stringFromDate:pubDate];
-                pubDate = [formatter dateFromString:tempDate];
+//                [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
+//                NSString *tempDate = [formatter stringFromDate:pubDate];
+//                pubDate = [formatter dateFromString:tempDate];
                 
                 NSDictionary *enclosure = [singleNews objectForKey:@"enclosure"];
                 NSString *imageType = [enclosure objectForKey:@"type"];
@@ -101,7 +112,8 @@ static NSString *currentQuery;
                     imageUrl = [NSURL URLWithString:tempUrl];
                 }
                 
-                News *news = [[News alloc] initWithTitle:title leadText:leadText link:link pubDate:pubDate imageType:imageType imageUrl:imageUrl];
+                News *news = [[News alloc] initWithTitle:title leadText:leadText link:link pubDate:pubDate imageType:imageType imageUrl:imageUrl publisher:publisher];
+                
                 [unsortedArray addObject:news];
             }
             newsList = [unsortedArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
@@ -113,5 +125,28 @@ static NSString *currentQuery;
     return newsList;
 }
 
++ (NSArray *) categories
+{
+    if (!categoryList) {
+        PFQuery *query = [PFQuery queryWithClassName:@"Categories"];
+        NSError *error;
+        NSArray *categories = [query findObjects:(&error)];
+        if(!error)
+        {
+            NSMutableArray *tempArray = [[NSMutableArray alloc] initWithCapacity:[categories count]];
+            for (PFObject *category in categories) {
+                
+                NewsCategory *newsCategory = [[NewsCategory alloc] initWithName:[category objectForKey:@"name"] displayName:[category objectForKey:@"displayName"] tag:[[category objectForKey:@"tag"] intValue] url:[category objectForKey:@"url"]];
+                [tempArray addObject:newsCategory];
+            }
+            categoryList = [tempArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+                NSNumber *one = [[NSNumber alloc] initWithInt:[(NewsCategory *)obj1 tag]];
+                NSNumber *two = [[NSNumber alloc] initWithInt:[(NewsCategory *)obj2 tag]];
+                return [one compare:two];
+            }];
+        }
+    }
+    return categoryList;
+}
 
 @end

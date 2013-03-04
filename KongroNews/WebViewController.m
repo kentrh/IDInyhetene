@@ -141,6 +141,7 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+    [self closeButtonPressed];
 }
 
 #pragma mark - UIWebViewDelegate Methods

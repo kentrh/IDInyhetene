@@ -83,6 +83,18 @@
 		37EE406C16DE8BBE008AE7A8 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 37EE406916DE8BBE008AE7A8 /* SVProgressHUD.bundle */; };
 		37EE406D16DE8BBE008AE7A8 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406B16DE8BBE008AE7A8 /* SVProgressHUD.m */; };
 		37EE407016DE96E3008AE7A8 /* HelpMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406F16DE96E3008AE7A8 /* HelpMethods.m */; };
+		37EE408816DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE408516DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m */; };
+		37EE408916DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE408716DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m */; };
+		37EE408D16E1F955008AE7A8 /* Parse.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE408C16E1F955008AE7A8 /* Parse.framework */; };
+		37EE408F16E1F97D008AE7A8 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE408E16E1F97D008AE7A8 /* Accounts.framework */; };
+		37EE409116E1F989008AE7A8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409016E1F989008AE7A8 /* CFNetwork.framework */; };
+		37EE409316E1F99C008AE7A8 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409216E1F99C008AE7A8 /* CoreLocation.framework */; };
+		37EE409516E1F9A6008AE7A8 /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409416E1F9A6008AE7A8 /* libsqlite3.dylib */; };
+		37EE409716E1F9B0008AE7A8 /* libz.1.1.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409616E1F9B0008AE7A8 /* libz.1.1.3.dylib */; };
+		37EE409916E1F9BB008AE7A8 /* MobileCoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409816E1F9BB008AE7A8 /* MobileCoreServices.framework */; };
+		37EE409B16E1F9C9008AE7A8 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409A16E1F9C9008AE7A8 /* Security.framework */; };
+		37EE409E16E2179A008AE7A8 /* NewsCategory.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE409D16E2179A008AE7A8 /* NewsCategory.m */; };
+		37EE40A416E3A4F6008AE7A8 /* NSDate+TimeSince.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE40A316E3A4F6008AE7A8 /* NSDate+TimeSince.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -196,6 +208,23 @@
 		37EE406B16DE8BBE008AE7A8 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		37EE406E16DE96E3008AE7A8 /* HelpMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpMethods.h; sourceTree = "<group>"; };
 		37EE406F16DE96E3008AE7A8 /* HelpMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpMethods.m; sourceTree = "<group>"; };
+		37EE408316DF7A3C008AE7A8 /* SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPullToRefresh.h; sourceTree = "<group>"; };
+		37EE408416DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVInfiniteScrolling.h"; sourceTree = "<group>"; };
+		37EE408516DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVInfiniteScrolling.m"; sourceTree = "<group>"; };
+		37EE408616DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
+		37EE408716DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
+		37EE408C16E1F955008AE7A8 /* Parse.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Parse.framework; sourceTree = "<group>"; };
+		37EE408E16E1F97D008AE7A8 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
+		37EE409016E1F989008AE7A8 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
+		37EE409216E1F99C008AE7A8 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
+		37EE409416E1F9A6008AE7A8 /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		37EE409616E1F9B0008AE7A8 /* libz.1.1.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.1.1.3.dylib; path = usr/lib/libz.1.1.3.dylib; sourceTree = SDKROOT; };
+		37EE409816E1F9BB008AE7A8 /* MobileCoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileCoreServices.framework; path = System/Library/Frameworks/MobileCoreServices.framework; sourceTree = SDKROOT; };
+		37EE409A16E1F9C9008AE7A8 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		37EE409C16E2179A008AE7A8 /* NewsCategory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NewsCategory.h; sourceTree = "<group>"; };
+		37EE409D16E2179A008AE7A8 /* NewsCategory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NewsCategory.m; sourceTree = "<group>"; };
+		37EE40A216E3A4F6008AE7A8 /* NSDate+TimeSince.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSDate+TimeSince.h"; sourceTree = "<group>"; };
+		37EE40A316E3A4F6008AE7A8 /* NSDate+TimeSince.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeSince.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +232,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				37EE409B16E1F9C9008AE7A8 /* Security.framework in Frameworks */,
+				37EE409916E1F9BB008AE7A8 /* MobileCoreServices.framework in Frameworks */,
+				37EE409716E1F9B0008AE7A8 /* libz.1.1.3.dylib in Frameworks */,
+				37EE409516E1F9A6008AE7A8 /* libsqlite3.dylib in Frameworks */,
+				37EE409316E1F99C008AE7A8 /* CoreLocation.framework in Frameworks */,
+				37EE409116E1F989008AE7A8 /* CFNetwork.framework in Frameworks */,
+				37EE408F16E1F97D008AE7A8 /* Accounts.framework in Frameworks */,
 				37AB1D4616DCDD7400789092 /* libz.dylib in Frameworks */,
 				37AB1D2D16DB97FF00789092 /* AdSupport.framework in Frameworks */,
 				37AB1D2B16DB97DE00789092 /* SystemConfiguration.framework in Frameworks */,
@@ -216,6 +252,7 @@
 				378889EE16D2B64400C41C39 /* CoreGraphics.framework in Frameworks */,
 				37AB1D2316DB975400789092 /* libGoogleAdMobAds.a in Frameworks */,
 				37AB1D4216DCDD5500789092 /* libTestFlight.a in Frameworks */,
+				37EE408D16E1F955008AE7A8 /* Parse.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -258,6 +295,8 @@
 				37AB1D3616DCD6D000789092 /* NSString+HTML.m */,
 				37AB1D3716DCD6D000789092 /* NSString+XMLEntities.h */,
 				37AB1D3816DCD6D000789092 /* NSString+XMLEntities.m */,
+				37EE40A216E3A4F6008AE7A8 /* NSDate+TimeSince.h */,
+				37EE40A316E3A4F6008AE7A8 /* NSDate+TimeSince.m */,
 			);
 			name = CustomClasses;
 			sourceTree = "<group>";
@@ -334,6 +373,15 @@
 		378889E816D2B64400C41C39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				37EE409A16E1F9C9008AE7A8 /* Security.framework */,
+				37EE409816E1F9BB008AE7A8 /* MobileCoreServices.framework */,
+				37EE409616E1F9B0008AE7A8 /* libz.1.1.3.dylib */,
+				37EE409416E1F9A6008AE7A8 /* libsqlite3.dylib */,
+				37EE409216E1F99C008AE7A8 /* CoreLocation.framework */,
+				37EE409016E1F989008AE7A8 /* CFNetwork.framework */,
+				37EE408E16E1F97D008AE7A8 /* Accounts.framework */,
+				37EE408C16E1F955008AE7A8 /* Parse.framework */,
+				37EE408216DF7A3C008AE7A8 /* SVPullToRefresh */,
 				37EE406816DE8BBE008AE7A8 /* SVProgressHUD */,
 				37AB1D4516DCDD7200789092 /* libz.dylib */,
 				37EE406416DE2308008AE7A8 /* SKBounceAnimation */,
@@ -415,6 +463,8 @@
 				37888A2516D3CDBC00C41C39 /* News.m */,
 				37888A2716D3CDCF00C41C39 /* NewsParser.h */,
 				37888A2816D3CDCF00C41C39 /* NewsParser.m */,
+				37EE409C16E2179A008AE7A8 /* NewsCategory.h */,
+				37EE409D16E2179A008AE7A8 /* NewsCategory.m */,
 			);
 			name = News;
 			sourceTree = "<group>";
@@ -481,6 +531,19 @@
 			);
 			name = SVProgressHUD;
 			path = ../../libraries/iOS/SVProgressHUD/SVProgressHUD;
+			sourceTree = "<group>";
+		};
+		37EE408216DF7A3C008AE7A8 /* SVPullToRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				37EE408316DF7A3C008AE7A8 /* SVPullToRefresh.h */,
+				37EE408416DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.h */,
+				37EE408516DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m */,
+				37EE408616DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.h */,
+				37EE408716DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m */,
+			);
+			name = SVPullToRefresh;
+			path = ../../libraries/iOS/SVPullToRefresh/SVPullToRefresh;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -608,6 +671,10 @@
 				37EE406716DE231A008AE7A8 /* SKBounceAnimation.m in Sources */,
 				37EE406D16DE8BBE008AE7A8 /* SVProgressHUD.m in Sources */,
 				37EE407016DE96E3008AE7A8 /* HelpMethods.m in Sources */,
+				37EE408816DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
+				37EE408916DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m in Sources */,
+				37EE409E16E2179A008AE7A8 /* NewsCategory.m in Sources */,
+				37EE40A416E3A4F6008AE7A8 /* NSDate+TimeSince.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -692,6 +759,11 @@
 		37888A0416D2B64400C41C39 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../libraries/iOS\"",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KongroNews/KongroNews-Prefix.pch";
 				INFOPLIST_FILE = "KongroNews/KongroNews-Info.plist";
@@ -711,6 +783,11 @@
 		37888A0516D2B64400C41C39 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/../../libraries/iOS\"",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KongroNews/KongroNews-Prefix.pch";
 				INFOPLIST_FILE = "KongroNews/KongroNews-Info.plist";

@@ -15,6 +15,7 @@
 @property (strong, nonatomic) NSMutableArray *singleNewsVCs;
 @property (strong, nonatomic) GADBannerView *adBannerView;
 @property (assign, nonatomic) int categoryTag;
+@property (strong, nonatomic) NSString *queryUrl;
 
 
 @end
