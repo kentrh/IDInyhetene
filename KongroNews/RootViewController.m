@@ -78,9 +78,11 @@
 
 - (void)refreshMainPages
 {
-    [categoriesViewController.view removeFromSuperview];
+
+    for (UIView *view in _rootScrollView.subviews) {
+        [view removeFromSuperview];
+    }
     categoriesViewController = nil;
-    [frontPageViewController.view removeFromSuperview];
     frontPageViewController = nil;
     [self addFrontPageViewAndCategoriesView];
     
