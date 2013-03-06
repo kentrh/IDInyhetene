@@ -17,10 +17,12 @@
 #import "HelpMethods.h"
 #import "NewsCategory.h"
 #import "NSDate+TimeSince.h"
+#import "SettingsViewController.h"
 
 @interface FrontPageViewController (){
     News *frontPageNewsArticle;
     NewsCategory *topStoriesCategory;
+    BOOL fromSettingsView;
 }
 
 @end
@@ -49,7 +51,14 @@
 {
     
     CGRect frame = [[UIScreen mainScreen] bounds];
-    frame.origin.y = frame.size.height;
+    if (fromSettingsView)
+    {
+        frame.origin.y = -frame.size.height;
+        fromSettingsView = NO;
+    }
+    else {
+        frame.origin.y = frame.size.height;
+    }
     self.view.frame = frame;
 }
 
@@ -62,6 +71,21 @@
     if (!frontPageNewsArticle) {
         [self triggerNoNetworkMode];
     }
+    [self performSelectorInBackground:@selector(checkIfFrontpageNewsHasUpdated) withObject:nil];
+    [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
+}
+
+- (void)checkIfFrontpageNewsHasUpdated
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *topStories = [NewsParser newsList:topStoriesCategory.url shouldUpdate:NO];
+        News *tempNews = [topStories objectAtIndex:0];
+        if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
+            frontPageNewsArticle = tempNews;
+            [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
+            [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
+        }
+    });
 }
 
 - (void)triggerNoNetworkMode
@@ -130,10 +154,15 @@
 
 - (void)addGestureRecognizer
 {
-    UISwipeGestureRecognizer *swiper = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(showTopStories)];
-    [swiper setDirection:UISwipeGestureRecognizerDirectionDown];
-    [swiper setNumberOfTouchesRequired:1];
-    [self.view addGestureRecognizer:swiper];
+    UISwipeGestureRecognizer *downSwiper = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDownTriggered:)];
+    [downSwiper setDirection:UISwipeGestureRecognizerDirectionDown];
+    [downSwiper setNumberOfTouchesRequired:1];
+    [self.view addGestureRecognizer:downSwiper];
+    
+    UISwipeGestureRecognizer *upSwiper = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUpTriggered:)];
+    [upSwiper setDirection:UISwipeGestureRecognizerDirectionUp];
+    [upSwiper setNumberOfTouchesRequired:1];
+    [self.view addGestureRecognizer:upSwiper];
 }
 
 - (void)didReceiveMemoryWarning
@@ -143,7 +172,20 @@
 }
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender {
+    [TestFlight passCheckpoint:@"Frontpage show top stories swipe"];
     [self showTopStories];
+}
+
+- (IBAction)swipeDownTriggered:(UISwipeGestureRecognizer *)swipe
+{
+    [TestFlight passCheckpoint:@"Frontpage show top stories swipe"];
+    [self showTopStories];
+}
+
+- (IBAction)swipeUpTriggered:(UISwipeGestureRecognizer *)swipe
+{
+    [TestFlight passCheckpoint:@"Frontpage show settings"];
+    [self showSettings];
 }
 
 - (void)showTopStories
@@ -157,7 +199,21 @@
     } completion:^(BOOL finished) {
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
         [topStoriesViewController setQueryUrl:topStoriesCategory.url];
+        [topStoriesViewController setShouldAnimate:YES];
         [self presentViewController:topStoriesViewController animated:NO completion:nil];
+    }];
+}
+
+- (void)showSettings
+{
+    _parentScrollView.scrollEnabled = NO;
+    fromSettingsView = YES;
+    CGRect rect = CGRectMake(0, -self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
+    [UIView animateWithDuration:0.3f animations:^{
+        self.view.frame = rect;
+    } completion:^(BOOL finished) {
+        SettingsViewController *settingsViewController = [[SettingsViewController alloc] initWithNibName:@"SettingsViewController" bundle:nil];
+        [self presentViewController:settingsViewController animated:NO completion:nil];
     }];
 }
 @end

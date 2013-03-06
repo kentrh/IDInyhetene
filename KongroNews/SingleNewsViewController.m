@@ -13,13 +13,14 @@
 #import "Constants.h"
 #import "HelpMethods.h"
 #import "NSDate+TimeSince.h"
+#import <SDWebImage/UIImageView+WebCache.h>
 
 #define kIndexTwitter 0
 #define kIndexFavorite 1
 #define kIndexEmail 2
 #define kIndexFaceBook 3
 
-#define NUMBER_OF_GRADIENTS 3;
+#define NUMBER_OF_GRADIENTS 5;
 
 @interface SingleNewsViewController (){
     KLExpandingSelect *shareFlower;
@@ -51,10 +52,11 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     if (_shouldAnimate) {
-        _parentScrollView.scrollEnabled = YES;
+        [[_tsvc rootScrollView] setScrollEnabled:YES];
         [self setStartPositionForAnimation];
         [self startBounceInAnimation];
     }
+    _timeSinceLabel.text = [_newsArticle.pubDate timeSinceFromDate];
 }
 
 - (void)setStartPositionForAnimation
@@ -94,11 +96,12 @@
 
 - (void)swipeMade:(UISwipeGestureRecognizer*)swipeGesture
 {
+    [TestFlight passCheckpoint:@"SingleNews show web article swipe"];
     if (swipeGesture.direction == UISwipeGestureRecognizerDirectionDown) {
         NSString *status = [HelpMethods randomLoadText];
         [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
         _shouldAnimate = YES;
-        _parentScrollView.scrollEnabled = NO;
+        [[_tsvc rootScrollView] setScrollEnabled:NO];
         CGRect rect = self.view.frame;
         [UIView animateWithDuration:0.3f animations:^{
             [self.view setFrame:CGRectMake(rect.origin.x, rect.size.height, rect.size.width, rect.size.height)];
@@ -115,9 +118,7 @@
     _titleLabel.text = _newsArticle.title;
     _textView.text = _newsArticle.leadText;
     if (_newsArticle.imageUrl) {
-        NSData *imageData = [NSData dataWithContentsOfURL:_newsArticle.imageUrl];
-        UIImage *image = [UIImage imageWithData:imageData];
-        _imageView.image = image;
+        [_imageView setImageWithURL:_newsArticle.imageUrl];
         UIView *filterView = [[UIView alloc] initWithFrame:_imageView.frame];
         [filterView setBackgroundColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.3f]];
         [_imageView addSubview:filterView];
@@ -134,6 +135,13 @@
                 break;
             case 2:
                 gradient = [Colors blueGradientWithFrame:_imageView.frame];
+                break;
+            case 3:
+                gradient = [Colors purpleGradientWithFrame:_imageView.frame];
+                break;
+            case 4:
+                gradient = [Colors purpleGreenGradientWithFrame:_imageView.frame];
+                break;
             default:
                 gradient = [Colors blueGradientWithFrame:_imageView.frame];
                 break;
@@ -216,13 +224,10 @@
 - (void)expandingSelector:(id)expandingSelect didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.row == kIndexEmail) {
-        MFMailComposeViewController* mailViewController = [[MFMailComposeViewController alloc] init];
-        [mailViewController setMailComposeDelegate: self];
-        [mailViewController setSubject:@"Interessant artikkel jeg fant via nyhetene for iPhone"];
-        [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", _newsArticle.title, [_newsArticle.link absoluteString]] isHTML:NO];
-        [self presentViewController: mailViewController
-                           animated: YES
-                         completion: nil];
+        [TestFlight passCheckpoint:@"SingleNews shareFlower mail clicked"];
+        [_tsvc presentMailComposerWithNews:_newsArticle];
+        [_tsvc setShouldAnimate:NO];
+        _shouldAnimate = NO;
         return;
     }
     else {
@@ -232,13 +237,16 @@
             case kIndexEmail:
                 break;
             case kIndexFaceBook:
+                [TestFlight passCheckpoint:@"SingleNews shareFlower Facebook clicked"];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
                 break;
             case kIndexTwitter:
+                [TestFlight passCheckpoint:@"SingleNews shareFlower Twitter clicked"];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
                 break;
             case kIndexFavorite:
                 //Handle favorites
+                [TestFlight passCheckpoint:@"SingleNews shareFlower Star clicked"];
                 [self starArticle];
                 return;
             default:
@@ -293,6 +301,8 @@
             [starred removeObject:news];
             NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:starred];
             [[NSUserDefaults standardUserDefaults] setObject:archiveData forKey:@"starredArticles"];
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel fjernet" message:@"Artikkelen er nå fjernet fra favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
+            [alertView show];
             return;
         }
     }
@@ -310,21 +320,15 @@
 
 //Called after the animations have completed
 - (void)expandingSelector:(id)expandingSelect didFinishExpandingAtPoint:(CGPoint) point {
+    [TestFlight passCheckpoint:@"SingleNews shareflower triggered"];
 }
 - (void)expandingSelector:(id)expandingSelect didFinishCollapsingAtPoint:(CGPoint) point {
-}
-
-#pragma mark - MFMailComposerDelegate callback
-
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    _imageView = nil;
 }
 
 @end

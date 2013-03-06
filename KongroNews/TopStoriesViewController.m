@@ -24,11 +24,18 @@
     NSArray *newsArray;
     int startLoadIndex;
     int stopLoadIndex;
+    MFMailComposeViewController *mailViewController;
 }
 
 @end
 
 @implementation TopStoriesViewController
+
+- (void)dealloc
+{
+    newsArray = nil;
+    [_singleNewsVCs removeAllObjects];
+}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -60,15 +67,24 @@
     }
     else {
         newsArray = [NewsParser newsList:_queryUrl shouldUpdate:shouldUpdate];
+        if (!newsArray || [newsArray count] == 0){
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Kunne ikke hente nyheter, vennligst sjekk nettverkstilkoplingen og prøv på nytt." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+            [alertView show];
+            [self closeViewSliding];
+            return;
+        }
     }
+    
     startLoadIndex = 0;
     stopLoadIndex = NUMBER_OF_NEWS_TO_GET < newsArray.count ? NUMBER_OF_NEWS_TO_GET : newsArray.count;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    [self setStartPositionForAnimation];
-    [self startBounceInAnimation];
+    if (_shouldAnimate) {
+        [self setStartPositionForAnimation];
+        [self startBounceInAnimation];
+    }
     [SVProgressHUD dismiss];
 }
 
@@ -106,7 +122,8 @@
     _rootScrollView.delegate = self;
     __weak TopStoriesViewController *tsvc = self;
     [_rootScrollView addPullToRefreshWithActionHandler:^{
-        [tsvc updateNews];
+        [TestFlight passCheckpoint:@"TopStories update triggered"];
+        [tsvc performSelectorInBackground:@selector(updateNews) withObject:nil];
     }];
     [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
     [_rootScrollView addInfiniteScrollingWithActionHandler:^{
@@ -123,7 +140,6 @@
 
 - (void)updateNews
 {
-    NSLog(@"Update was triggered");
     dispatch_async(dispatch_get_main_queue(), ^(void) {
         [self initNewsArrayAndUpdate:YES];
         if([[[[[_singleNewsVCs objectAtIndex:0] newsArticle] link] absoluteString] isEqualToString:[[[newsArray objectAtIndex:0] link]absoluteString]]){
@@ -141,7 +157,7 @@
             [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
             [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
             [singleNewsController setShouldAnimate:NO];
-            [singleNewsController setParentScrollView:_rootScrollView];
+            [singleNewsController setTsvc:self];
             [_singleNewsVCs addObject:singleNewsController];
             [_rootScrollView addSubview:singleNewsController.view];
         }
@@ -163,13 +179,18 @@
 - (void)swipeMade:(UISwipeGestureRecognizer*)swipeGesture
 {
     if (swipeGesture.direction == UISwipeGestureRecognizerDirectionUp) {
-        CGRect rect = self.view.frame;
-        [UIView animateWithDuration:0.3f animations:^{
-            [self.view setFrame:CGRectMake(rect.origin.x, -(rect.size.height), rect.size.width, rect.size.height)];
-        } completion:^(BOOL finished) {
-            [self dismissViewControllerAnimated:NO completion:nil];
-        }];
+        [self closeViewSliding];
     }
+}
+
+- (void)closeViewSliding
+{
+    CGRect rect = self.view.frame;
+    [UIView animateWithDuration:0.3f animations:^{
+        [self.view setFrame:CGRectMake(rect.origin.x, -(rect.size.height), rect.size.width, rect.size.height)];
+    } completion:^(BOOL finished) {
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }];
 }
 
 - (void)addFirstNewsArticlesToScreen
@@ -179,7 +200,7 @@
         [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
         [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
         [singleNewsController setShouldAnimate:NO];
-        [singleNewsController setParentScrollView:_rootScrollView];
+        [singleNewsController setTsvc:self];
         [_singleNewsVCs addObject:singleNewsController];
         [_rootScrollView addSubview:singleNewsController.view];
     }
@@ -196,7 +217,7 @@
             [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
             [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
             [singleNewsController setShouldAnimate:NO];
-            [singleNewsController setParentScrollView:_rootScrollView];
+            [singleNewsController setTsvc:self];
             [_singleNewsVCs addObject:singleNewsController];
             if (i==startLoadIndex){
                 CGRect frame = singleNewsController.view.frame;
@@ -251,6 +272,7 @@
     else {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen artikler lagret" message:@"Ingen artikler er lagt til i favoritter. Dette kan gjøres ved å holde nede på en artikkel og trykke på stjerneikonet." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
         [alertView show];
+        [self closeViewSliding];
     }
 }
 
@@ -258,22 +280,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    for (SingleNewsViewController *snvc in _singleNewsVCs) {
-        [snvc.view removeFromSuperview];
-    }
-    [_singleNewsVCs removeAllObjects];
-    for (int i=0; i<NUMBER_OF_NEWS_TO_GET; i++) {
-        SingleNewsViewController *singleNewsController = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-        [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
-        [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
-        [singleNewsController setShouldAnimate:NO];
-        [singleNewsController setParentScrollView:_rootScrollView];
-        [_singleNewsVCs addObject:singleNewsController];
-        [_rootScrollView addSubview:singleNewsController.view];
-    }
-    [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
-    startLoadIndex = 0;
-    stopLoadIndex = NUMBER_OF_NEWS_TO_GET < newsArray.count ? NUMBER_OF_NEWS_TO_GET : newsArray.count;
 }
 
 #pragma mark - UIScrollViewDelegate methods
@@ -295,6 +301,31 @@
 //        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
 //        [self performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
 //    }
+}
+
+#pragma mark - MFMailComposerDelegate and methods
+
+- (void)presentMailComposerWithNews:(News *)newsArticle
+{
+    if ([MFMailComposeViewController canSendMail])
+    {
+        mailViewController = [[MFMailComposeViewController alloc] init];
+        [mailViewController setMailComposeDelegate:self];
+        [mailViewController setSubject:@"Interessant artikkel jeg fant via nyhetene for iPhone"];
+        [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", newsArticle.title, [newsArticle.link absoluteString]] isHTML:NO];
+        [self presentViewController:mailViewController animated:YES completion:nil];
+    }
+    else
+    {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Send mail" message:@"Ingen mailkonto er lagt inn på enheten. Registrer en mailkonto og prøv igjen." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+        [alertView show];
+    }
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
+    [self dismissViewControllerAnimated:YES completion:^{
+//        _shouldAnimate = YES;
+    }];
 }
 
 @end

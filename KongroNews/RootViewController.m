@@ -11,10 +11,12 @@
 #import "CategoriesViewController.h"
 #import "Constants.h"
 #import "HelpMethods.h"
+#import "SettingsViewController.h"
 
 @interface RootViewController (){
     FrontPageViewController *frontPageViewController;
     CategoriesViewController *categoriesViewController;
+    SettingsViewController *settingsViewController;
 }
 
 @end
@@ -53,10 +55,12 @@
 - (void)addBackground
 {
     int random = (arc4random() % NUMBER_OF_BACKGROUND_IMAGES) + 1;
-    UIImage *backgroundImage = [UIImage imageNamed:[NSString stringWithFormat:@"%d", random]];
+    UIImage *backgroundImage = [UIImage imageNamed:[NSString stringWithFormat:@"%d.jpg", random]];
     _backgroundImageView.image = backgroundImage;
-    UIImage *filterImage = [UIImage imageNamed:@"blackFilter"];
-    UIImageView *filterView = [[UIImageView alloc] initWithFrame:self.view.frame];
+    UIImage *filterImage;
+    if (IS_IPHONE_5) filterImage = [UIImage imageNamed:@"blackFilter5"];
+    else filterImage = [UIImage imageNamed:@"blackFilter"];
+    UIImageView *filterView = [[UIImageView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     [filterView setImage:filterImage];
     [_backgroundImageView addSubview:filterView];
 }
@@ -69,7 +73,6 @@
         frontPageViewController.parentScrollView = _rootScrollView;
         categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
         categoriesViewController.parentScrollView = _rootScrollView;
-        
         [_rootScrollView addSubview:frontPageViewController.view];
         [_rootScrollView addSubview:categoriesViewController.view];
         [SVProgressHUD dismiss];

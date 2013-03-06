@@ -14,9 +14,15 @@
 + (CAGradientLayer *)blueGradientWithFrame:(CGRect) rect;
 + (CAGradientLayer *)redGradientWithFrame:(CGRect) rect;
 + (CAGradientLayer *)greenGradientWithFrame:(CGRect) rect;
++ (CAGradientLayer *)purpleGradientWithFrame:(CGRect) rect;
++ (CAGradientLayer *)purpleGreenGradientWithFrame:(CGRect) rect;
 
 + (UIColor *)lightBlue;
 + (UIColor *)orange;
 + (UIColor *)green;
++ (UIColor *)facebook;
++ (UIColor *)twitter;
++ (UIColor *)rate;
++ (UIColor *)feedback;
 
 @end

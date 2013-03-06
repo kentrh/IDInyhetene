@@ -9,7 +9,7 @@
 #ifndef KongroNews_Constants_h
 #define KongroNews_Constants_h
 
-#define NUMBER_OF_BACKGROUND_IMAGES 14
+#define NUMBER_OF_BACKGROUND_IMAGES 12
 
 
 #define CATEGORY_TAG_FAVORITES -1
@@ -18,5 +18,7 @@
 #define ANIMATION_DURATION 1.5f
 #define ANIMATION_NUMBER_OF_BOUNCES 4
 #define ANIMATION_SHOULD_OVERSHOOT 1
+
+#define IS_IPHONE_5 ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )
 
 #endif

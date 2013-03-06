@@ -128,6 +128,7 @@
 
 - (void)showNewsArticles:(UIButton *)sender
 {
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Show news articles clicked, tag: %d", sender.tag]];
     if (sender.tag == 1) {
         [_parentScrollView setContentOffset:CGPointZero animated:YES];
         return;
@@ -149,6 +150,7 @@
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
         [topStoriesViewController setCategoryTag:sender.tag];
         [topStoriesViewController setQueryUrl:url];
+        [topStoriesViewController setShouldAnimate:YES];
         [self presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
 }

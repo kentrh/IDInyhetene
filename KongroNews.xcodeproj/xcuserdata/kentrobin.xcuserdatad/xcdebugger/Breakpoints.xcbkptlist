@@ -4,29 +4,29 @@
    version = "1.0">
    <FileBreakpoints>
       <FileBreakpoint
-         shouldBeEnabled = "No"
+         shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "KongroNews/SingleNewsViewController.m"
-         timestampString = "384028119.009441"
+         filePath = "KongroNews/TopStoriesViewController.m"
+         timestampString = "384194102.734611"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "153"
-         endingLineNumber = "153"
-         landmarkName = "-setUpUi"
+         startingLineNumber = "215"
+         endingLineNumber = "215"
+         landmarkName = "-addNewsArticlesToScrollView"
          landmarkType = "5">
       </FileBreakpoint>
       <FileBreakpoint
          shouldBeEnabled = "Yes"
          ignoreCount = "0"
          continueAfterRunningActions = "No"
-         filePath = "KongroNews/NewsParser.m"
-         timestampString = "384077342.150001"
+         filePath = "KongroNews/RootViewController.m"
+         timestampString = "384251451.144623"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "25"
-         endingLineNumber = "25"
-         landmarkName = "+newsList:shouldUpdate:"
+         startingLineNumber = "60"
+         endingLineNumber = "60"
+         landmarkName = "-addBackground"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

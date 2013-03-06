@@ -141,7 +141,6 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-    [self closeButtonPressed];
 }
 
 #pragma mark - UIWebViewDelegate Methods
@@ -160,4 +159,8 @@
     [SVProgressHUD dismiss];
 }
 
+- (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error
+{
+    [SVProgressHUD dismiss];
+}
 @end

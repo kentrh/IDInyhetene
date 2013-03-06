@@ -11,15 +11,16 @@
 #import "KLExpandingSelect.h"
 #import <MessageUI/MessageUI.h>
 #import <Social/Social.h>
+#import "TopStoriesViewController.h"
 
 
-@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate, MFMailComposeViewControllerDelegate>
+@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) News *newsArticle;
 @property (assign, nonatomic) BOOL shouldAnimate;
-@property (strong, nonatomic) UIScrollView *parentScrollView;
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
 @property (strong, nonatomic) IBOutlet UILabel *providerLabel;
+@property (strong, nonatomic) TopStoriesViewController *tsvc;
 @end
