@@ -15,8 +15,8 @@
 #define CATEGORY_TAG_FAVORITES -1
 #define CATEGORY_TAG_TOP_STORIES 1
 
-#define ANIMATION_DURATION 1.5f
-#define ANIMATION_NUMBER_OF_BOUNCES 4
+#define ANIMATION_DURATION 1.0f
+#define ANIMATION_NUMBER_OF_BOUNCES 3
 #define ANIMATION_SHOULD_OVERSHOOT 1
 
 #define IS_IPHONE_5 ( fabs( ( double )[ [ UIScreen mainScreen ] bounds ].size.height - ( double )568 ) < DBL_EPSILON )

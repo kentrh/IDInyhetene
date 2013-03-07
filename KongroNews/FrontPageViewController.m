@@ -96,7 +96,7 @@
     }
     [_parentScrollView setScrollEnabled:NO];
     [_parentScrollView setPagingEnabled:NO];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Ingen nyheter kunne bli hentet, mest sannsynlig på grunn av en nettverksfeil. Sjekk at nettverk er tilgjengelig og start applikasjonen på nytt, eller hold 2 fingre nede på startskjermen for å laste inn på nytt!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Ingen nyheter kunne bli hentet, mest sannsynlig på grunn av en nettverksfeil. Sjekk at nettverk er tilgjengelig og start applikasjonen på nytt, eller hold 3 fingre nede på startskjermen for å laste inn på nytt!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
     [alertView show];
 }
 

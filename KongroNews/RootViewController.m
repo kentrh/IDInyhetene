@@ -94,7 +94,7 @@
 - (void)addRefreshGesture
 {
     UILongPressGestureRecognizer *doubletouch = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(refreshMainPages)];
-    doubletouch.numberOfTouchesRequired = 2;
+    doubletouch.numberOfTouchesRequired = 3;
     [self.view addGestureRecognizer:doubletouch];
 }
 

@@ -11,7 +11,7 @@
 #import "News.h"
 #import <MessageUI/MessageUI.h>
 
-@interface TopStoriesViewController : UIViewController <UIScrollViewDelegate, GADBannerViewDelegate, MFMailComposeViewControllerDelegate>
+@interface TopStoriesViewController : UIViewController <UIScrollViewDelegate, GADBannerViewDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
 
 @property (strong, nonatomic) IBOutlet UIScrollView *rootScrollView;
 @property (strong, nonatomic) NSMutableArray *singleNewsVCs;
@@ -20,6 +20,7 @@
 @property (strong, nonatomic) NSString *queryUrl;
 @property (assign, nonatomic) BOOL shouldAnimate;
 
+- (void)setCloseSwipeEnabled:(BOOL)isEnabled;
 - (void)presentMailComposerWithNews:(News *)newsArticle;
 
 @end

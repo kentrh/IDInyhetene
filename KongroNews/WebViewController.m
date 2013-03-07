@@ -50,7 +50,6 @@
 {
     // Toolbar
     [_navToolbar setBackgroundImage:[UIImage imageNamed:@"navBarImage"] forToolbarPosition:UIToolbarPositionAny barMetrics:UIBarMetricsDefault];
-    [_navToolbar setAlpha:0.8f];
     
     // Toolbar Items
     UIImage *prevImage = [[UIImage imageNamed:@"backButtonS"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];

@@ -25,6 +25,8 @@
     int startLoadIndex;
     int stopLoadIndex;
     MFMailComposeViewController *mailViewController;
+    UISwipeGestureRecognizer *swipeGestureRecognizer;
+    UIAlertView *alertViewForDismissingViewController;
 }
 
 @end
@@ -58,20 +60,22 @@
     [self addFirstNewsArticlesToScreen];
     [self addSwipeUpGestureRecognizer];
     [self setUpAdBanner];
+    [self addTripleTapGestureRecognizer];
 }
 
 - (void)initNewsArrayAndUpdate:(BOOL)shouldUpdate
 {
-    if (_categoryTag == -1) {
+    if (_categoryTag == CATEGORY_TAG_FAVORITES) {
         [self loadFavorites];
+        startLoadIndex = 0;
+        stopLoadIndex = newsArray.count;
+        return;
     }
     else {
         newsArray = [NewsParser newsList:_queryUrl shouldUpdate:shouldUpdate];
         if (!newsArray || [newsArray count] == 0){
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Kunne ikke hente nyheter, vennligst sjekk nettverkstilkoplingen og prøv på nytt." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
-            [alertView show];
-            [self closeViewSliding];
-            return;
+            alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Kunne ikke hente nyheter, vennligst sjekk nettverkstilkoplingen og prøv på nytt." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+            [alertViewForDismissingViewController show];
         }
     }
     
@@ -120,16 +124,18 @@
 - (void)setUpScrollView
 {
     _rootScrollView.delegate = self;
-    __weak TopStoriesViewController *tsvc = self;
-    [_rootScrollView addPullToRefreshWithActionHandler:^{
-        [TestFlight passCheckpoint:@"TopStories update triggered"];
-        [tsvc performSelectorInBackground:@selector(updateNews) withObject:nil];
-    }];
-    [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
-    [_rootScrollView addInfiniteScrollingWithActionHandler:^{
-        [tsvc performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
-    }];
-    [_rootScrollView.infiniteScrollingView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    if (_categoryTag != CATEGORY_TAG_FAVORITES) {
+        __weak TopStoriesViewController *tsvc = self;
+        [_rootScrollView addPullToRefreshWithActionHandler:^{
+            [TestFlight passCheckpoint:@"TopStories update triggered"];
+            [tsvc performSelectorInBackground:@selector(updateNews) withObject:nil];
+        }];
+        [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
+        [_rootScrollView addInfiniteScrollingWithActionHandler:^{
+            [tsvc performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
+        }];
+        [_rootScrollView.infiniteScrollingView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
+    }
     [_rootScrollView setCanCancelContentTouches:NO];
     _rootScrollView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
     _rootScrollView.clipsToBounds = YES;
@@ -170,10 +176,15 @@
 
 - (void)addSwipeUpGestureRecognizer
 {
-    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeMade:)];
+    swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeMade:)];
     [swipeGestureRecognizer setNumberOfTouchesRequired:1];
     [swipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
     [self.view addGestureRecognizer:swipeGestureRecognizer];
+}
+
+- (void)setCloseSwipeEnabled:(BOOL)isEnabled
+{
+    swipeGestureRecognizer.enabled = isEnabled;
 }
 
 - (void)swipeMade:(UISwipeGestureRecognizer*)swipeGesture
@@ -181,6 +192,19 @@
     if (swipeGesture.direction == UISwipeGestureRecognizerDirectionUp) {
         [self closeViewSliding];
     }
+}
+
+- (void)addTripleTapGestureRecognizer
+{
+    UITapGestureRecognizer *tripleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goToNewest)];
+    tripleTap.numberOfTouchesRequired = 1;
+    tripleTap.numberOfTapsRequired = 3;
+    [self.view addGestureRecognizer:tripleTap];
+}
+
+- (void)goToNewest
+{
+    [_rootScrollView setContentOffset:CGPointZero animated:YES];
 }
 
 - (void)closeViewSliding
@@ -244,7 +268,7 @@
 {
     //testbanner
     GADRequest *request = [GADRequest request];
-    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
     
     _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(self.view.frame.origin.x, self.view.frame.size.height)];
     _adBannerView.delegate = self;
@@ -268,11 +292,13 @@
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"starredArticles"];
     if (data) {
         newsArray = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        if (newsArray.count > 0){
+            return;
+        }
     }
-    else {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen artikler lagret" message:@"Ingen artikler er lagt til i favoritter. Dette kan gjøres ved å holde nede på en artikkel og trykke på stjerneikonet." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
-        [alertView show];
-        [self closeViewSliding];
+    if (newsArray.count == 0 || !data) {
+        alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Ingen artikler lagret" message:@"Ingen artikler er lagt til i favoritter. Dette kan gjøres ved å holde nede på en artikkel og trykke på stjerneikonet." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
+        [alertViewForDismissingViewController show];
     }
 }
 
@@ -317,7 +343,7 @@
     }
     else
     {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Send mail" message:@"Ingen mailkonto er lagt inn på enheten. Registrer en mailkonto og prøv igjen." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Send mail" message:@"Ingen mailkonto er lagt inn på enheten. Registrer en mailkonto og prøv igjen." delegate:nil cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
         [alertView show];
     }
 }
@@ -326,6 +352,12 @@
     [self dismissViewControllerAnimated:YES completion:^{
 //        _shouldAnimate = YES;
     }];
+}
+
+#pragma mark - UIAlertViewDelegate methods
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
+{
+    [self closeViewSliding];
 }
 
 @end

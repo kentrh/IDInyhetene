@@ -53,10 +53,14 @@
 {
     if (_shouldAnimate) {
         [[_tsvc rootScrollView] setScrollEnabled:YES];
+        [_tsvc setCloseSwipeEnabled:YES];
         [self setStartPositionForAnimation];
         [self startBounceInAnimation];
     }
     _timeSinceLabel.text = [_newsArticle.pubDate timeSinceFromDate];
+    CGRect frame = _textView.frame;
+    frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
+    _textView.frame = frame;
 }
 
 - (void)setStartPositionForAnimation
@@ -102,6 +106,7 @@
         [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
         _shouldAnimate = YES;
         [[_tsvc rootScrollView] setScrollEnabled:NO];
+        [_tsvc setCloseSwipeEnabled:NO];
         CGRect rect = self.view.frame;
         [UIView animateWithDuration:0.3f animations:^{
             [self.view setFrame:CGRectMake(rect.origin.x, rect.size.height, rect.size.width, rect.size.height)];
@@ -159,6 +164,13 @@
     [_timeSinceLabel sizeToFit];
     
     _providerLabel.text = _newsArticle.publisher;
+}
+
+- (void)setTExtViewSize
+{
+    CGRect frame = _textView.frame;
+    frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
+    _textView.frame = frame;
 }
 
 - (void)initShareFlower
