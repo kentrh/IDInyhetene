@@ -8,25 +8,12 @@
          ignoreCount = "0"
          continueAfterRunningActions = "No"
          filePath = "KongroNews/TopStoriesViewController.m"
-         timestampString = "384334389.554677"
+         timestampString = "384423351.38954"
          startingColumnNumber = "9223372036854775807"
          endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "239"
-         endingLineNumber = "239"
-         landmarkName = "-addNewsArticlesToScrollView"
-         landmarkType = "5">
-      </FileBreakpoint>
-      <FileBreakpoint
-         shouldBeEnabled = "Yes"
-         ignoreCount = "0"
-         continueAfterRunningActions = "No"
-         filePath = "KongroNews/RootViewController.m"
-         timestampString = "384251451.144623"
-         startingColumnNumber = "9223372036854775807"
-         endingColumnNumber = "9223372036854775807"
-         startingLineNumber = "60"
-         endingLineNumber = "60"
-         landmarkName = "-addBackground"
+         startingLineNumber = "80"
+         endingLineNumber = "80"
+         landmarkName = "-setUpPullToRefresh"
          landmarkType = "5">
       </FileBreakpoint>
    </FileBreakpoints>

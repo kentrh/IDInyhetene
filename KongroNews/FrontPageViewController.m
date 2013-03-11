@@ -45,6 +45,7 @@
     [self setUpUi];
     [self setStartPositionForAnimation];
     [self addGestureRecognizer];
+    [self addTapGestureRecognizer];
 }
 
 - (void)setStartPositionForAnimation
@@ -86,6 +87,14 @@
             [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
         }
     });
+}
+
+- (void)addTapGestureRecognizer
+{
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(removeTextFieldKeyboard)];
+    tap.numberOfTapsRequired = 1;
+    tap.numberOfTouchesRequired = 1;
+    [self.view addGestureRecognizer:tap];
 }
 
 - (void)triggerNoNetworkMode
@@ -150,6 +159,8 @@
     [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
+    
+    [_searchField setDelegate:self];
 }
 
 - (void)addGestureRecognizer
@@ -176,6 +187,31 @@
     [self showTopStories];
 }
 
+- (IBAction)searchAction:(UITextField *)sender {
+    if (sender.text.length > 0 || ![sender.text isEqualToString:@""]){
+        NSString *query = sender.text;
+        NSString *baseUrl = @"http://pipes.yahoo.com/kongronews/allnews?_render=json&query=";
+        NSString *queryString = [NSString stringWithFormat:@"%@%@", baseUrl, query];
+        queryString = [queryString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        
+        sender.text = @"";
+        
+        NSString *status = [HelpMethods randomLoadText];
+        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
+        _parentScrollView.scrollEnabled = NO;
+        CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
+        [UIView animateWithDuration:0.3f animations:^{
+            self.view.frame = rect;
+        } completion:^(BOOL finished) {
+            TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
+            [topStoriesViewController setQueryUrl:queryString];
+            [topStoriesViewController setShouldAnimateFromMainView:YES];
+            [self presentViewController:topStoriesViewController animated:NO completion:nil];
+        }];
+    }
+    
+}
+
 - (IBAction)swipeDownTriggered:(UISwipeGestureRecognizer *)swipe
 {
     [TestFlight passCheckpoint:@"Frontpage show top stories swipe"];
@@ -199,7 +235,7 @@
     } completion:^(BOOL finished) {
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
         [topStoriesViewController setQueryUrl:topStoriesCategory.url];
-        [topStoriesViewController setShouldAnimate:YES];
+        [topStoriesViewController setShouldAnimateFromMainView:YES];
         [self presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
 }
@@ -215,5 +251,17 @@
         SettingsViewController *settingsViewController = [[SettingsViewController alloc] initWithNibName:@"SettingsViewController" bundle:nil];
         [self presentViewController:settingsViewController animated:NO completion:nil];
     }];
+}
+
+#pragma mark - UITextFieldDelegate
+- (BOOL)textFieldShouldReturn:(UITextField *)textField
+{
+    [textField resignFirstResponder];
+    return YES;
+}
+
+- (void)removeTextFieldKeyboard
+{
+    [_searchField resignFirstResponder];
 }
 @end

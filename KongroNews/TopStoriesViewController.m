@@ -15,29 +15,19 @@
 #import "CategoriesViewController.h"
 #import "HelpMethods.h"
 #import "SVPullToRefresh.h"
+#import "WebViewController.h"
 
 #define ADMOB_PUBLISHER_ID @"a1512b63e1b9dcd"
 
-#define NUMBER_OF_NEWS_TO_GET 5
-
 @interface TopStoriesViewController (){
     NSArray *newsArray;
-    int startLoadIndex;
-    int stopLoadIndex;
-    MFMailComposeViewController *mailViewController;
-    UISwipeGestureRecognizer *swipeGestureRecognizer;
     UIAlertView *alertViewForDismissingViewController;
+    BOOL animationIsFinished;
 }
 
 @end
 
 @implementation TopStoriesViewController
-
-- (void)dealloc
-{
-    newsArray = nil;
-    [_singleNewsVCs removeAllObjects];
-}
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -54,49 +44,114 @@
     // Do any additional setup after loading the view from its nib.
     
     [self initNewsArrayAndUpdate:NO];
-    _singleNewsVCs = [[NSMutableArray alloc] initWithCapacity:newsArray.count];
-    
-    [self setUpScrollView];
-    [self addFirstNewsArticlesToScreen];
+    [self setUpPageViewController];
     [self addSwipeUpGestureRecognizer];
+    [self addSwipeDownGestureRecognizer];
+    [self addDoubleTapGestureRecognizer];
     [self setUpAdBanner];
-    [self addTripleTapGestureRecognizer];
+//    [self setUpPullToRefresh];
+    
+}
+
+- (void)setUpPageViewController
+{
+    _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:nil];
+    _pageViewController.delegate = self;
+    _pageViewController.dataSource = self;
+    NSArray *viewControllers;
+    if (newsArray.count > 0){
+        SingleNewsViewController *singleNewsVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+        [singleNewsVC setNewsArticle:[newsArray objectAtIndex:0]];
+        [singleNewsVC setPageIndex:1];
+        _pageIndex = 0;
+        viewControllers = [NSArray arrayWithObject:singleNewsVC];
+    }
+    [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
+    
+    [self addChildViewController:_pageViewController];
+    _pageViewController.view.frame = CGRectMake(0, 0, 320, 430);
+    [self.view addSubview:_pageViewController.view];
+    [_pageViewController didMoveToParentViewController:self];
+    self.view.gestureRecognizers = _pageViewController.gestureRecognizers;
+}
+
+- (void)setUpPullToRefresh
+{
+    UIScrollView *pullToRefreshView = [[UIScrollView alloc] initWithFrame:_pageViewController.view.frame];
+    pullToRefreshView.contentSize = _pageViewController.view.frame.size;
+    __weak TopStoriesViewController *tsvc = self;
+    [pullToRefreshView addPullToRefreshWithActionHandler:^{
+        [tsvc performSelectorInBackground:@selector(updateData) withObject:nil];
+    }];
+    [_pageViewController.view addSubview:pullToRefreshView];
+}
+
+- (void)updateData
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+//        News *currentFirst = [newsArray objectAtIndex:0];
+        [self initNewsArrayAndUpdate:YES];
+        if (newsArray.count > 0) {
+//            News *newCurrent = [newsArray objectAtIndex:0];
+//            if ([currentFirst.link.absoluteString isEqualToString:newCurrent.link.absoluteString]) {
+//                [SVProgressHUD dismiss];
+//                return;
+//            }
+            SingleNewsViewController *snvc = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+            [snvc setNewsArticle:[newsArray objectAtIndex:0]];
+            [snvc setPageIndex:1];
+            _pageIndex = 0;
+            [_pageViewController setViewControllers:[NSArray arrayWithObject:snvc] direction:UIPageViewControllerNavigationDirectionReverse animated:YES completion:nil];
+            [SVProgressHUD dismiss];
+        }
+        
+    });
 }
 
 - (void)initNewsArrayAndUpdate:(BOOL)shouldUpdate
 {
     if (_categoryTag == CATEGORY_TAG_FAVORITES) {
         [self loadFavorites];
-        startLoadIndex = 0;
-        stopLoadIndex = newsArray.count;
         return;
     }
     else {
         newsArray = [NewsParser newsList:_queryUrl shouldUpdate:shouldUpdate];
         if (!newsArray || [newsArray count] == 0){
-            alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Kunne ikke hente nyheter, vennligst sjekk nettverkstilkoplingen og prøv på nytt." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+            alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Fant ingen nyheter!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
             [alertViewForDismissingViewController show];
         }
     }
-    
-    startLoadIndex = 0;
-    stopLoadIndex = NUMBER_OF_NEWS_TO_GET < newsArray.count ? NUMBER_OF_NEWS_TO_GET : newsArray.count;
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if (_shouldAnimate) {
-        [self setStartPositionForAnimation];
-        [self startBounceInAnimation];
+    if (_shouldAnimateFromMainView) {
+        [self setStartPositionForAnimationForTop];
     }
+    else if (_shouldAnimateFromWebView) {
+        [self setStartPositionForAnimationForBottom];
+    }
+    [self startBounceInAnimation];
     [SVProgressHUD dismiss];
+    animationIsFinished = YES;
 }
 
-- (void)setStartPositionForAnimation
+- (void)setStartPositionForAnimationForTop
 {
     
     CGRect frame = [[UIScreen mainScreen] bounds];
     frame.origin.y = -(frame.size.height);
+    if (_categoryTag) {
+        frame.origin.x = frame.size.width;
+    }
+    self.view.frame = frame;
+}
+
+- (void)setStartPositionForAnimationForBottom
+{
+    
+    CGRect frame = [[UIScreen mainScreen] bounds];
+    frame.origin.y = (frame.size.height);
     if (_categoryTag) {
         frame.origin.x = frame.size.width;
     }
@@ -121,154 +176,81 @@
     [self.view.layer setValue:finalValue forKeyPath:keyPath];
 }
 
-- (void)setUpScrollView
+- (void)addSwipeDownGestureRecognizer
 {
-    _rootScrollView.delegate = self;
-    if (_categoryTag != CATEGORY_TAG_FAVORITES) {
-        __weak TopStoriesViewController *tsvc = self;
-        [_rootScrollView addPullToRefreshWithActionHandler:^{
-            [TestFlight passCheckpoint:@"TopStories update triggered"];
-            [tsvc performSelectorInBackground:@selector(updateNews) withObject:nil];
-        }];
-        [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
-        [_rootScrollView addInfiniteScrollingWithActionHandler:^{
-            [tsvc performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
-        }];
-        [_rootScrollView.infiniteScrollingView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhite];
-    }
-    [_rootScrollView setCanCancelContentTouches:NO];
-    _rootScrollView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
-    _rootScrollView.clipsToBounds = YES;
-    _rootScrollView.scrollEnabled = YES;
-    _rootScrollView.pagingEnabled = YES;
-    _rootScrollView.directionalLockEnabled = YES;
+    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeDownMade:)];
+    [swipeGestureRecognizer setNumberOfTouchesRequired:1];
+    [swipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
+    swipeGestureRecognizer.delegate = self;
+    [self.view addGestureRecognizer:swipeGestureRecognizer];
 }
 
-- (void)updateNews
+- (void)swipeDownMade:(UISwipeGestureRecognizer*)swipeGesture
 {
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-        [self initNewsArrayAndUpdate:YES];
-        if([[[[[_singleNewsVCs objectAtIndex:0] newsArticle] link] absoluteString] isEqualToString:[[[newsArray objectAtIndex:0] link]absoluteString]]){
-            startLoadIndex = _singleNewsVCs.count;
-            stopLoadIndex = _singleNewsVCs.count + NUMBER_OF_NEWS_TO_GET < newsArray.count ? _singleNewsVCs.count + NUMBER_OF_NEWS_TO_GET : newsArray.count;
-            [_rootScrollView.pullToRefreshView stopAnimating];
-            return;
-        }
-        for (SingleNewsViewController *snvc in _singleNewsVCs) {
-            [snvc.view removeFromSuperview];
-        }
-        [_singleNewsVCs removeAllObjects];
-        for (int i=startLoadIndex; i<stopLoadIndex; i++) {
-            SingleNewsViewController *singleNewsController = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-            [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
-            [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
-            [singleNewsController setShouldAnimate:NO];
-            [singleNewsController setTsvc:self];
-            [_singleNewsVCs addObject:singleNewsController];
-            [_rootScrollView addSubview:singleNewsController.view];
-        }
-        [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
-        startLoadIndex = stopLoadIndex;
-        stopLoadIndex = stopLoadIndex + NUMBER_OF_NEWS_TO_GET < newsArray.count ? stopLoadIndex + NUMBER_OF_NEWS_TO_GET : newsArray.count;
-        [_rootScrollView.pullToRefreshView stopAnimating];
-    });
+        [TestFlight passCheckpoint:@"SingleNews show web article swipe"];
+        _shouldAnimateFromMainView = NO;
+        _shouldAnimateFromWebView = YES;
+        NSString *status = [HelpMethods randomLoadText];
+        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
+        CGRect rect = self.view.frame;
+        [UIView animateWithDuration:0.3f animations:^{
+            [self.view setFrame:CGRectMake(rect.origin.x, rect.size.height, rect.size.width, rect.size.height)];
+        } completion:^(BOOL finished) {
+            WebViewController *webViewController = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
+            [webViewController setNews:[newsArray objectAtIndex:_pageIndex]];
+            [self presentViewController:webViewController animated:NO completion:nil];
+        }];
 }
 
 - (void)addSwipeUpGestureRecognizer
 {
-    swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeMade:)];
+    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeUpMade:)];
     [swipeGestureRecognizer setNumberOfTouchesRequired:1];
     [swipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionUp];
+    swipeGestureRecognizer.delegate = self;
     [self.view addGestureRecognizer:swipeGestureRecognizer];
 }
 
-- (void)setCloseSwipeEnabled:(BOOL)isEnabled
+- (void)swipeUpMade:(UISwipeGestureRecognizer*)swipeGesture
 {
-    swipeGestureRecognizer.enabled = isEnabled;
+    [self closeViewSliding];
 }
 
-- (void)swipeMade:(UISwipeGestureRecognizer*)swipeGesture
+- (void)addDoubleTapGestureRecognizer
 {
-    if (swipeGesture.direction == UISwipeGestureRecognizerDirectionUp) {
-        [self closeViewSliding];
-    }
+    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goToNewest:)];
+    doubleTap.numberOfTouchesRequired = 1;
+    doubleTap.numberOfTapsRequired = 2;
+    [self.view addGestureRecognizer:doubleTap];
 }
 
-- (void)addTripleTapGestureRecognizer
+- (void)goToNewest:(UITapGestureRecognizer *)tap
 {
-    UITapGestureRecognizer *tripleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goToNewest)];
-    tripleTap.numberOfTouchesRequired = 1;
-    tripleTap.numberOfTapsRequired = 3;
-    [self.view addGestureRecognizer:tripleTap];
-}
-
-- (void)goToNewest
-{
-    [_rootScrollView setContentOffset:CGPointZero animated:YES];
+//    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
+//    [self performSelectorInBackground:@selector(updateData) withObject:nil];
+    alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Gå til artikkelside" message:[NSString stringWithFormat:@"Må være mellom 1 og %d.",[newsArray count]] delegate:self cancelButtonTitle:@"Avbryt" otherButtonTitles:@"Gå", nil];
+    [alertViewForDismissingViewController setAlertViewStyle:UIAlertViewStylePlainTextInput];
+    [[alertViewForDismissingViewController textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeDecimalPad];
+    [alertViewForDismissingViewController show];    
 }
 
 - (void)closeViewSliding
 {
-    CGRect rect = self.view.frame;
-    [UIView animateWithDuration:0.3f animations:^{
-        [self.view setFrame:CGRectMake(rect.origin.x, -(rect.size.height), rect.size.width, rect.size.height)];
-    } completion:^(BOOL finished) {
-        [self dismissViewControllerAnimated:NO completion:nil];
-    }];
-}
-
-- (void)addFirstNewsArticlesToScreen
-{
-    for (int i=startLoadIndex; i<stopLoadIndex; i++) {
-        SingleNewsViewController *singleNewsController = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-        [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
-        [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
-        [singleNewsController setShouldAnimate:NO];
-        [singleNewsController setTsvc:self];
-        [_singleNewsVCs addObject:singleNewsController];
-        [_rootScrollView addSubview:singleNewsController.view];
-    }
-    [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
-    startLoadIndex = stopLoadIndex;
-    stopLoadIndex = stopLoadIndex + NUMBER_OF_NEWS_TO_GET < newsArray.count ? stopLoadIndex + NUMBER_OF_NEWS_TO_GET : newsArray.count;
-}
-
-- (void)addNewsArticlesToScrollView
-{
-    dispatch_async(dispatch_get_main_queue(), ^(void) {
-        for (int i=startLoadIndex; i<stopLoadIndex; i++) {
-            SingleNewsViewController *singleNewsController = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-            [singleNewsController setNewsArticle:[newsArray objectAtIndex:i]];
-            [singleNewsController.view setFrame:CGRectMake(i*_rootScrollView.frame.size.width, 0, _rootScrollView.frame.size.width, _rootScrollView.frame.size.height)];
-            [singleNewsController setShouldAnimate:NO];
-            [singleNewsController setTsvc:self];
-            [_singleNewsVCs addObject:singleNewsController];
-            if (i==startLoadIndex){
-                CGRect frame = singleNewsController.view.frame;
-                frame.origin.x += frame.size.width;
-                singleNewsController.view.frame = frame;
-                [_rootScrollView addSubview:singleNewsController.view];
-                frame.origin.x -= frame.size.width;
-                [UIView animateWithDuration:0.3f animations:^{
-                    singleNewsController.view.frame = frame;
-                }];
-            }
-            else {
-                [_rootScrollView addSubview:singleNewsController.view];
-            }
-        }
-        [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * stopLoadIndex, _rootScrollView.frame.size.height)];
-        startLoadIndex = stopLoadIndex;
-        stopLoadIndex = stopLoadIndex + NUMBER_OF_NEWS_TO_GET < newsArray.count ? stopLoadIndex + NUMBER_OF_NEWS_TO_GET : newsArray.count;
-        [_rootScrollView.infiniteScrollingView stopAnimating];
-    });
+//    if (animationIsFinished) {
+        CGRect rect = self.view.frame;
+        [UIView animateWithDuration:0.3f animations:^{
+            [self.view setFrame:CGRectMake(rect.origin.x, -(rect.size.height), rect.size.width, rect.size.height)];
+        } completion:^(BOOL finished) {
+            [self dismissViewControllerAnimated:NO completion:nil];
+        }];
+//    }
 }
 
 - (void)setUpAdBanner
 {
     //testbanner
     GADRequest *request = [GADRequest request];
-//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
     
     _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(self.view.frame.origin.x, self.view.frame.size.height)];
     _adBannerView.delegate = self;
@@ -308,56 +290,100 @@
     // Dispose of any resources that can be recreated.
 }
 
-#pragma mark - UIScrollViewDelegate methods
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    if (startLoadIndex == stopLoadIndex)
-    {
-        [_rootScrollView setShowsInfiniteScrolling:NO];
-        return;
-    }
-//    float scrollViewWidth = scrollView.frame.size.width;
-//    float scrollContentSizeWidth = scrollView.contentSize.width;
-//    float scrollOffset = scrollView.contentOffset.x;
-//    
-//    if (scrollOffset + scrollViewWidth == scrollContentSizeWidth)
-//    {
-//        NSString *status = [HelpMethods randomLoadText];
-//        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
-//        [self performSelectorInBackground:@selector(addNewsArticlesToScrollView) withObject:nil];
-//    }
-}
-
-#pragma mark - MFMailComposerDelegate and methods
-
-- (void)presentMailComposerWithNews:(News *)newsArticle
-{
-    if ([MFMailComposeViewController canSendMail])
-    {
-        mailViewController = [[MFMailComposeViewController alloc] init];
-        [mailViewController setMailComposeDelegate:self];
-        [mailViewController setSubject:@"Interessant artikkel jeg fant via nyhetene for iPhone"];
-        [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", newsArticle.title, [newsArticle.link absoluteString]] isHTML:NO];
-        [self presentViewController:mailViewController animated:YES completion:nil];
-    }
-    else
-    {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Send mail" message:@"Ingen mailkonto er lagt inn på enheten. Registrer en mailkonto og prøv igjen." delegate:nil cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
-        [alertView show];
-    }
-}
-
-- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
-    [self dismissViewControllerAnimated:YES completion:^{
-//        _shouldAnimate = YES;
-    }];
-}
-
 #pragma mark - UIAlertViewDelegate methods
+
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
 {
-    [self closeViewSliding];
+    if ([alertView.title isEqualToString:@"Ingen artikler lagret"] || [alertView.title isEqualToString:@"Ingen nyheter"]) {
+        [self closeViewSliding];
+    }
+    else if ([alertView.title isEqualToString:@"Gå til artikkelside"]) {
+        if (alertView.cancelButtonIndex == buttonIndex) {
+            return;
+        }
+        else {
+            int index =  [[[alertView textFieldAtIndex:0] text] intValue];
+            if (index > 0 && index <= newsArray.count) {
+                UIPageViewControllerNavigationDirection direction = index > _pageIndex ? UIPageViewControllerNavigationDirectionForward : UIPageViewControllerNavigationDirectionReverse;
+                _pageIndex = index-1;
+                SingleNewsViewController *snvc = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+                [snvc setNewsArticle:[newsArray objectAtIndex:index-1]];
+                [snvc setPageIndex:index];
+                [_pageViewController setViewControllers:[NSArray arrayWithObject:snvc] direction:direction animated:YES completion:nil];
+            }
+        }
+
+    }
 }
 
+#pragma mark - PageViewControllerDelegate and Datasource
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerBeforeViewController:(UIViewController *)viewController
+{
+    if (animationIsFinished) {
+        SingleNewsViewController *currentSingleNewsVC = (SingleNewsViewController *)viewController;
+        NSUInteger currentIndex = [newsArray indexOfObject:currentSingleNewsVC.newsArticle];
+        if (currentIndex == 0) {
+            animationIsFinished = YES;
+            return nil;
+        }
+        else{
+            SingleNewsViewController *prevVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+            [prevVC setNewsArticle:[newsArray objectAtIndex:currentIndex - 1]];
+            [prevVC setPageIndex:currentIndex];
+            animationIsFinished = NO;
+            return prevVC;
+        }
+    }
+    else return nil;
+
+}
+
+- (UIViewController *)pageViewController:(UIPageViewController *)pageViewController viewControllerAfterViewController:(UIViewController *)viewController
+{
+    if (animationIsFinished) {
+        SingleNewsViewController *currentSingleNewsVC = (SingleNewsViewController *)viewController;
+        NSUInteger currentIndex = [newsArray indexOfObject:currentSingleNewsVC.newsArticle];
+        if (currentIndex == newsArray.count - 1) {
+            animationIsFinished = YES;
+            return nil;
+        }
+        else{
+            SingleNewsViewController *nextVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+            [nextVC setNewsArticle:[newsArray objectAtIndex:currentIndex + 1]];
+            [nextVC setPageIndex:currentIndex+2];
+            animationIsFinished = NO;
+            return nextVC;
+        }
+    }
+    else return nil;
+    
+}
+
+- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
+{
+    return newsArray.count;
+}
+
+- (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
+{
+    return 0;
+}
+
+- (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
+{
+    if (finished){
+        animationIsFinished = YES;
+    }
+    if (completed) {
+        SingleNewsViewController *snvc = (SingleNewsViewController *) [[pageViewController childViewControllers] lastObject];
+        _pageIndex = [snvc pageIndex] - 1;
+    }
+}
+
+#pragma mark - UIGestureRecognizerDelegate
+
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return YES;
+}
 @end

@@ -14,13 +14,13 @@
 #import "TopStoriesViewController.h"
 
 
-@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate>
+@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate, MFMailComposeViewControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
 @property (strong, nonatomic) News *newsArticle;
-@property (assign, nonatomic) BOOL shouldAnimate;
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
 @property (strong, nonatomic) IBOutlet UILabel *providerLabel;
-@property (strong, nonatomic) TopStoriesViewController *tsvc;
+@property (strong, nonatomic) IBOutlet UILabel *pageNumber;
+@property (assign, nonatomic) int pageIndex;
 @end

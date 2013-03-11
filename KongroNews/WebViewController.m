@@ -10,6 +10,8 @@
 #import "SKBounceAnimation.h"
 #import "Constants.h"
 
+#define ADMOB_PUBLISHER_ID @"a1512b63e1b9dcd"
+
 @interface WebViewController (){
     UIButton *nextBut;
     UIButton *prevBut;
@@ -34,7 +36,7 @@
     // Do any additional setup after loading the view from its nib.
     [self setUpWebView];
     [self setUpNavToolbar];
-    [self setWantsFullScreenLayout:YES];
+    [self setUpAdBanner];
 }
 
 - (void)setUpWebView
@@ -140,6 +142,31 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - Admob
+
+- (void)setUpAdBanner
+{
+    //testbanner
+    GADRequest *request = [GADRequest request];
+    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+    
+    _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(self.view.frame.origin.x, self.view.frame.size.height)];
+    _adBannerView.delegate = self;
+    _adBannerView.adUnitID = ADMOB_PUBLISHER_ID;
+    _adBannerView.rootViewController = self;
+    [self.view addSubview:_adBannerView];
+    [_adBannerView loadRequest:request];
+    
+}
+
+- (void)adViewDidReceiveAd:(GADBannerView *)view
+{
+    [UIView animateWithDuration:0.3f animations:^{
+        CGRect rect = [[UIScreen mainScreen] bounds];
+        _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
+    }];
 }
 
 #pragma mark - UIWebViewDelegate Methods

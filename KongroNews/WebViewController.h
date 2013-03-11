@@ -8,10 +8,12 @@
 
 #import <UIKit/UIKit.h>
 #import "News.h"
+#import "GADBannerView.h"
 
-@interface WebViewController : UIViewController <UIWebViewDelegate, UIGestureRecognizerDelegate>
+@interface WebViewController : UIViewController <UIWebViewDelegate, UIGestureRecognizerDelegate, GADBannerViewDelegate>
 @property (strong, nonatomic) IBOutlet UIWebView *webView;
 @property (strong, nonatomic) News *news;
 @property (strong, nonatomic) IBOutlet UIToolbar *navToolbar;
+@property (strong, nonatomic) GADBannerView *adBannerView;
 
 @end

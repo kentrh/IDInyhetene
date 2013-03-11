@@ -11,16 +11,16 @@
 #import "News.h"
 #import <MessageUI/MessageUI.h>
 
-@interface TopStoriesViewController : UIViewController <UIScrollViewDelegate, GADBannerViewDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate>
+@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate>
 
-@property (strong, nonatomic) IBOutlet UIScrollView *rootScrollView;
-@property (strong, nonatomic) NSMutableArray *singleNewsVCs;
 @property (strong, nonatomic) GADBannerView *adBannerView;
 @property (assign, nonatomic) int categoryTag;
 @property (strong, nonatomic) NSString *queryUrl;
-@property (assign, nonatomic) BOOL shouldAnimate;
+@property (assign, nonatomic) BOOL shouldAnimateFromMainView;
+@property (assign, nonatomic) BOOL shouldAnimateFromWebView;
 
-- (void)setCloseSwipeEnabled:(BOOL)isEnabled;
-- (void)presentMailComposerWithNews:(News *)newsArticle;
+//pageviewcontroller stuff
+@property (strong, nonatomic) UIPageViewController *pageViewController;
+@property (assign, nonatomic) int pageIndex;
 
 @end

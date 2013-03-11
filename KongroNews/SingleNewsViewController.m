@@ -8,8 +8,6 @@
 
 #import "SingleNewsViewController.h"
 #import "Colors.h"
-#import "WebViewController.h"
-#import "SKBounceAnimation.h"
 #import "Constants.h"
 #import "HelpMethods.h"
 #import "NSDate+TimeSince.h"
@@ -45,85 +43,23 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self setUpUi];
-    [self addSwipeUpGestureRecognizer];
     [self initShareFlower];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    if (_shouldAnimate) {
-        [[_tsvc rootScrollView] setScrollEnabled:YES];
-        [_tsvc setCloseSwipeEnabled:YES];
-        [self setStartPositionForAnimation];
-        [self startBounceInAnimation];
-    }
     _timeSinceLabel.text = [_newsArticle.pubDate timeSinceFromDate];
-    CGRect frame = _textView.frame;
-    frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
-    _textView.frame = frame;
-}
-
-- (void)setStartPositionForAnimation
-{
-    
-    CGRect frame = [[UIScreen mainScreen] bounds];
-    frame.origin.y = frame.size.height;
-    frame.origin.x = self.view.frame.origin.x;
-    self.view.frame = frame;
-}
-
-- (void)startBounceInAnimation
-{
-    NSString *keyPath = @"position.y";
-    CGRect frame = [[UIScreen mainScreen] bounds];
-    CGPoint center = CGPointMake(frame.size.width/2, frame.size.height/2);
-    id finalValue = [NSNumber numberWithFloat:center.y];
-    
-    SKBounceAnimation *bounceAnimation = [SKBounceAnimation animationWithKeyPath:keyPath];
-    bounceAnimation.fromValue = [NSNumber numberWithFloat:self.view.center.y];
-    bounceAnimation.toValue = finalValue;
-    bounceAnimation.duration = ANIMATION_DURATION;
-    bounceAnimation.numberOfBounces = ANIMATION_NUMBER_OF_BOUNCES;
-    bounceAnimation.shouldOvershoot = ANIMATION_SHOULD_OVERSHOOT;
-    
-    [self.view.layer addAnimation:bounceAnimation forKey:@"someKey"];
-    [self.view.layer setValue:finalValue forKeyPath:keyPath];
-}
-
-- (void)addSwipeUpGestureRecognizer
-{
-    UISwipeGestureRecognizer *swipeGestureRecognizer = [[UISwipeGestureRecognizer alloc] initWithTarget:self action:@selector(swipeMade:)];
-    [swipeGestureRecognizer setNumberOfTouchesRequired:1];
-    [swipeGestureRecognizer setDirection:UISwipeGestureRecognizerDirectionDown];
-    [self.view addGestureRecognizer:swipeGestureRecognizer];
-}
-
-- (void)swipeMade:(UISwipeGestureRecognizer*)swipeGesture
-{
-    [TestFlight passCheckpoint:@"SingleNews show web article swipe"];
-    if (swipeGesture.direction == UISwipeGestureRecognizerDirectionDown) {
-        NSString *status = [HelpMethods randomLoadText];
-        [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
-        _shouldAnimate = YES;
-        [[_tsvc rootScrollView] setScrollEnabled:NO];
-        [_tsvc setCloseSwipeEnabled:NO];
-        CGRect rect = self.view.frame;
-        [UIView animateWithDuration:0.3f animations:^{
-            [self.view setFrame:CGRectMake(rect.origin.x, rect.size.height, rect.size.width, rect.size.height)];
-        } completion:^(BOOL finished) {
-            WebViewController *webViewController = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil];
-            [webViewController setNews:_newsArticle];
-            [self presentViewController:webViewController animated:NO completion:nil];
-        }];
-    }
+    [self setTextViewSize];
 }
 
 - (void)setUpUi
 {
     _titleLabel.text = _newsArticle.title;
     _textView.text = _newsArticle.leadText;
+    _pageNumber.text = [NSString stringWithFormat:@"%d", _pageIndex];
     if (_newsArticle.imageUrl) {
         [_imageView setImageWithURL:_newsArticle.imageUrl];
+//        [_imageView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:_newsArticle.imageUrl]]];
         UIView *filterView = [[UIView alloc] initWithFrame:_imageView.frame];
         [filterView setBackgroundColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.3f]];
         [_imageView addSubview:filterView];
@@ -166,7 +102,7 @@
     _providerLabel.text = _newsArticle.publisher;
 }
 
-- (void)setTExtViewSize
+- (void)setTextViewSize
 {
     CGRect frame = _textView.frame;
     frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
@@ -237,9 +173,19 @@
     
     if (indexPath.row == kIndexEmail) {
         [TestFlight passCheckpoint:@"SingleNews shareFlower mail clicked"];
-        [_tsvc presentMailComposerWithNews:_newsArticle];
-        [_tsvc setShouldAnimate:NO];
-        _shouldAnimate = NO;
+        if ([MFMailComposeViewController canSendMail])
+        {
+            MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
+            [mailViewController setMailComposeDelegate:self];
+            [mailViewController setSubject:@"Interessant artikkel jeg fant via nyhetene for iPhone"];
+            [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", _newsArticle.title, [_newsArticle.link absoluteString]] isHTML:NO];
+            [self presentViewController:mailViewController animated:YES completion:nil];
+        }
+        else
+        {
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Send mail" message:@"Ingen mailkonto er lagt inn på enheten. Registrer en mailkonto og prøv igjen." delegate:nil cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+            [alertView show];
+        }
         return;
     }
     else {
@@ -328,6 +274,12 @@
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel lagt til" message:@"Artikkelen er nå lagt til i favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
     [alertView show];
+}
+
+- (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
+    [self dismissViewControllerAnimated:YES completion:^{
+        //        _shouldAnimate = YES;
+    }];
 }
 
 //Called after the animations have completed

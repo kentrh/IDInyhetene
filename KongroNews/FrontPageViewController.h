@@ -8,11 +8,13 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FrontPageViewController : UIViewController
+@interface FrontPageViewController : UIViewController <UITextFieldDelegate>
 @property (strong, nonatomic) IBOutlet UIButton *headlineButton;
 @property (strong, nonatomic) IBOutlet UILabel *numberOfNewsLabel;
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
 @property (strong, nonatomic) UIScrollView *parentScrollView;
+@property (strong, nonatomic) IBOutlet UITextField *searchField;
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender;
+- (IBAction)searchAction:(UITextField *)sender;
 @end

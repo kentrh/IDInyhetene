@@ -150,7 +150,7 @@
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
         [topStoriesViewController setCategoryTag:sender.tag];
         [topStoriesViewController setQueryUrl:url];
-        [topStoriesViewController setShouldAnimate:YES];
+        [topStoriesViewController setShouldAnimateFromMainView:YES];
         [self presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
 }
