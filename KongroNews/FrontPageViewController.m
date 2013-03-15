@@ -236,7 +236,7 @@
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
         [topStoriesViewController setQueryUrl:topStoriesCategory.url];
         [topStoriesViewController setShouldAnimateFromMainView:YES];
-        [self presentViewController:topStoriesViewController animated:NO completion:nil];
+        [self.parentViewController presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
 }
 
@@ -249,7 +249,7 @@
         self.view.frame = rect;
     } completion:^(BOOL finished) {
         SettingsViewController *settingsViewController = [[SettingsViewController alloc] initWithNibName:@"SettingsViewController" bundle:nil];
-        [self presentViewController:settingsViewController animated:NO completion:nil];
+        [self.parentViewController presentViewController:settingsViewController animated:NO completion:nil];
     }];
 }
 

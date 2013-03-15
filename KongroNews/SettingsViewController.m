@@ -40,6 +40,7 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self addBackgroundImage];
     [self addButtons];
     [self addGestureRecognizer];
 }
@@ -57,6 +58,21 @@
         [self setStartPositionForAnimation];
         [self startBounceInAnimation];
     }
+}
+
+- (void)addBackgroundImage
+{
+    UIImage *backgroundImage = [UIImage imageNamed:@"settings.jpg"];
+    UIImageView *backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
+    backgroundView.frame = [[UIScreen mainScreen] bounds];
+    backgroundView.contentMode = UIViewContentModeScaleAspectFill;
+    UIImage *filterImage;
+    if (IS_IPHONE_5) filterImage = [UIImage imageNamed:@"blackFilter5"];
+    else filterImage = [UIImage imageNamed:@"blackFilter"];
+    UIImageView *filterView = [[UIImageView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
+    [filterView setImage:filterImage];
+    [backgroundView addSubview:filterView];
+    [self.view addSubview:backgroundView];
 }
 
 - (void)addGestureRecognizer
@@ -210,6 +226,11 @@
     {
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Nyhetene/358349337615099"]];
     }
+}
+
+- (BOOL)shouldAutorotate
+{
+    return NO;
 }
 
 #pragma mark Mail delegate

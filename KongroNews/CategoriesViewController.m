@@ -151,7 +151,7 @@
         [topStoriesViewController setCategoryTag:sender.tag];
         [topStoriesViewController setQueryUrl:url];
         [topStoriesViewController setShouldAnimateFromMainView:YES];
-        [self presentViewController:topStoriesViewController animated:NO completion:nil];
+        [self.parentViewController presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
 }
 

@@ -8,12 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import "GADBannerView.h"
+#import "GADInterstitial.h"
 #import "News.h"
 #import <MessageUI/MessageUI.h>
 
-@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate>
+@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate, GADInterstitialDelegate>
 
 @property (strong, nonatomic) GADBannerView *adBannerView;
+@property (strong, nonatomic) GADInterstitial *adFullPage;
 @property (assign, nonatomic) int categoryTag;
 @property (strong, nonatomic) NSString *queryUrl;
 @property (assign, nonatomic) BOOL shouldAnimateFromMainView;

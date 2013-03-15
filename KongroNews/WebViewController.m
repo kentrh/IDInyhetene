@@ -15,6 +15,8 @@
 @interface WebViewController (){
     UIButton *nextBut;
     UIButton *prevBut;
+    float reverseDegree;
+    BOOL isPlayingVideo;
 }
 
 @end
@@ -34,9 +36,42 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(youTubeStarted:) name:@"UIMoviePlayerControllerDidEnterFullscreenNotification" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(youTubeFinished:) name:@"UIMoviePlayerControllerDidExitFullscreenNotification" object:nil];
+    
     [self setUpWebView];
     [self setUpNavToolbar];
-    [self setUpAdBanner];
+//    [self setUpAdBanner];
+}
+
+-(void)youTubeStarted:(NSNotification *)notification
+{
+    isPlayingVideo = YES;
+//    UIDeviceOrientation currentDeviceOrientation =  [[UIDevice currentDevice] orientation];
+//    
+//    if (currentDeviceOrientation == UIDeviceOrientationLandscapeRight)
+//    {
+//        _webView.transform = CGAffineTransformMakeRotation(M_PI_2);
+//        _webView.bounds = (CGRect){480,320};
+//        _webView.center = (CGPoint){240,160};
+//        reverseDegree = -(M_PI_2);
+//    }
+//    else if (currentDeviceOrientation == UIDeviceOrientationLandscapeLeft)
+//    {
+//        _webView.transform = CGAffineTransformMakeRotation(-M_PI_2);
+//        _webView.bounds = (CGRect){480,320};
+//        _webView.center = (CGPoint){240,160};
+//        reverseDegree = M_PI_2;
+//    }
+}
+
+-(void)youTubeFinished:(NSNotification *)notification
+{
+    isPlayingVideo = NO;
+//    _webView.transform = CGAffineTransformMakeRotation(reverseDegree);
+//    _webView.bounds = (CGRect){320,480};
+//    _webView.center = (CGPoint){160,240};
 }
 
 - (void)setUpWebView
@@ -142,6 +177,16 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (BOOL)shouldAutorotate
+{
+    return YES;
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return isPlayingVideo ? UIInterfaceOrientationMaskAllButUpsideDown : UIInterfaceOrientationMaskPortrait;
 }
 
 #pragma mark - Admob

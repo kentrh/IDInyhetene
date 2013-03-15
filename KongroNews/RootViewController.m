@@ -71,8 +71,10 @@
     dispatch_async(dispatch_get_main_queue(), ^{
         frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
         frontPageViewController.parentScrollView = _rootScrollView;
+        [self addChildViewController:frontPageViewController];
         categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
         categoriesViewController.parentScrollView = _rootScrollView;
+        [self addChildViewController:categoriesViewController];
         [_rootScrollView addSubview:frontPageViewController.view];
         [_rootScrollView addSubview:categoriesViewController.view];
         [SVProgressHUD dismiss];
@@ -102,6 +104,11 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (BOOL)shouldAutorotate
+{
+    return NO;
 }
 
 @end
