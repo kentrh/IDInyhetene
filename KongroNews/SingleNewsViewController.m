@@ -186,7 +186,7 @@
         {
             MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
             [mailViewController setMailComposeDelegate:self];
-            [mailViewController setSubject:@"Interessant artikkel jeg fant via nyhetene for iPhone"];
+            [mailViewController setSubject:@"[via @nyheteneapp for iPhone]"];
             [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", _newsArticle.title, [_newsArticle.link absoluteString]] isHTML:NO];
             [self presentViewController:mailViewController animated:YES completion:nil];
         }
@@ -199,6 +199,7 @@
     }
     else {
         SLComposeViewController* shareViewController;
+        NSString *shareText;
         
         switch (indexPath.row) {
             case kIndexEmail:
@@ -206,10 +207,12 @@
             case kIndexFaceBook:
                 [TestFlight passCheckpoint:@"SingleNews shareFlower Facebook clicked"];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
+                shareText = @" via http://fb.com/nyheteneapp";
                 break;
             case kIndexTwitter:
                 [TestFlight passCheckpoint:@"SingleNews shareFlower Twitter clicked"];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
+                shareText = @" via @nyheteneapp";
                 break;
             case kIndexFavorite:
                 //Handle favorites
@@ -220,7 +223,7 @@
                 break;
         }
         [shareViewController addURL: _newsArticle.link];
-        [shareViewController setInitialText:@"Interessant artikkel jeg fant via nyhetene for iPhone"];
+        [shareViewController setInitialText:shareText];
         
         if ([SLComposeViewController isAvailableForServiceType:shareViewController.serviceType]) {
             [self presentViewController:shareViewController

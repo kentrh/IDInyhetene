@@ -10,6 +10,7 @@
 #import "Colors.h"
 #import "SKBounceAnimation.h"
 #import "Constants.h"
+#import "FrontPageViewController.h"
 
 #define BUTTON_WIDTH 280.0f
 #define BUTTON_HEIGHT 50.0f
@@ -40,7 +41,8 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    [self addBackgroundImage];
+//    [self addBackgroundImage];
+    [self setStartPositionForAnimation];
     [self addButtons];
     [self addGestureRecognizer];
 }
@@ -89,7 +91,14 @@
     [UIView animateWithDuration:0.3f animations:^{
         self.view.frame = rect;
     } completion:^(BOOL finished) {
-        [self dismissViewControllerAnimated:NO completion:nil];
+        for (UIViewController *vc in self.parentViewController.childViewControllers) {
+            if ([vc isKindOfClass:[FrontPageViewController class]]) {
+                [(FrontPageViewController *)vc setSettingsIsShowing:NO];
+                [vc viewDidAppear:YES];
+            }
+        }
+        [self.view removeFromSuperview];
+        [self removeFromParentViewController];
     }];
 }
 

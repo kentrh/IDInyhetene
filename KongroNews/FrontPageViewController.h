@@ -14,7 +14,9 @@
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
 @property (strong, nonatomic) UIScrollView *parentScrollView;
 @property (strong, nonatomic) IBOutlet UITextField *searchField;
+@property (assign, nonatomic) BOOL settingsIsShowing;
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender;
 - (IBAction)searchAction:(UITextField *)sender;
+- (void)updateFrontPageNews;
 @end

@@ -18,6 +18,7 @@
 #import "NewsCategory.h"
 #import "NSDate+TimeSince.h"
 #import "SettingsViewController.h"
+#import "SVPullToRefresh.h"
 
 @interface FrontPageViewController (){
     News *frontPageNewsArticle;
@@ -65,9 +66,11 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    _parentScrollView.scrollEnabled = YES;
-    [self setStartPositionForAnimation];
-    [self startBounceInAnimation];
+    if (!_settingsIsShowing) {
+        _parentScrollView.scrollEnabled = YES;
+        [self setStartPositionForAnimation];
+        [self startBounceInAnimation];
+    }
     
     if (!frontPageNewsArticle) {
         [self triggerNoNetworkMode];
@@ -132,7 +135,17 @@
     [self.view.layer insertSublayer:[Colors blueGradientWithFrame:self.view.frame] atIndex:0];
 }
 
-
+- (void)updateFrontPageNews
+{
+    NSArray *topStories = [NewsParser newsList:topStoriesCategory.url shouldUpdate:YES];
+    News *tempNews = [topStories objectAtIndex:0];
+    if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
+        frontPageNewsArticle = tempNews;
+        [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
+        [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
+    }
+    [_parentScrollView.pullToRefreshView stopAnimating];
+}
 
 - (void)setUpUi
 {
@@ -249,7 +262,9 @@
         self.view.frame = rect;
     } completion:^(BOOL finished) {
         SettingsViewController *settingsViewController = [[SettingsViewController alloc] initWithNibName:@"SettingsViewController" bundle:nil];
-        [self.parentViewController presentViewController:settingsViewController animated:NO completion:nil];
+        [self.parentViewController addChildViewController:settingsViewController];
+        [self setSettingsIsShowing:YES];
+        [self.parentViewController.view addSubview:settingsViewController.view];
     }];
 }
 

@@ -12,6 +12,7 @@
 #import "Constants.h"
 #import "HelpMethods.h"
 #import "SettingsViewController.h"
+#import "SVPullToRefresh.h"
 
 @interface RootViewController (){
     FrontPageViewController *frontPageViewController;
@@ -50,6 +51,18 @@
     _rootScrollView.pagingEnabled = YES;
     _rootScrollView.scrollEnabled = YES;
     [_rootScrollView setContentSize:CGSizeMake(_rootScrollView.frame.size.width * 2, _rootScrollView.frame.size.height)];
+    __weak RootViewController *rvc = self;
+    [_rootScrollView addPullToRefreshWithActionHandler:^{
+        [rvc performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
+    }];
+    [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
+}
+
+- (void)updateFrontPageNews
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [frontPageViewController updateFrontPageNews];
+    });
 }
 
 - (void)addBackground
