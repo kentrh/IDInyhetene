@@ -55,6 +55,7 @@
 - (void)setUpUi
 {
     _titleLabel.text = _newsArticle.title;
+    [self trimLeadText];
     _textView.text = _newsArticle.leadText;
     _pageNumber.text = [NSString stringWithFormat:@"%d", _pageIndex];
     if (_newsArticle.imageUrl) {
@@ -104,9 +105,17 @@
 
 - (void)setTextViewSize
 {
-    CGRect frame = _textView.frame;
-    frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
-    _textView.frame = frame;
+//    CGRect frame = _textView.frame;
+//    frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
+//    _textView.frame = frame;
+}
+
+- (void)trimLeadText
+{
+    if (_newsArticle.leadText.length > 280) {
+        NSString *text = [_newsArticle.leadText substringToIndex:280];
+        _newsArticle.leadText = [NSString stringWithFormat:@"%@%@", text, @"..."];
+    }
 }
 
 - (void)initShareFlower

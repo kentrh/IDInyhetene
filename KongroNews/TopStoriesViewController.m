@@ -22,7 +22,6 @@
 @interface TopStoriesViewController (){
     NSArray *newsArray;
     UIAlertView *alertViewForDismissingViewController;
-    int pageCounter;
 }
 
 @end
@@ -49,7 +48,6 @@
     [self addSwipeDownGestureRecognizer];
     [self addDoubleTapGestureRecognizer];
     [self setUpAdBanner];
-    [self setUpAdFullScreenBanner];
 //    [self setUpPullToRefresh];
     
 }
@@ -57,7 +55,7 @@
 - (void)setUpPageViewController
 {
     if (newsArray.count > 0){
-        _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:[NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:10.0f] forKey:UIPageViewControllerOptionInterPageSpacingKey]];
+        _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:[NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.0f] forKey:UIPageViewControllerOptionInterPageSpacingKey]];
         
         _pageViewController.delegate = self;
         _pageViewController.dataSource = self;
@@ -74,7 +72,6 @@
         [self.view addSubview:_pageViewController.view];
         [_pageViewController didMoveToParentViewController:self];
         self.view.gestureRecognizers = _pageViewController.gestureRecognizers;
-        pageCounter = 0;
     }
     
 }
@@ -271,17 +268,17 @@
     }];
 }
 
-- (void)setUpAdFullScreenBanner
-{
-    //testbanner
-    GADRequest *request = [GADRequest request];
-    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
-    
-    _adFullPage = [[GADInterstitial alloc] init];
-    _adFullPage.delegate = self;
-    _adFullPage.adUnitID = ADMOB_PUBLISHER_ID;
-    [_adFullPage loadRequest:request];
-}
+//- (void)setUpAdFullScreenBanner
+//{
+//    //testbanner
+//    GADRequest *request = [GADRequest request];
+//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+//    
+//    _adFullPage = [[GADInterstitial alloc] init];
+//    _adFullPage.delegate = self;
+//    _adFullPage.adUnitID = ADMOB_PUBLISHER_ID;
+//    [_adFullPage loadRequest:request];
+//}
 
 - (void)loadFavorites
 {
@@ -352,7 +349,6 @@
         SingleNewsViewController *prevVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
         [prevVC setNewsArticle:[newsArray objectAtIndex:currentIndex - 1]];
         [prevVC setPageIndex:currentIndex];
-        pageCounter++;
         return prevVC;
     }
 }
@@ -368,7 +364,6 @@
         SingleNewsViewController *nextVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
         [nextVC setNewsArticle:[newsArray objectAtIndex:currentIndex + 1]];
         [nextVC setPageIndex:currentIndex+2];
-        pageCounter++;
         return nextVC;
     }
     
@@ -387,13 +382,13 @@
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
 {
     if (finished){
-        if (pageCounter % 7 == 0 && _adFullPage.isReady)
-        {
-            [_adFullPage presentFromRootViewController:self];
-            _shouldAnimateFromMainView = NO;
-            _shouldAnimateFromWebView = NO;
-            [SVProgressHUD dismiss];
-        }
+//        if (pageCounter % 7 == 0 && _adFullPage.isReady)
+//        {
+//            [_adFullPage presentFromRootViewController:self];
+//            _shouldAnimateFromMainView = NO;
+//            _shouldAnimateFromWebView = NO;
+//            [SVProgressHUD dismiss];
+//        }
     }
     if (completed) {
         SingleNewsViewController *snvc = (SingleNewsViewController *) [[pageViewController childViewControllers] lastObject];
@@ -408,14 +403,14 @@
     return YES;
 }
 
-#pragma mark - GADInterstitialDelegate
-
-- (void)interstitialDidReceiveAd:(GADInterstitial *)ad
-{
-}
-
-- (void)interstitialDidDismissScreen:(GADInterstitial *)ad
-{
-    [self setUpAdFullScreenBanner];
-}
+//#pragma mark - GADInterstitialDelegate
+//
+//- (void)interstitialDidReceiveAd:(GADInterstitial *)ad
+//{
+//}
+//
+//- (void)interstitialDidDismissScreen:(GADInterstitial *)ad
+//{
+//    [self setUpAdFullScreenBanner];
+//}
 @end

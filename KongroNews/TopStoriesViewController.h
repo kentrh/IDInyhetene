@@ -12,10 +12,9 @@
 #import "News.h"
 #import <MessageUI/MessageUI.h>
 
-@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, MFMailComposeViewControllerDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate, GADInterstitialDelegate>
+@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate>
 
 @property (strong, nonatomic) GADBannerView *adBannerView;
-@property (strong, nonatomic) GADInterstitial *adFullPage;
 @property (assign, nonatomic) int categoryTag;
 @property (strong, nonatomic) NSString *queryUrl;
 @property (assign, nonatomic) BOOL shouldAnimateFromMainView;

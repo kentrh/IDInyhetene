@@ -14,7 +14,7 @@
 #import "TopStoriesViewController.h"
 
 
-@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate, UIGestureRecognizerDelegate>
+@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate, UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UITextView *textView;
