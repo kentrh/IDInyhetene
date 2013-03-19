@@ -12,7 +12,7 @@
 #import "News.h"
 #import <MessageUI/MessageUI.h>
 
-@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate>
+@interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate>
 
 @property (strong, nonatomic) GADBannerView *adBannerView;
 @property (assign, nonatomic) int categoryTag;

@@ -23,6 +23,7 @@
     NSArray *newsArray;
     UIAlertView *alertViewForDismissingViewController;
     BOOL isAnimating;
+    UIScrollView *pageScrollView;
 }
 
 @end
@@ -47,10 +48,9 @@
     [self setUpPageViewController];
     [self addSwipeUpGestureRecognizer];
     [self addSwipeDownGestureRecognizer];
-    [self addDoubleTapGestureRecognizer];
+//    [self addDoubleTapGestureRecognizer];
     [self setUpAdBanner];
-//    [self setUpPullToRefresh];
-    
+    [self setUpPullToRefresh];
 }
 
 - (void)setUpPageViewController
@@ -101,17 +101,23 @@
 {
     for (UIView *view in _pageViewController.view.subviews) {
         if ([view isKindOfClass:[UIScrollView class]]) {
-            UIScrollView *sv = (UIScrollView *)view;
+            pageScrollView = (UIScrollView *)view;
+            pageScrollView.delegate = self;
             __weak TopStoriesViewController *tsvc = self;
-            [sv addPullToRefreshWithActionHandler:^{
+            [pageScrollView addPullToRefreshWithActionHandler:^{
+                [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeGradient];
                 [tsvc performSelectorInBackground:@selector(updateData) withObject:nil];
             }];
+            [pageScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
+            [pageScrollView setShowsPullToRefresh:NO];
         }
     }
+    [_pageViewController.view bringSubviewToFront:pageScrollView];
 }
 
 - (void)updateData
 {
+    NSLog(@"update called");
     dispatch_async(dispatch_get_main_queue(), ^{
 //        News *currentFirst = [newsArray objectAtIndex:0];
         [self initNewsArrayAndUpdate:YES];
@@ -129,10 +135,12 @@
             [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
             [_pageViewController removeFromParentViewController];
             _pageViewController = nil;
+            pageScrollView = nil;
             [self setUpPageViewController];
             [self addSwipeUpGestureRecognizer];
             [self addSwipeDownGestureRecognizer];
-            [self addDoubleTapGestureRecognizer];
+//            [self addDoubleTapGestureRecognizer];
+            [self setUpPullToRefresh];
             [SVProgressHUD dismiss];
         }
         
@@ -255,12 +263,22 @@
 
 - (void)goToNewest:(UITapGestureRecognizer *)tap
 {
-    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
-    [self performSelectorInBackground:@selector(updateData) withObject:nil];
+//    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
+//    [self performSelectorInBackground:@selector(updateData) withObject:nil];
 //    alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Gå til artikkelside" message:[NSString stringWithFormat:@"Må være mellom 1 og %d.",[newsArray count]] delegate:self cancelButtonTitle:@"Avbryt" otherButtonTitles:@"Gå", nil];
 //    [alertViewForDismissingViewController setAlertViewStyle:UIAlertViewStylePlainTextInput];
 //    [[alertViewForDismissingViewController textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeDecimalPad];
-//    [alertViewForDismissingViewController show];    
+//    [alertViewForDismissingViewController show];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    SingleNewsViewController *singleNewsVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+    int index = [self getStartIndex];
+    [singleNewsVC setNewsArticle:[newsArray objectAtIndex:index]];
+    [singleNewsVC setPageIndex:index+1];
+    _pageIndex = index;
+    NSArray *viewControllers = [NSArray arrayWithObject:singleNewsVC];
+    [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionReverse animated:YES completion:nil];
+    
 }
 
 - (void)closeViewSliding
@@ -416,7 +434,6 @@
 
 - (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
 {
-    NSLog(@"will transition");
     [self.view setUserInteractionEnabled:NO];
     isAnimating = YES;
 }
@@ -432,17 +449,21 @@
 //            [SVProgressHUD dismiss];
 //        }
         [self setUserInteractionEnabledAgain];
-        NSLog(@"finished animating");
     }
     if (completed) {
         SingleNewsViewController *snvc = (SingleNewsViewController *)[[pageViewController viewControllers] lastObject];
-        NSLog(@"Child count: %d", [[pageViewController viewControllers] count]);
         _pageIndex = [snvc pageIndex] - 1;
+        if (_pageIndex == 0) {
+            pageScrollView.showsPullToRefresh = YES;
+            [pageScrollView bringSubviewToFront:pageScrollView.pullToRefreshView];
+        }
+        else pageScrollView.showsPullToRefresh = NO;
     }
 }
 
 - (void)setUserInteractionEnabledAgain
 {
+    NSLog(@"pneis");
     isAnimating = NO;
     [self.view setUserInteractionEnabled:YES];
 }
@@ -464,4 +485,11 @@
 //{
 //    [self setUpAdFullScreenBanner];
 //}
+
+#pragma mark - UIScrollViewDelegate methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+//    NSLog(@"did scroll, offset: %f %f, inset: %f %f %f %f, size: %f %f", scrollView.contentOffset.x, scrollView.contentOffset.y, scrollView.contentInset.left, scrollView.contentInset.top, scrollView.contentInset.right, scrollView.contentInset.bottom, scrollView.contentSize.width, scrollView.contentSize.height);
+}
 @end
