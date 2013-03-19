@@ -22,6 +22,7 @@
 @interface TopStoriesViewController (){
     NSArray *newsArray;
     UIAlertView *alertViewForDismissingViewController;
+    BOOL isAnimating;
 }
 
 @end
@@ -60,11 +61,12 @@
         _pageViewController.delegate = self;
         _pageViewController.dataSource = self;
         NSArray *viewControllers;
-            SingleNewsViewController *singleNewsVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-            [singleNewsVC setNewsArticle:[newsArray objectAtIndex:0]];
-            [singleNewsVC setPageIndex:1];
-            _pageIndex = 0;
-            viewControllers = [NSArray arrayWithObject:singleNewsVC];
+        SingleNewsViewController *singleNewsVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
+        int index = [self getStartIndex];
+        [singleNewsVC setNewsArticle:[newsArray objectAtIndex:index]];
+        [singleNewsVC setPageIndex:index+1];
+        _pageIndex = index;
+        viewControllers = [NSArray arrayWithObject:singleNewsVC];
         [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
         
         [self addChildViewController:_pageViewController];
@@ -74,6 +76,25 @@
         self.view.gestureRecognizers = _pageViewController.gestureRecognizers;
     }
     
+}
+
+- (int)getStartIndex
+{
+    NSData *previousNews = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    News *previousArticle;
+    if (previousNews) {
+        previousArticle = [NSKeyedUnarchiver unarchiveObjectWithData:previousNews];
+    }
+    if (previousArticle){
+        for (int i=0; i<newsArray.count; i++) {
+            News *news = (News *)[newsArray objectAtIndex:i];
+            if ([[news.link absoluteString] compare:[previousArticle.link absoluteString]] == NSOrderedSame) {
+                NSLog(@"%@", news.title);
+                return i;
+            }
+        }
+    }
+    return 0;
 }
 
 - (void)setUpPullToRefresh
@@ -100,11 +121,18 @@
 //                [SVProgressHUD dismiss];
 //                return;
 //            }
-            SingleNewsViewController *snvc = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-            [snvc setNewsArticle:[newsArray objectAtIndex:0]];
-            [snvc setPageIndex:1];
-            _pageIndex = 0;
-            [_pageViewController setViewControllers:[NSArray arrayWithObject:snvc] direction:UIPageViewControllerNavigationDirectionReverse animated:YES completion:nil];
+            for (UIView *view in self.view.subviews) {
+                if (view != _adBannerView) {
+                    [view removeFromSuperview];
+                }
+            }
+            [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+            [_pageViewController removeFromParentViewController];
+            _pageViewController = nil;
+            [self setUpPageViewController];
+            [self addSwipeUpGestureRecognizer];
+            [self addSwipeDownGestureRecognizer];
+            [self addDoubleTapGestureRecognizer];
             [SVProgressHUD dismiss];
         }
         
@@ -183,7 +211,7 @@
 
 - (void)swipeDownMade:(UISwipeGestureRecognizer*)swipeGesture
 {
-    [self showNewsArticleInWebView];
+    if (!isAnimating) [self showNewsArticleInWebView];
 }
 
 - (void)showNewsArticleInWebView
@@ -214,7 +242,7 @@
 
 - (void)swipeUpMade:(UISwipeGestureRecognizer*)swipeGesture
 {
-    [self closeViewSliding];
+    if (!isAnimating) [self closeViewSliding];
 }
 
 - (void)addDoubleTapGestureRecognizer
@@ -227,22 +255,27 @@
 
 - (void)goToNewest:(UITapGestureRecognizer *)tap
 {
-//    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
-//    [self performSelectorInBackground:@selector(updateData) withObject:nil];
-    alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Gå til artikkelside" message:[NSString stringWithFormat:@"Må være mellom 1 og %d.",[newsArray count]] delegate:self cancelButtonTitle:@"Avbryt" otherButtonTitles:@"Gå", nil];
-    [alertViewForDismissingViewController setAlertViewStyle:UIAlertViewStylePlainTextInput];
-    [[alertViewForDismissingViewController textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeDecimalPad];
-    [alertViewForDismissingViewController show];    
+    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
+    [self performSelectorInBackground:@selector(updateData) withObject:nil];
+//    alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Gå til artikkelside" message:[NSString stringWithFormat:@"Må være mellom 1 og %d.",[newsArray count]] delegate:self cancelButtonTitle:@"Avbryt" otherButtonTitles:@"Gå", nil];
+//    [alertViewForDismissingViewController setAlertViewStyle:UIAlertViewStylePlainTextInput];
+//    [[alertViewForDismissingViewController textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeDecimalPad];
+//    [alertViewForDismissingViewController show];    
 }
 
 - (void)closeViewSliding
 {
-        CGRect rect = self.view.frame;
-        [UIView animateWithDuration:0.3f animations:^{
-            [self.view setFrame:CGRectMake(rect.origin.x, -(rect.size.height), rect.size.width, rect.size.height)];
-        } completion:^(BOOL finished) {
-            [self dismissViewControllerAnimated:NO completion:nil];
-        }];
+    News *news = [newsArray objectAtIndex:_pageIndex];
+    NSLog(@"%@", news.title);
+    NSData *archive = [NSKeyedArchiver archivedDataWithRootObject:news];
+    [[NSUserDefaults standardUserDefaults] setObject:archive forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    
+    CGRect rect = self.view.frame;
+    [UIView animateWithDuration:0.3f animations:^{
+        [self.view setFrame:CGRectMake(rect.origin.x, -(rect.size.height), rect.size.width, rect.size.height)];
+    } completion:^(BOOL finished) {
+        [self dismissViewControllerAnimated:NO completion:nil];
+    }];
 }
 
 - (void)setUpAdBanner
@@ -379,6 +412,15 @@
     return 0;
 }
 
+#pragma mark - UIPageViewControllerDelegate methods
+
+- (void)pageViewController:(UIPageViewController *)pageViewController willTransitionToViewControllers:(NSArray *)pendingViewControllers
+{
+    NSLog(@"will transition");
+    [self.view setUserInteractionEnabled:NO];
+    isAnimating = YES;
+}
+
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
 {
     if (finished){
@@ -389,11 +431,20 @@
 //            _shouldAnimateFromWebView = NO;
 //            [SVProgressHUD dismiss];
 //        }
+        [self setUserInteractionEnabledAgain];
+        NSLog(@"finished animating");
     }
     if (completed) {
-        SingleNewsViewController *snvc = (SingleNewsViewController *) [[pageViewController childViewControllers] lastObject];
+        SingleNewsViewController *snvc = (SingleNewsViewController *)[[pageViewController viewControllers] lastObject];
+        NSLog(@"Child count: %d", [[pageViewController viewControllers] count]);
         _pageIndex = [snvc pageIndex] - 1;
     }
+}
+
+- (void)setUserInteractionEnabledAgain
+{
+    isAnimating = NO;
+    [self.view setUserInteractionEnabled:YES];
 }
 
 #pragma mark - UIGestureRecognizerDelegate

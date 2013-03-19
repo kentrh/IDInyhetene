@@ -47,6 +47,36 @@
     [self setStartPositionForAnimation];
     [self addGestureRecognizer];
     [self addTapGestureRecognizer];
+    [self addObserversToHandleApplicationResigning];
+}
+
+- (void)addObserversToHandleApplicationResigning
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDelegateWillTerminate:) name:@"applicationWillTerminate" object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appDelegateDidBecomeActive:) name:@"applicationDidBecomeActive" object:nil];
+}
+
+- (void)appDelegateWillTerminate:(NSNotification *)notification
+{
+    NSLog(@"application will terminate");
+    if ([self.parentViewController.presentedViewController isKindOfClass:[TopStoriesViewController class]])
+    {
+        
+        TopStoriesViewController *tsvc = (TopStoriesViewController *)self.parentViewController.presentedViewController;
+        for (UIViewController *vc in tsvc.childViewControllers) {
+            [vc dismissViewControllerAnimated:NO completion:nil];
+            [vc removeFromParentViewController];
+        }
+        [tsvc dismissViewControllerAnimated:NO completion:nil];
+        [tsvc removeFromParentViewController];
+    }
+}
+
+- (void)appDelegateDidBecomeActive:(NSNotification *)notification
+{
+    NSLog(@"application did become active");
+    [self updateFrontPageNews];
 }
 
 - (void)setStartPositionForAnimation
@@ -142,9 +172,9 @@
     if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
         frontPageNewsArticle = tempNews;
         [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
-        [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
     }
     [_parentScrollView.pullToRefreshView stopAnimating];
+    [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
 }
 
 - (void)setUpUi
@@ -196,7 +226,8 @@
 }
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender {
-    [TestFlight passCheckpoint:@"Frontpage show top stories swipe"];
+    [TestFlight passCheckpoint:@"Frontpage show top stories clicked headline"];
+    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
     [self showTopStories];
 }
 
