@@ -75,8 +75,9 @@
 
 - (void)appDelegateDidBecomeActive:(NSNotification *)notification
 {
+    [_activityIndicator startAnimating];
     NSLog(@"application did become active");
-    [self updateFrontPageNews];
+    [self performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
 }
 
 - (void)setStartPositionForAnimation
@@ -105,6 +106,7 @@
     if (!frontPageNewsArticle) {
         [self triggerNoNetworkMode];
     }
+    [_activityIndicator startAnimating];
     [self performSelectorInBackground:@selector(checkIfFrontpageNewsHasUpdated) withObject:nil];
     [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
 }
@@ -119,6 +121,7 @@
             [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
             [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
         }
+        [_activityIndicator stopAnimating];
     });
 }
 
@@ -167,14 +170,18 @@
 
 - (void)updateFrontPageNews
 {
-    NSArray *topStories = [NewsParser newsList:topStoriesCategory.url shouldUpdate:YES];
-    News *tempNews = [topStories objectAtIndex:0];
-    if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
-        frontPageNewsArticle = tempNews;
-        [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
-    }
-    [_parentScrollView.pullToRefreshView stopAnimating];
-    [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSArray *topStories = [NewsParser newsList:topStoriesCategory.url shouldUpdate:YES];
+        News *tempNews = [topStories objectAtIndex:0];
+        if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
+            frontPageNewsArticle = tempNews;
+            [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
+        }
+        [_parentScrollView.pullToRefreshView stopAnimating];
+        [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
+        [_activityIndicator stopAnimating];
+    });
+    
 }
 
 - (void)setUpUi

@@ -27,10 +27,10 @@
     self.window.backgroundColor = [UIColor clearColor];
     
 //#define TESTING 1
-#ifdef TESTING
-    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
-#endif
-    [TestFlight takeOff:@"3bcb0a18465d380946152965f06b5b22_MTMyMDgxMjAxMi0wOS0xNCAwODo0NDozMi4zMTIxNzc"];
+//#ifdef TESTING
+//    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
+//#endif
+//    [TestFlight takeOff:@"3bcb0a18465d380946152965f06b5b22_MTMyMDgxMjAxMi0wOS0xNCAwODo0NDozMi4zMTIxNzc"];
     
     [Parse setApplicationId:@"SK8Boe17LDovDyHc2GUHhK2neLjT3380PRBCdkbY"
                   clientKey:@"PlYaaZSuuLECBYjgVe5pZcandovIjIuwveZcclv6"];

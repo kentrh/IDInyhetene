@@ -12,4 +12,5 @@
 
 + (NSString *)randomLoadText;
 
++ (UIButton *)buttonWithTitle:(NSString *)title color:(UIColor *)color;
 @end

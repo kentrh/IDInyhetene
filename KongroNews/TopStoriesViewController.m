@@ -48,15 +48,15 @@
     [self setUpPageViewController];
     [self addSwipeUpGestureRecognizer];
     [self addSwipeDownGestureRecognizer];
-//    [self addDoubleTapGestureRecognizer];
+    [self addDoubleTapGestureRecognizer];
     [self setUpAdBanner];
-    [self setUpPullToRefresh];
+//    [self setUpPullToRefresh];
 }
 
 - (void)setUpPageViewController
 {
     if (newsArray.count > 0){
-        _pageViewController = [[UIPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStyleScroll navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:[NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.0f] forKey:UIPageViewControllerOptionInterPageSpacingKey]];
+        _pageViewController = [[NewsPageViewController alloc] initWithTransitionStyle:UIPageViewControllerTransitionStylePageCurl navigationOrientation:UIPageViewControllerNavigationOrientationHorizontal options:[NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.0f] forKey:UIPageViewControllerOptionInterPageSpacingKey]];
         
         _pageViewController.delegate = self;
         _pageViewController.dataSource = self;
@@ -70,7 +70,7 @@
         [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
         
         [self addChildViewController:_pageViewController];
-        _pageViewController.view.frame = CGRectMake(0, 0, 320, 430);
+        _pageViewController.view.frame = CGRectMake(0, 0, 320, 480);
         [self.view addSubview:_pageViewController.view];
         [_pageViewController didMoveToParentViewController:self];
         self.view.gestureRecognizers = _pageViewController.gestureRecognizers;
@@ -89,7 +89,6 @@
         for (int i=0; i<newsArray.count; i++) {
             News *news = (News *)[newsArray objectAtIndex:i];
             if ([[news.link absoluteString] compare:[previousArticle.link absoluteString]] == NSOrderedSame) {
-                NSLog(@"%@", news.title);
                 return i;
             }
         }
@@ -105,7 +104,7 @@
             pageScrollView.delegate = self;
             __weak TopStoriesViewController *tsvc = self;
             [pageScrollView addPullToRefreshWithActionHandler:^{
-                [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeGradient];
+                [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
                 [tsvc performSelectorInBackground:@selector(updateData) withObject:nil];
             }];
             [pageScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
@@ -117,16 +116,9 @@
 
 - (void)updateData
 {
-    NSLog(@"update called");
     dispatch_async(dispatch_get_main_queue(), ^{
-//        News *currentFirst = [newsArray objectAtIndex:0];
         [self initNewsArrayAndUpdate:YES];
         if (newsArray.count > 0) {
-//            News *newCurrent = [newsArray objectAtIndex:0];
-//            if ([currentFirst.link.absoluteString isEqualToString:newCurrent.link.absoluteString]) {
-//                [SVProgressHUD dismiss];
-//                return;
-//            }
             for (UIView *view in self.view.subviews) {
                 if (view != _adBannerView) {
                     [view removeFromSuperview];
@@ -139,8 +131,8 @@
             [self setUpPageViewController];
             [self addSwipeUpGestureRecognizer];
             [self addSwipeDownGestureRecognizer];
-//            [self addDoubleTapGestureRecognizer];
-            [self setUpPullToRefresh];
+            [self addDoubleTapGestureRecognizer];
+//            [self setUpPullToRefresh];
             [SVProgressHUD dismiss];
         }
         
@@ -255,38 +247,25 @@
 
 - (void)addDoubleTapGestureRecognizer
 {
-    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(goToNewest:)];
+    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(doubleTapAction:)];
     doubleTap.numberOfTouchesRequired = 1;
     doubleTap.numberOfTapsRequired = 2;
     [self.view addGestureRecognizer:doubleTap];
 }
 
-- (void)goToNewest:(UITapGestureRecognizer *)tap
+- (void)doubleTapAction:(UITapGestureRecognizer *)tap
 {
-//    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
-//    [self performSelectorInBackground:@selector(updateData) withObject:nil];
-//    alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Gå til artikkelside" message:[NSString stringWithFormat:@"Må være mellom 1 og %d.",[newsArray count]] delegate:self cancelButtonTitle:@"Avbryt" otherButtonTitles:@"Gå", nil];
-//    [alertViewForDismissingViewController setAlertViewStyle:UIAlertViewStylePlainTextInput];
-//    [[alertViewForDismissingViewController textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeDecimalPad];
-//    [alertViewForDismissingViewController show];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
-    SingleNewsViewController *singleNewsVC = [[SingleNewsViewController alloc] initWithNibName:@"SingleNewsViewController" bundle:nil];
-    int index = [self getStartIndex];
-    [singleNewsVC setNewsArticle:[newsArray objectAtIndex:index]];
-    [singleNewsVC setPageIndex:index+1];
-    _pageIndex = index;
-    NSArray *viewControllers = [NSArray arrayWithObject:singleNewsVC];
-    [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionReverse animated:YES completion:nil];
-    
+    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
+    [self performSelectorInBackground:@selector(updateData) withObject:nil];
 }
 
 - (void)closeViewSliding
 {
-    News *news = [newsArray objectAtIndex:_pageIndex];
-    NSLog(@"%@", news.title);
-    NSData *archive = [NSKeyedArchiver archivedDataWithRootObject:news];
-    [[NSUserDefaults standardUserDefaults] setObject:archive forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    if (newsArray.count > 0) {
+        News *news = [newsArray objectAtIndex:_pageIndex];
+        NSData *archive = [NSKeyedArchiver archivedDataWithRootObject:news];
+        [[NSUserDefaults standardUserDefaults] setObject:archive forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    }
     
     CGRect rect = self.view.frame;
     [UIView animateWithDuration:0.3f animations:^{
@@ -310,26 +289,6 @@
     [_adBannerView loadRequest:request];
     
 }
-
-- (void)adViewDidReceiveAd:(GADBannerView *)view
-{
-    [UIView animateWithDuration:0.3f animations:^{
-        CGRect rect = [[UIScreen mainScreen] bounds];
-        _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
-    }];
-}
-
-//- (void)setUpAdFullScreenBanner
-//{
-//    //testbanner
-//    GADRequest *request = [GADRequest request];
-//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
-//    
-//    _adFullPage = [[GADInterstitial alloc] init];
-//    _adFullPage.delegate = self;
-//    _adFullPage.adUnitID = ADMOB_PUBLISHER_ID;
-//    [_adFullPage loadRequest:request];
-//}
 
 - (void)loadFavorites
 {
@@ -357,9 +316,21 @@
     return NO;
 }
 
-- (void)setUserInteractionEnabled
+- (void)setUserInteractionEnabledAgain
 {
-    self.view.userInteractionEnabled = YES;
+    isAnimating = NO;
+    [self.view setUserInteractionEnabled:YES];
+}
+
+#pragma mark - GADBannerViewDelegate methods
+
+- (void)adViewDidReceiveAd:(GADBannerView *)view
+{
+    [UIView animateWithDuration:0.3f animations:^{
+        CGRect rect = [[UIScreen mainScreen] bounds];
+        _pageViewController.view.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-_adBannerView.frame.size.height);
+        _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
+    }];
 }
 
 #pragma mark - UIAlertViewDelegate methods
@@ -441,13 +412,6 @@
 - (void)pageViewController:(UIPageViewController *)pageViewController didFinishAnimating:(BOOL)finished previousViewControllers:(NSArray *)previousViewControllers transitionCompleted:(BOOL)completed
 {
     if (finished){
-//        if (pageCounter % 7 == 0 && _adFullPage.isReady)
-//        {
-//            [_adFullPage presentFromRootViewController:self];
-//            _shouldAnimateFromMainView = NO;
-//            _shouldAnimateFromWebView = NO;
-//            [SVProgressHUD dismiss];
-//        }
         [self setUserInteractionEnabledAgain];
     }
     if (completed) {
@@ -461,35 +425,27 @@
     }
 }
 
-- (void)setUserInteractionEnabledAgain
-{
-    NSLog(@"pneis");
-    isAnimating = NO;
-    [self.view setUserInteractionEnabled:YES];
-}
-
 #pragma mark - UIGestureRecognizerDelegate
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
-    return YES;
-}
-
-//#pragma mark - GADInterstitialDelegate
-//
-//- (void)interstitialDidReceiveAd:(GADInterstitial *)ad
-//{
-//}
-//
-//- (void)interstitialDidDismissScreen:(GADInterstitial *)ad
-//{
-//    [self setUpAdFullScreenBanner];
-//}
-
-#pragma mark - UIScrollViewDelegate methods
-
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-//    NSLog(@"did scroll, offset: %f %f, inset: %f %f %f %f, size: %f %f", scrollView.contentOffset.x, scrollView.contentOffset.y, scrollView.contentInset.left, scrollView.contentInset.top, scrollView.contentInset.right, scrollView.contentInset.bottom, scrollView.contentSize.width, scrollView.contentSize.height);
+    if ([otherGestureRecognizer isKindOfClass:[UIPanGestureRecognizer class]])
+    {
+        UIPanGestureRecognizer *panGestureRecognizer = (UIPanGestureRecognizer *) otherGestureRecognizer;
+        CGPoint distance = [panGestureRecognizer translationInView:self.view];
+        [panGestureRecognizer cancelsTouchesInView];
+        if (distance.x > 0 && abs(distance.y) < abs(distance.x)) { // right
+            return NO;
+        } else if (distance.x < 0 && abs(distance.y) < abs(distance.x)) { //left
+            return NO;
+        }
+        if (distance.y > 0 && abs(distance.y) > abs(distance.x)) { // down
+            return YES;
+        } else if (distance.y < 0 && abs(distance.y) > abs(distance.x)) { //up
+            return YES;
+        }
+        
+    }
+    return NO;
 }
 @end

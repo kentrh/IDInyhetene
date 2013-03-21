@@ -11,6 +11,7 @@
 #import "GADInterstitial.h"
 #import "News.h"
 #import <MessageUI/MessageUI.h>
+#import "NewsPageViewController.h"
 
 @interface TopStoriesViewController : UIViewController <GADBannerViewDelegate, UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate>
 
@@ -21,7 +22,7 @@
 @property (assign, nonatomic) BOOL shouldAnimateFromWebView;
 
 //pageviewcontroller stuff
-@property (strong, nonatomic) UIPageViewController *pageViewController;
+@property (strong, nonatomic) NewsPageViewController *pageViewController;
 @property (assign, nonatomic) int pageIndex;
 
 @end

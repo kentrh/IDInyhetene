@@ -56,13 +56,15 @@
         [rvc performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
     }];
     [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
+//    NSLog(@"%@", _rootScrollView.frame);
+//    NSLog(@"%@", _rootScrollView.contentSize);
+    
 }
 
 - (void)updateFrontPageNews
 {
-    dispatch_async(dispatch_get_main_queue(), ^{
-        [frontPageViewController updateFrontPageNews];
-    });
+    [frontPageViewController.activityIndicator startAnimating];
+    [frontPageViewController updateFrontPageNews];
 }
 
 - (void)addBackground

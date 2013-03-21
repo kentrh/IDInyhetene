@@ -66,7 +66,7 @@
         [_imageView addSubview:filterView];
     }
     else {
-        int random = arc4random() % NUMBER_OF_GRADIENTS;
+        int random = _pageIndex % NUMBER_OF_GRADIENTS;
         CAGradientLayer *gradient;
         switch (random) {
             case 0:
@@ -207,12 +207,12 @@
             case kIndexFaceBook:
                 [TestFlight passCheckpoint:@"SingleNews shareFlower Facebook clicked"];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-                shareText = @" via http://fb.com/nyheteneapp";
+                shareText = @"Via http://fb.com/nyheteneapp - ";
                 break;
             case kIndexTwitter:
                 [TestFlight passCheckpoint:@"SingleNews shareFlower Twitter clicked"];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-                shareText = @" via @nyheteneapp";
+                shareText = @"Via @nyheteneapp - ";
                 break;
             case kIndexFavorite:
                 //Handle favorites

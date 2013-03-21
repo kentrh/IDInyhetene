@@ -42,36 +42,21 @@
     
     [self setUpWebView];
     [self setUpNavToolbar];
-//    [self setUpAdBanner];
+    [self setUpAdBanner];
 }
 
 -(void)youTubeStarted:(NSNotification *)notification
 {
+    CGRect rect = [[UIScreen mainScreen] bounds];
+    _webView.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+    _navToolbar.center = CGPointMake(_navToolbar.center.x, rect.size.height - _navToolbar.frame.size.height / 2);
+    _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
     isPlayingVideo = YES;
-//    UIDeviceOrientation currentDeviceOrientation =  [[UIDevice currentDevice] orientation];
-//    
-//    if (currentDeviceOrientation == UIDeviceOrientationLandscapeRight)
-//    {
-//        _webView.transform = CGAffineTransformMakeRotation(M_PI_2);
-//        _webView.bounds = (CGRect){480,320};
-//        _webView.center = (CGPoint){240,160};
-//        reverseDegree = -(M_PI_2);
-//    }
-//    else if (currentDeviceOrientation == UIDeviceOrientationLandscapeLeft)
-//    {
-//        _webView.transform = CGAffineTransformMakeRotation(-M_PI_2);
-//        _webView.bounds = (CGRect){480,320};
-//        _webView.center = (CGPoint){240,160};
-//        reverseDegree = M_PI_2;
-//    }
 }
 
 -(void)youTubeFinished:(NSNotification *)notification
 {
     isPlayingVideo = NO;
-//    _webView.transform = CGAffineTransformMakeRotation(reverseDegree);
-//    _webView.bounds = (CGRect){320,480};
-//    _webView.center = (CGPoint){160,240};
 }
 
 - (void)setUpWebView
@@ -189,8 +174,6 @@
     return isPlayingVideo ? UIInterfaceOrientationMaskAllButUpsideDown : UIInterfaceOrientationMaskPortrait;
 }
 
-#pragma mark - Admob
-
 - (void)setUpAdBanner
 {
     //testbanner
@@ -206,10 +189,14 @@
     
 }
 
+#pragma mark - GADBannerViewDelegate methods
+
 - (void)adViewDidReceiveAd:(GADBannerView *)view
 {
     [UIView animateWithDuration:0.3f animations:^{
         CGRect rect = [[UIScreen mainScreen] bounds];
+        _webView.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-_adBannerView.frame.size.height);
+        _navToolbar.center = CGPointMake(_navToolbar.center.x, _navToolbar.center.y - _adBannerView.frame.size.height);
         _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
     }];
 }

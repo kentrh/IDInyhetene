@@ -147,11 +147,11 @@
 
 + (UIColor *)rate
 {
-    return [UIColor colorWithRed:0.0f/255.0f green:0.0f/255.0f blue:102.0f/255.0f alpha:0.5f];
+    return [UIColor colorWithRed:157.0f/255.0f green:74.0f/255.0f blue:178.0f/255.0f alpha:0.5f];
 }
 
 + (UIColor *)feedback
 {
-    return [UIColor colorWithRed:102.0f/255.0f green:0.0f/255.0f blue:255.0f/255.0f alpha:0.5f];
+    return [UIColor colorWithRed:118.0f/255.0f green:18.0f/255.0f blue:144.0f/255.0f alpha:0.5f];
 }
 @end

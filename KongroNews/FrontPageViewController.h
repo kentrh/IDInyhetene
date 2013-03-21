@@ -15,6 +15,7 @@
 @property (strong, nonatomic) UIScrollView *parentScrollView;
 @property (strong, nonatomic) IBOutlet UITextField *searchField;
 @property (assign, nonatomic) BOOL settingsIsShowing;
+@property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender;
 - (IBAction)searchAction:(UITextField *)sender;

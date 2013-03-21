@@ -16,14 +16,6 @@
 #import "NewsCategory.h"
 #import "NewsParser.h"
 
-#define BUTTON_WIDTH 280.0f
-#define BUTTON_HEIGHT 50.0f
-#define BUTTON_Y 20.0f
-#define BUTTON_X 20.0f
-#define BUTTON_VERTICAL_SPACING 20.0f
-#define BUTTON_FONT_TYPE @"AmericanTypewriter"
-#define BUTTON_FONT_SIZE 18.0f
-
 @interface CategoriesViewController (){
     NSArray *newsCategories;
 }
@@ -99,6 +91,8 @@
 - (void)addCategoryButtons{
     newsCategories = [NewsParser categories];
     
+    float buttonWidth = [[UIScreen mainScreen] bounds].size.width - 40.0f;
+    
     int counter = 0;
     for (NewsCategory *newsCategory in newsCategories) {
         int buttonY = counter == 0 ? BUTTON_VERTICAL_SPACING : ((BUTTON_VERTICAL_SPACING + BUTTON_HEIGHT)*counter)+BUTTON_VERTICAL_SPACING;
@@ -111,14 +105,9 @@
         }
         else buttonColor = [Colors lightBlue];
         
-        UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-        button.frame = CGRectMake(BUTTON_X, buttonY, BUTTON_WIDTH, BUTTON_HEIGHT);
+        UIButton *button = [HelpMethods buttonWithTitle:newsCategory.displayName color:buttonColor];
+        button.frame = CGRectMake(BUTTON_X, buttonY, buttonWidth, BUTTON_HEIGHT);
         [button addTarget:self action:@selector(showNewsArticles:) forControlEvents:UIControlEventTouchUpInside];
-        [button setBackgroundColor:buttonColor];
-        [button setTitle:newsCategory.displayName forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        [button setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-        [button.titleLabel setFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
         [button setTag:newsCategory.tag];
         [_rootScrollView addSubview:button];
         counter++;

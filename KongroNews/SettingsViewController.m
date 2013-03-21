@@ -11,14 +11,7 @@
 #import "SKBounceAnimation.h"
 #import "Constants.h"
 #import "FrontPageViewController.h"
-
-#define BUTTON_WIDTH 280.0f
-#define BUTTON_HEIGHT 50.0f
-#define BUTTON_Y 20.0f
-#define BUTTON_X 20.0f
-#define BUTTON_VERTICAL_SPACING 20.0f
-#define BUTTON_FONT_TYPE @"AmericanTypewriter"
-#define BUTTON_FONT_SIZE 18.0f
+#import "HelpMethods.h"
 
 @interface SettingsViewController (){
     BOOL modalIsShowing;
@@ -41,9 +34,9 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-//    [self addBackgroundImage];
     [self setStartPositionForAnimation];
-    [self addButtons];
+    [self setButtonAlpha];
+    [self addButtonTapRecognizers];
     [self addGestureRecognizer];
 }
 
@@ -62,19 +55,36 @@
     }
 }
 
-- (void)addBackgroundImage
+- (void)setButtonAlpha
 {
-    UIImage *backgroundImage = [UIImage imageNamed:@"settings.jpg"];
-    UIImageView *backgroundView = [[UIImageView alloc] initWithImage:backgroundImage];
-    backgroundView.frame = [[UIScreen mainScreen] bounds];
-    backgroundView.contentMode = UIViewContentModeScaleAspectFill;
-    UIImage *filterImage;
-    if (IS_IPHONE_5) filterImage = [UIImage imageNamed:@"blackFilter5"];
-    else filterImage = [UIImage imageNamed:@"blackFilter"];
-    UIImageView *filterView = [[UIImageView alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    [filterView setImage:filterImage];
-    [backgroundView addSubview:filterView];
-    [self.view addSubview:backgroundView];
+    _feedbackView.backgroundColor = [Colors feedback];
+    _rateView.backgroundColor = [Colors rate];
+    _facebookView.backgroundColor = [Colors facebook];
+    _twitterView.backgroundColor = [Colors twitter];
+    
+}
+
+- (void)addButtonTapRecognizers
+{
+    UITapGestureRecognizer *feedbackTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sendFeedback)];
+    feedbackTap.numberOfTapsRequired = 1;
+    feedbackTap.numberOfTouchesRequired = 1;
+    [_feedbackView addGestureRecognizer:feedbackTap];
+    
+    UITapGestureRecognizer *rateTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(rateApp)];
+    rateTap.numberOfTapsRequired = 1;
+    rateTap.numberOfTouchesRequired = 1;
+    [_rateView addGestureRecognizer:rateTap];
+    
+    UITapGestureRecognizer *facebookTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeOnFacebook)];
+    facebookTap.numberOfTapsRequired = 1;
+    facebookTap.numberOfTouchesRequired = 1;
+    [_facebookView addGestureRecognizer:facebookTap];
+    
+    UITapGestureRecognizer *twitterTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(followOnTwitter)];
+    twitterTap.numberOfTapsRequired = 1;
+    twitterTap.numberOfTouchesRequired = 1;
+    [_twitterView addGestureRecognizer:twitterTap];
 }
 
 - (void)addGestureRecognizer
@@ -126,59 +136,6 @@
     
     [self.view.layer addAnimation:bounceAnimation forKey:@"someKey"];
     [self.view.layer setValue:finalValue forKeyPath:keyPath];
-}
-
-- (void)addButtons
-{
-    int counter = 0;
-
-    UIButton *feedback = [UIButton buttonWithType:UIButtonTypeCustom];
-    feedback.frame = CGRectMake(BUTTON_X, counter == 0 ? BUTTON_VERTICAL_SPACING : ((BUTTON_VERTICAL_SPACING + BUTTON_HEIGHT)*counter)+BUTTON_VERTICAL_SPACING, BUTTON_WIDTH, BUTTON_HEIGHT);
-    [feedback addTarget:self action:@selector(sendFeedback) forControlEvents:UIControlEventTouchUpInside];
-    [feedback setBackgroundColor:[Colors rate]];
-    [feedback setTitle:@"Send tilbakemelding" forState:UIControlStateNormal];
-    [feedback setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [feedback setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [feedback.titleLabel setFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
-    
-    counter++;
-    
-    UIButton *rate = [UIButton buttonWithType:UIButtonTypeCustom];
-    rate.frame = CGRectMake(BUTTON_X, counter == 0 ? BUTTON_VERTICAL_SPACING : ((BUTTON_VERTICAL_SPACING + BUTTON_HEIGHT)*counter)+BUTTON_VERTICAL_SPACING, BUTTON_WIDTH, BUTTON_HEIGHT);
-    [rate addTarget:self action:@selector(rateApp) forControlEvents:UIControlEventTouchUpInside];
-    [rate setBackgroundColor:[Colors rate]];
-    [rate setTitle:@"Vurder på App Store" forState:UIControlStateNormal];
-    [rate setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [rate setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [rate.titleLabel setFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
-    
-    counter++;
-    
-    UIButton *facebook = [UIButton buttonWithType:UIButtonTypeCustom];
-    facebook.frame = CGRectMake(BUTTON_X, counter == 0 ? BUTTON_VERTICAL_SPACING : ((BUTTON_VERTICAL_SPACING + BUTTON_HEIGHT)*counter)+BUTTON_VERTICAL_SPACING, BUTTON_WIDTH, BUTTON_HEIGHT);
-    [facebook addTarget:self action:@selector(likeOnFacebook) forControlEvents:UIControlEventTouchUpInside];
-    [facebook setBackgroundColor:[Colors facebook]];
-    [facebook setTitle:@"Lik på Facebook" forState:UIControlStateNormal];
-    [facebook setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [facebook setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [facebook.titleLabel setFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
-    
-    counter++;
-    
-    UIButton *twitter = [UIButton buttonWithType:UIButtonTypeCustom];
-    twitter.frame = CGRectMake(BUTTON_X, counter == 0 ? BUTTON_VERTICAL_SPACING : ((BUTTON_VERTICAL_SPACING + BUTTON_HEIGHT)*counter)+BUTTON_VERTICAL_SPACING, BUTTON_WIDTH, BUTTON_HEIGHT);
-    [twitter addTarget:self action:@selector(followOnTwitter) forControlEvents:UIControlEventTouchUpInside];
-    [twitter setBackgroundColor:[Colors twitter]];
-    [twitter setTitle:@"Følg på Twitter" forState:UIControlStateNormal];
-    [twitter setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    [twitter setTitleColor:[UIColor grayColor] forState:UIControlStateHighlighted];
-    [twitter.titleLabel setFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
-
-    
-    [self.view addSubview:feedback];
-    [self.view addSubview:rate];
-    [self.view addSubview:twitter];
-    [self.view addSubview:facebook];
 }
 
 - (void)sendFeedback
