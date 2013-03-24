@@ -12,6 +12,7 @@
 #import "HelpMethods.h"
 #import "NSDate+TimeSince.h"
 #import <SDWebImage/UIImageView+WebCache.h>
+#import "RootViewController.h"
 
 #define kIndexTwitter 0
 #define kIndexFavorite 1
@@ -23,6 +24,7 @@
 @interface SingleNewsViewController (){
     KLExpandingSelect *shareFlower;
     NSArray *selectorData;
+    int counter;
 }
 
 @end
@@ -44,6 +46,22 @@
     // Do any additional setup after loading the view from its nib.
     [self setUpUi];
     [self initShareFlower];
+    if ([RootViewController isFirstRun]) {
+        [self setUpPopUp];
+    }
+}
+
+- (void)setUpPopUp
+{
+    CMPopTipView *popTip;
+    popTip = [[CMPopTipView alloc] initWithMessage:@"Dra til siden for å lese neste artikkel."];
+    [popTip setTextColor:[UIColor whiteColor]];
+    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+    [popTip setBackgroundColor:[Colors help]];
+    [popTip setDismissTapAnywhere:YES];
+    [popTip setDelegate:self];
+    [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+    counter = 0;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -99,8 +117,16 @@
     [_timeSinceLabel setText:[_newsArticle.pubDate timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
-    
-    _providerLabel.text = _newsArticle.publisher;
+    if ([_newsArticle.publisher isKindOfClass:[NSArray class]]) {
+        NSArray *pubs = (NSArray *)_newsArticle.publisher;
+        _providerLabel.text = [pubs objectAtIndex:0];
+    }
+    else if ([_newsArticle.publisher isKindOfClass:[NSString class]]) {
+        _providerLabel.text = _newsArticle.publisher;
+    }
+    else {
+        _providerLabel.text = @"";
+    }
 }
 
 - (void)setTextViewSize
@@ -305,6 +331,35 @@
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+#pragma mark - CMPopTipViewDelegate Methods
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
+{
+    CMPopTipView *popTip = [[CMPopTipView alloc] init];
+    [popTip setTextColor:[UIColor whiteColor]];
+    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+    [popTip setBackgroundColor:[Colors help]];
+    [popTip setDismissTapAnywhere:YES];
+    [popTip setDelegate:self];
+    
+    if (counter == 0) {
+        
+        [popTip setMessage:@"Dra ned for å lese hele artikkelen."];
+        [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 1) {
+        [popTip setMessage:@"Hold nede én finger for å åpne delemenyen."];
+        [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 2) {
+        [popTip setMessage:@"Dobbelklikk med én finger for oppdatere nyhetene og gå til nyeste artikkel."];
+        [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+        counter++;
+        [RootViewController setIsFirstRun:NO];
+    }
 }
 
 @end

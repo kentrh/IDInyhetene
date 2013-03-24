@@ -11,6 +11,4 @@
 @interface HelpMethods : NSObject
 
 + (NSString *)randomLoadText;
-
-+ (UIButton *)buttonWithTitle:(NSString *)title color:(UIColor *)color;
 @end

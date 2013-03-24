@@ -7,11 +7,21 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "NewsCategory.h"
 
 @interface NewsParser : NSObject
 
-+ (NSArray *) newsList:(NSString *)queryString shouldUpdate:(BOOL)shouldUpdate;
++ (NSArray *)newsListFromCategoryTag:(int)categoryTag shouldUpdate:(BOOL)shouldUpdate;
 
-+ (NSArray *) categories;
++ (NSArray *)categories;
+
++ (int)numberOfNewsFromTag:(int)tag;
+
++ (NSString *)lastViewedArticleByCategoryTag:(int)tag;
++ (void)setLastViewedArticleByCategoryTag:(int)tag lastViewedArticleUrlString:(NSString *)lastArticleUrlString;
+
++ (NewsCategory *)newsCategoryFromTag:(int)tag;
+
++ (NSArray *)queryResult:(NSString *)queryUrl;
 
 @end

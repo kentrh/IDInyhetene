@@ -24,6 +24,18 @@
 
 @implementation RootViewController
 
+static bool isFirstRun;
+
++ (BOOL)isFirstRun
+{
+    return isFirstRun;
+}
+
++ (void)setIsFirstRun:(BOOL)firstRun
+{
+    isFirstRun = firstRun;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -40,7 +52,17 @@
     [self addBackground];
     [self setUpScrollView];
     [self addRefreshGesture];
-    [self performSelectorInBackground:@selector(addFrontPageViewAndCategoriesView) withObject:nil];
+    [self setIsFirstRun];
+    [self performSelectorInBackground:@selector(addFrontPageView) withObject:nil];
+}
+
+- (void)setIsFirstRun
+{
+    NSString *isFirst = [[NSUserDefaults standardUserDefaults] objectForKey:@"firstRun"];
+    if (!isFirst) {
+        isFirstRun = YES;
+        [[NSUserDefaults standardUserDefaults] setObject:@"firstRun" forKey:@"firstRun"];
+    }
 }
 
 - (void)setUpScrollView
@@ -80,20 +102,25 @@
     [_backgroundImageView addSubview:filterView];
 }
 
-- (void)addFrontPageViewAndCategoriesView
+- (void)addFrontPageView
 {
     [SVProgressHUD showWithStatus:[HelpMethods randomLoadText] maskType:SVProgressHUDMaskTypeBlack];
     dispatch_async(dispatch_get_main_queue(), ^{
         frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
         frontPageViewController.parentScrollView = _rootScrollView;
         [self addChildViewController:frontPageViewController];
-        categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
-        categoriesViewController.parentScrollView = _rootScrollView;
-        [self addChildViewController:categoriesViewController];
         [_rootScrollView addSubview:frontPageViewController.view];
-        [_rootScrollView addSubview:categoriesViewController.view];
         [SVProgressHUD dismiss];
+        [self addCategoryView];
     });
+}
+
+- (void)addCategoryView
+{
+    categoriesViewController = [[CategoriesViewController alloc] initWithNibName:@"CategoriesViewController" bundle:nil];
+    categoriesViewController.parentScrollView = _rootScrollView;
+    [self addChildViewController:categoriesViewController];
+    [_rootScrollView addSubview:categoriesViewController.view];
 }
 
 - (void)refreshMainPages
@@ -104,7 +131,11 @@
     }
     categoriesViewController = nil;
     frontPageViewController = nil;
-    [self addFrontPageViewAndCategoriesView];
+    __weak RootViewController *rvc = self;
+    [_rootScrollView addPullToRefreshWithActionHandler:^{
+        [rvc performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
+    }];
+    [self addFrontPageView];
     
 }
 

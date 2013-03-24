@@ -24,6 +24,7 @@
     UIAlertView *alertViewForDismissingViewController;
     BOOL isAnimating;
     UIScrollView *pageScrollView;
+    BOOL adBannerHasReceivedAd;
 }
 
 @end
@@ -80,15 +81,12 @@
 
 - (int)getStartIndex
 {
-    NSData *previousNews = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
-    News *previousArticle;
-    if (previousNews) {
-        previousArticle = [NSKeyedUnarchiver unarchiveObjectWithData:previousNews];
-    }
-    if (previousArticle){
+    if (_queryUrl) return 0;
+    NSString *previousArticleUrl = [NewsParser lastViewedArticleByCategoryTag:_categoryTag];
+    if (previousArticleUrl){
         for (int i=0; i<newsArray.count; i++) {
             News *news = (News *)[newsArray objectAtIndex:i];
-            if ([[news.link absoluteString] compare:[previousArticle.link absoluteString]] == NSOrderedSame) {
+            if ([[news.link absoluteString] compare:previousArticleUrl] == NSOrderedSame) {
                 return i;
             }
         }
@@ -116,6 +114,7 @@
 
 - (void)updateData
 {
+    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
     dispatch_async(dispatch_get_main_queue(), ^{
         [self initNewsArrayAndUpdate:YES];
         if (newsArray.count > 0) {
@@ -124,7 +123,7 @@
                     [view removeFromSuperview];
                 }
             }
-            [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+            [NewsParser setLastViewedArticleByCategoryTag:_categoryTag lastViewedArticleUrlString:@""];
             [_pageViewController removeFromParentViewController];
             _pageViewController = nil;
             pageScrollView = nil;
@@ -132,7 +131,9 @@
             [self addSwipeUpGestureRecognizer];
             [self addSwipeDownGestureRecognizer];
             [self addDoubleTapGestureRecognizer];
-//            [self setUpPullToRefresh];
+            if (adBannerHasReceivedAd) {
+                [self showAdBannerAnimated];
+            }
             [SVProgressHUD dismiss];
         }
         
@@ -145,12 +146,15 @@
         [self loadFavorites];
         return;
     }
+    else if(_queryUrl.length > 0) {
+        newsArray = [NewsParser queryResult:_queryUrl];
+    }
     else {
-        newsArray = [NewsParser newsList:_queryUrl shouldUpdate:shouldUpdate];
-        if (!newsArray || [newsArray count] == 0){
-            alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Fant ingen nyheter!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
-            [alertViewForDismissingViewController show];
-        }
+        newsArray = [NewsParser newsListFromCategoryTag:_categoryTag shouldUpdate:shouldUpdate];
+    }
+    if (!newsArray || [newsArray count] == 0){
+        alertViewForDismissingViewController = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Fant ingen nyheter!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+        [alertViewForDismissingViewController show];
     }
 }
 
@@ -255,16 +259,14 @@
 
 - (void)doubleTapAction:(UITapGestureRecognizer *)tap
 {
-    [SVProgressHUD showWithStatus:@"Oppdaterer" maskType:SVProgressHUDMaskTypeBlack];
     [self performSelectorInBackground:@selector(updateData) withObject:nil];
 }
 
 - (void)closeViewSliding
 {
-    if (newsArray.count > 0) {
+    if (newsArray.count > 0 && !_queryUrl) {
         News *news = [newsArray objectAtIndex:_pageIndex];
-        NSData *archive = [NSKeyedArchiver archivedDataWithRootObject:news];
-        [[NSUserDefaults standardUserDefaults] setObject:archive forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+        [NewsParser setLastViewedArticleByCategoryTag:_categoryTag lastViewedArticleUrlString:[news.link absoluteString]];
     }
     
     CGRect rect = self.view.frame;
@@ -279,7 +281,7 @@
 {
     //testbanner
     GADRequest *request = [GADRequest request];
-    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
     
     _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(self.view.frame.origin.x, self.view.frame.size.height)];
     _adBannerView.delegate = self;
@@ -322,15 +324,27 @@
     [self.view setUserInteractionEnabled:YES];
 }
 
-#pragma mark - GADBannerViewDelegate methods
-
-- (void)adViewDidReceiveAd:(GADBannerView *)view
+- (void)showAdBannerAnimated
 {
     [UIView animateWithDuration:0.3f animations:^{
         CGRect rect = [[UIScreen mainScreen] bounds];
         _pageViewController.view.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-_adBannerView.frame.size.height);
         _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
     }];
+}
+
+#pragma mark - GADBannerViewDelegate methods
+
+- (void)adViewDidReceiveAd:(GADBannerView *)view
+{
+    adBannerHasReceivedAd = YES;
+    [self showAdBannerAnimated];
+    
+}
+
+- (void)adView:(GADBannerView *)view didFailToReceiveAdWithError:(GADRequestError *)error
+{
+    adBannerHasReceivedAd = NO;
 }
 
 #pragma mark - UIAlertViewDelegate methods
@@ -390,11 +404,6 @@
     }
     
 }
-
-//- (NSInteger)presentationCountForPageViewController:(UIPageViewController *)pageViewController
-//{
-//    return newsArray.count;
-//}
 
 - (NSInteger)presentationIndexForPageViewController:(UIPageViewController *)pageViewController
 {

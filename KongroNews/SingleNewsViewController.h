@@ -12,9 +12,10 @@
 #import <MessageUI/MessageUI.h>
 #import <Social/Social.h>
 #import "TopStoriesViewController.h"
+#import "CMPopTipView.h"
 
 
-@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate, UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate>
+@interface SingleNewsViewController : UIViewController <KLExpandingSelectDataSource, KLExpandingSelectDelegate, UIGestureRecognizerDelegate, MFMailComposeViewControllerDelegate, CMPopTipViewDelegate>
 @property (strong, nonatomic) IBOutlet UIImageView *imageView;
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
 @property (strong, nonatomic) IBOutlet UITextView *textView;

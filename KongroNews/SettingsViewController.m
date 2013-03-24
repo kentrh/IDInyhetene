@@ -12,6 +12,8 @@
 #import "Constants.h"
 #import "FrontPageViewController.h"
 #import "HelpMethods.h"
+#import "RootViewController.h"
+#import "CategoriesViewController.h"
 
 @interface SettingsViewController (){
     BOOL modalIsShowing;
@@ -57,10 +59,13 @@
 
 - (void)setButtonAlpha
 {
-    _feedbackView.backgroundColor = [Colors feedback];
-    _rateView.backgroundColor = [Colors rate];
-    _facebookView.backgroundColor = [Colors facebook];
-    _twitterView.backgroundColor = [Colors twitter];
+    float buttonAlpha = 0.7f;
+    float whiteness = 0.3f;
+    _feedbackView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
+    _rateView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
+    _facebookView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
+    _twitterView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
+    _helpView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
     
 }
 
@@ -85,6 +90,13 @@
     twitterTap.numberOfTapsRequired = 1;
     twitterTap.numberOfTouchesRequired = 1;
     [_twitterView addGestureRecognizer:twitterTap];
+    
+    UITapGestureRecognizer *helpTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(startHelpSession)];
+    helpTap.numberOfTapsRequired = 1;
+    helpTap.numberOfTouchesRequired = 1;
+    [_helpView addGestureRecognizer:helpTap];
+    
+    
 }
 
 - (void)addGestureRecognizer
@@ -96,6 +108,11 @@
 }
 
 - (IBAction)swipeDownTriggered:(id)sender
+{
+    [self closeSettingsView];
+}
+
+- (void)closeSettingsView
 {
     CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
     [UIView animateWithDuration:0.3f animations:^{
@@ -136,6 +153,25 @@
     
     [self.view.layer addAnimation:bounceAnimation forKey:@"someKey"];
     [self.view.layer setValue:finalValue forKeyPath:keyPath];
+}
+
+- (void)startHelpSession
+{
+    FrontPageViewController *fpvc;
+    CategoriesViewController *cvc;
+    for (UIViewController *vc in self.parentViewController.childViewControllers) {
+        if ([vc isKindOfClass:[FrontPageViewController class]]) {
+            fpvc = (FrontPageViewController *)vc;
+        }
+        if ([vc isKindOfClass:[CategoriesViewController class]]) {
+            cvc = (CategoriesViewController *)vc;
+        }
+        
+    }
+    [RootViewController setIsFirstRun:YES];
+    [fpvc setUpPopUp];
+    [cvc setUpPopUp];
+    [self closeSettingsView];
 }
 
 - (void)sendFeedback

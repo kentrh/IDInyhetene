@@ -12,4 +12,6 @@
 @property (strong, nonatomic) IBOutlet UIScrollView *rootScrollView;
 @property (strong, nonatomic) UIScrollView *parentScrollView;
 
+- (void)setUpPopUp;
+
 @end

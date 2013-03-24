@@ -14,5 +14,6 @@
 @property (strong, nonatomic) IBOutlet UIView *rateView;
 @property (strong, nonatomic) IBOutlet UIView *facebookView;
 @property (strong, nonatomic) IBOutlet UIView *twitterView;
+@property (strong, nonatomic) IBOutlet UIView *helpView;
 
 @end

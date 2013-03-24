@@ -24,5 +24,6 @@
 + (UIColor *)twitter;
 + (UIColor *)rate;
 + (UIColor *)feedback;
++ (UIColor *)help;
 
 @end

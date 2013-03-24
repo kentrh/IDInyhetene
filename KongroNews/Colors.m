@@ -137,21 +137,26 @@
 
 + (UIColor *)facebook
 {
-    return [UIColor colorWithRed:60.0f/255.0f green:90.0f/255.0f blue:152.0f/255.0f alpha:0.5f];
+    return [UIColor colorWithRed:60.0f/255.0f green:90.0f/255.0f blue:152.0f/255.0f alpha:0.7f];
 }
 
 + (UIColor *)twitter
 {
-    return [UIColor colorWithRed:49.0f/255.0f green:170.0f/255.0f blue:225.0f/255.0f alpha:0.5f];
+    return [UIColor colorWithRed:49.0f/255.0f green:170.0f/255.0f blue:225.0f/255.0f alpha:0.7f];
 }
 
 + (UIColor *)rate
 {
-    return [UIColor colorWithRed:157.0f/255.0f green:74.0f/255.0f blue:178.0f/255.0f alpha:0.5f];
+    return [UIColor colorWithRed:157.0f/255.0f green:74.0f/255.0f blue:178.0f/255.0f alpha:0.7f];
 }
 
 + (UIColor *)feedback
 {
-    return [UIColor colorWithRed:118.0f/255.0f green:18.0f/255.0f blue:144.0f/255.0f alpha:0.5f];
+    return [UIColor colorWithRed:118.0f/255.0f green:18.0f/255.0f blue:144.0f/255.0f alpha:0.7f];
+}
+
++ (UIColor *)help
+{
+    return [UIColor colorWithRed:10.0f/255.0f green:225.0f/255.0f blue:77.0f/255.0f alpha:0.7f];
 }
 @end

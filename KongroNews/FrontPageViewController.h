@@ -7,8 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "CMPopTipView.h"
 
-@interface FrontPageViewController : UIViewController <UITextFieldDelegate>
+@interface FrontPageViewController : UIViewController <UITextFieldDelegate, CMPopTipViewDelegate>
+
 @property (strong, nonatomic) IBOutlet UIButton *headlineButton;
 @property (strong, nonatomic) IBOutlet UILabel *numberOfNewsLabel;
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
@@ -20,4 +22,5 @@
 - (IBAction)headlineButtonPushed:(UIButton *)sender;
 - (IBAction)searchAction:(UITextField *)sender;
 - (void)updateFrontPageNews;
+- (void)setUpPopUp;
 @end

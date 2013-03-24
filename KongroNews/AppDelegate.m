@@ -8,7 +8,6 @@
 
 #import "AppDelegate.h"
 #import "RootViewController.h"
-#import "TestFlight.h"
 #import <Parse/Parse.h>
 #import "NewsParser.h"
 #import <QuartzCore/QuartzCore.h>
@@ -26,11 +25,8 @@
     
     self.window.backgroundColor = [UIColor clearColor];
     
-//#define TESTING 1
-//#ifdef TESTING
 //    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
-//#endif
-//    [TestFlight takeOff:@"3bcb0a18465d380946152965f06b5b22_MTMyMDgxMjAxMi0wOS0xNCAwODo0NDozMi4zMTIxNzc"];
+    [TestFlight takeOff:@"cd68b306-a673-460a-83e1-b5bffea4e2f3"];
     
     [Parse setApplicationId:@"SK8Boe17LDovDyHc2GUHhK2neLjT3380PRBCdkbY"
                   clientKey:@"PlYaaZSuuLECBYjgVe5pZcandovIjIuwveZcclv6"];

@@ -9,7 +9,10 @@
 #import <UIKit/UIKit.h>
 
 @interface RootViewController : UIViewController <UIScrollViewDelegate>
+
 @property (strong, nonatomic) IBOutlet UIScrollView *rootScrollView;
 @property (strong, nonatomic) IBOutlet UIImageView *backgroundImageView;
 
++ (BOOL)isFirstRun;
++ (void)setIsFirstRun:(BOOL)firstRun;
 @end

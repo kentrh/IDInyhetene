@@ -34,22 +34,4 @@
     int index = arc4random() % [randomTexts count];
     return [randomTexts objectAtIndex:index];
 }
-
-
-+ (UIButton *)buttonWithTitle:(NSString *)titleText color:(UIColor *)color
-{
-    float buttonWidth = [[UIScreen mainScreen] bounds].size.width - 40.0f;
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-    button.backgroundColor = color;
-    
-    UILabel *title = [[UILabel alloc] initWithFrame:CGRectMake(20, 40, buttonWidth-40, 20)];
-    title.text = titleText;
-    title.textColor = [UIColor whiteColor];
-    title.font = [UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE];
-    title.textAlignment = NSTextAlignmentLeft;
-    title.backgroundColor = [UIColor clearColor];
-    [button addSubview:title];
-    
-    return button;
-}
 @end

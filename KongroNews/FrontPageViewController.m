@@ -19,11 +19,13 @@
 #import "NSDate+TimeSince.h"
 #import "SettingsViewController.h"
 #import "SVPullToRefresh.h"
+#import "RootViewController.h"
 
 @interface FrontPageViewController (){
     News *frontPageNewsArticle;
     NewsCategory *topStoriesCategory;
     BOOL fromSettingsView;
+    int counter;
 }
 
 @end
@@ -48,6 +50,22 @@
     [self addGestureRecognizer];
     [self addTapGestureRecognizer];
     [self addObserversToHandleApplicationResigning];
+    if ([RootViewController isFirstRun]) {
+        [self setUpPopUp];
+    }
+}
+
+- (void)setUpPopUp
+{
+    CMPopTipView *popTip;
+    popTip = [[CMPopTipView alloc] initWithMessage:@"Klikk overskriften for å lese siste sak. (Klikk utenfor denne boksen for å se neste melding.)"];
+    [popTip setTextColor:[UIColor whiteColor]];
+    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+    [popTip setBackgroundColor:[Colors help]];
+    [popTip setDismissTapAnywhere:YES];
+    [popTip setDelegate:self];
+    [popTip presentPointingAtView:_headlineButton inView:self.view animated:YES];
+    counter = 0;
 }
 
 - (void)addObserversToHandleApplicationResigning
@@ -109,12 +127,13 @@
     [_activityIndicator startAnimating];
     [self performSelectorInBackground:@selector(checkIfFrontpageNewsHasUpdated) withObject:nil];
     [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
+    [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d", [NewsParser numberOfNewsFromTag:topStoriesCategory.tag]]];
 }
 
 - (void)checkIfFrontpageNewsHasUpdated
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSArray *topStories = [NewsParser newsList:topStoriesCategory.url shouldUpdate:NO];
+        NSArray *topStories = [NewsParser newsListFromCategoryTag:topStoriesCategory.tag shouldUpdate:NO];
         News *tempNews = [topStories objectAtIndex:0];
         if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
             frontPageNewsArticle = tempNews;
@@ -171,7 +190,7 @@
 - (void)updateFrontPageNews
 {
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSArray *topStories = [NewsParser newsList:topStoriesCategory.url shouldUpdate:YES];
+        NSArray *topStories = [NewsParser newsListFromCategoryTag:topStoriesCategory.tag shouldUpdate:YES];
         News *tempNews = [topStories objectAtIndex:0];
         if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
             frontPageNewsArticle = tempNews;
@@ -180,6 +199,7 @@
         [_parentScrollView.pullToRefreshView stopAnimating];
         [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
         [_activityIndicator stopAnimating];
+        [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d", [NewsParser numberOfNewsFromTag:topStoriesCategory.tag]]];
     });
     
 }
@@ -192,7 +212,7 @@
             topStoriesCategory = cat;
         }
     }
-    NSArray *newsArray = [NewsParser newsList:topStoriesCategory.url shouldUpdate:NO];
+    NSArray *newsArray = [NewsParser newsListFromCategoryTag:topStoriesCategory.tag shouldUpdate:YES];
     frontPageNewsArticle = [newsArray objectAtIndex:0];
     
     [_headlineButton setTitle:frontPageNewsArticle.title forState:UIControlStateNormal];
@@ -202,7 +222,7 @@
     [_headlineButton.titleLabel setNumberOfLines:4];
     [_headlineButton.titleLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:22.0f]];
     
-    [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d",newsArray.count]];
+    [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d",[NewsParser numberOfNewsFromTag:topStoriesCategory.tag]]];
     [_numberOfNewsLabel sizeToFit];
     
     
@@ -234,7 +254,7 @@
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender {
     [TestFlight passCheckpoint:@"Frontpage show top stories clicked headline"];
-    [[NSUserDefaults standardUserDefaults] setObject:nil forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    [NewsParser setLastViewedArticleByCategoryTag:CATEGORY_TAG_TOP_STORIES lastViewedArticleUrlString:@""];
     [self showTopStories];
 }
 
@@ -285,7 +305,7 @@
         self.view.frame = rect;
     } completion:^(BOOL finished) {
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
-        [topStoriesViewController setQueryUrl:topStoriesCategory.url];
+        [topStoriesViewController setCategoryTag:topStoriesCategory.tag];
         [topStoriesViewController setShouldAnimateFromMainView:YES];
         [self.parentViewController presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
@@ -316,5 +336,43 @@
 - (void)removeTextFieldKeyboard
 {
     [_searchField resignFirstResponder];
+}
+
+#pragma mark - CMPopTipViewDelegate Methods
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
+{
+    CMPopTipView *popTip = [[CMPopTipView alloc] init];
+    [popTip setTextColor:[UIColor whiteColor]];
+    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+    [popTip setBackgroundColor:[Colors help]];
+    [popTip setDismissTapAnywhere:YES];
+    [popTip setDelegate:self];
+    
+    if (counter == 0) {
+        
+        [popTip setMessage:@"Dra ned for å vise den forrige viste nyheten."];
+        [popTip presentPointingAtView:_headlineButton inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 1) {
+        [popTip setMessage:@"Klikke her for å søke blant de siste nyhetene i alle kategorier."];
+        [popTip presentPointingAtView:_searchField inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 2) {
+        [popTip setMessage:@"Dra opp for å gå til innstillinger."];
+        [popTip presentPointingAtView:_headlineButton inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 3) {
+        [popTip setMessage:@"Dra til høyre og slipp for å oppdatere hovedsakene."];
+        [popTip presentPointingAtView:_headlineButton inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 4) {
+        [popTip setMessage:@"Dra til venstre for å vise kategoriene."];
+        [popTip presentPointingAtView:_headlineButton inView:self.view animated:YES];
+        counter++;
+    }
 }
 @end

@@ -80,9 +80,6 @@
 		37AB1D3A16DCD6D000789092 /* NSDate+InternetDateTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AB1D3416DCD6D000789092 /* NSDate+InternetDateTime.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37AB1D3B16DCD6D000789092 /* NSString+HTML.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AB1D3616DCD6D000789092 /* NSString+HTML.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		37AB1D3C16DCD6D000789092 /* NSString+XMLEntities.m in Sources */ = {isa = PBXBuildFile; fileRef = 37AB1D3816DCD6D000789092 /* NSString+XMLEntities.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
-		37AB1D4216DCDD5500789092 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AB1D3E16DCDD5500789092 /* libTestFlight.a */; };
-		37AB1D4316DCDD5500789092 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37AB1D3F16DCDD5500789092 /* README.md */; };
-		37AB1D4416DCDD5500789092 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 37AB1D4016DCDD5500789092 /* release_notes.md */; };
 		37AB1D4616DCDD7400789092 /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 37AB1D4516DCDD7200789092 /* libz.dylib */; };
 		37D1255C16FB5C21005C0695 /* 5star.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1255616FB5C21005C0695 /* 5star.png */; };
 		37D1255D16FB5C21005C0695 /* 5star@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1255716FB5C21005C0695 /* 5star@2x.png */; };
@@ -92,6 +89,12 @@
 		37D1256116FB5C21005C0695 /* twitter@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1255B16FB5C21005C0695 /* twitter@2x.png */; };
 		37D1256416FB5DA7005C0695 /* gmail.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1256216FB5DA7005C0695 /* gmail.png */; };
 		37D1256516FB5DA7005C0695 /* gmail@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37D1256316FB5DA7005C0695 /* gmail@2x.png */; };
+		37D1256E16FCB3A0005C0695 /* TutorialViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D1256C16FCB3A0005C0695 /* TutorialViewController.m */; };
+		37D1256F16FCB3A0005C0695 /* TutorialViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37D1256D16FCB3A0005C0695 /* TutorialViewController.xib */; };
+		37D1257316FCBF0A005C0695 /* CMPopTipView.m in Sources */ = {isa = PBXBuildFile; fileRef = 37D1257216FCBF0A005C0695 /* CMPopTipView.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
+		37D1257916FDE7FA005C0695 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D1257516FDE7FA005C0695 /* libTestFlight.a */; };
+		37D1257A16FDE7FA005C0695 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37D1257616FDE7FA005C0695 /* README.md */; };
+		37D1257B16FDE7FA005C0695 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 37D1257716FDE7FA005C0695 /* release_notes.md */; };
 		37EE406716DE231A008AE7A8 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406616DE231A008AE7A8 /* SKBounceAnimation.m */; };
 		37EE406C16DE8BBE008AE7A8 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 37EE406916DE8BBE008AE7A8 /* SVProgressHUD.bundle */; };
 		37EE406D16DE8BBE008AE7A8 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406B16DE8BBE008AE7A8 /* SVProgressHUD.m */; };
@@ -135,8 +138,8 @@
 		373B44CF16E746D60003C3D7 /* 10.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 10.jpg; path = Graphics/BackgroundsOriginals5/10.jpg; sourceTree = SOURCE_ROOT; };
 		373B44D016E746D60003C3D7 /* 11.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 11.jpg; path = Graphics/BackgroundsOriginals5/11.jpg; sourceTree = SOURCE_ROOT; };
 		373B44D116E746D70003C3D7 /* 12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 12.jpg; path = Graphics/BackgroundsOriginals5/12.jpg; sourceTree = SOURCE_ROOT; };
-		373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nyheteneIconShiny57.png; sourceTree = "<group>"; };
-		373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nyheteneIconShiny114.png; sourceTree = "<group>"; };
+		373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nyheteneIconShiny57.png; path = ../nyheteneIconShiny57.png; sourceTree = "<group>"; };
+		373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nyheteneIconShiny114.png; path = ../nyheteneIconShiny114.png; sourceTree = "<group>"; };
 		3748F1B516D6502500C3CDB0 /* FrontPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrontPageViewController.h; sourceTree = "<group>"; };
 		3748F1B616D6502600C3CDB0 /* FrontPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrontPageViewController.m; sourceTree = "<group>"; };
 		3748F1B716D6502600C3CDB0 /* FrontPageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FrontPageViewController.xib; sourceTree = "<group>"; };
@@ -220,10 +223,6 @@
 		37AB1D3616DCD6D000789092 /* NSString+HTML.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+HTML.m"; path = "../../../libraries/iOS/MWFeedParser/MWFeedParser/Classes/NSString+HTML.m"; sourceTree = "<group>"; };
 		37AB1D3716DCD6D000789092 /* NSString+XMLEntities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+XMLEntities.h"; path = "../../../libraries/iOS/MWFeedParser/MWFeedParser/Classes/NSString+XMLEntities.h"; sourceTree = "<group>"; };
 		37AB1D3816DCD6D000789092 /* NSString+XMLEntities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+XMLEntities.m"; path = "../../../libraries/iOS/MWFeedParser/MWFeedParser/Classes/NSString+XMLEntities.m"; sourceTree = "<group>"; };
-		37AB1D3E16DCDD5500789092 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
-		37AB1D3F16DCDD5500789092 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
-		37AB1D4016DCDD5500789092 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
-		37AB1D4116DCDD5500789092 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		37AB1D4516DCDD7200789092 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
 		37D1255616FB5C21005C0695 /* 5star.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 5star.png; path = Graphics/settingsIcon/5star.png; sourceTree = SOURCE_ROOT; };
 		37D1255716FB5C21005C0695 /* 5star@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "5star@2x.png"; path = "Graphics/settingsIcon/5star@2x.png"; sourceTree = SOURCE_ROOT; };
@@ -233,6 +232,15 @@
 		37D1255B16FB5C21005C0695 /* twitter@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "twitter@2x.png"; path = "Graphics/settingsIcon/twitter@2x.png"; sourceTree = SOURCE_ROOT; };
 		37D1256216FB5DA7005C0695 /* gmail.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = gmail.png; path = Graphics/settingsIcon/gmail.png; sourceTree = SOURCE_ROOT; };
 		37D1256316FB5DA7005C0695 /* gmail@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "gmail@2x.png"; path = "Graphics/settingsIcon/gmail@2x.png"; sourceTree = SOURCE_ROOT; };
+		37D1256B16FCB3A0005C0695 /* TutorialViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TutorialViewController.h; sourceTree = "<group>"; };
+		37D1256C16FCB3A0005C0695 /* TutorialViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TutorialViewController.m; sourceTree = "<group>"; };
+		37D1256D16FCB3A0005C0695 /* TutorialViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TutorialViewController.xib; sourceTree = "<group>"; };
+		37D1257116FCBF0A005C0695 /* CMPopTipView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CMPopTipView.h; sourceTree = "<group>"; };
+		37D1257216FCBF0A005C0695 /* CMPopTipView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CMPopTipView.m; sourceTree = "<group>"; };
+		37D1257516FDE7FA005C0695 /* libTestFlight.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libTestFlight.a; sourceTree = "<group>"; };
+		37D1257616FDE7FA005C0695 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
+		37D1257716FDE7FA005C0695 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
+		37D1257816FDE7FA005C0695 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
 		37EE406516DE231A008AE7A8 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SKBounceAnimation.h; path = ../../libraries/iOS/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation.h; sourceTree = "<group>"; };
 		37EE406616DE231A008AE7A8 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SKBounceAnimation.m; path = ../../libraries/iOS/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation.m; sourceTree = "<group>"; };
 		37EE406916DE8BBE008AE7A8 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
@@ -286,9 +294,9 @@
 				378889EC16D2B64400C41C39 /* Foundation.framework in Frameworks */,
 				378889EE16D2B64400C41C39 /* CoreGraphics.framework in Frameworks */,
 				37AB1D2316DB975400789092 /* libGoogleAdMobAds.a in Frameworks */,
-				37AB1D4216DCDD5500789092 /* libTestFlight.a in Frameworks */,
 				37EE408D16E1F955008AE7A8 /* Parse.framework in Frameworks */,
 				373B448716E633CD0003C3D7 /* SDWebImage.framework in Frameworks */,
+				37D1257916FDE7FA005C0695 /* libTestFlight.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,8 +406,6 @@
 		378889DD16D2B64400C41C39 = {
 			isa = PBXGroup;
 			children = (
-				373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */,
-				373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */,
 				378889EF16D2B64400C41C39 /* KongroNews */,
 				378889E816D2B64400C41C39 /* Frameworks */,
 				378889E716D2B64400C41C39 /* Products */,
@@ -417,6 +423,8 @@
 		378889E816D2B64400C41C39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				37D1257416FDE7FA005C0695 /* TestFlightSDK1.2.4 */,
+				37D1257016FCBF0A005C0695 /* CMPopTipView */,
 				373B448816E633FB0003C3D7 /* ImageIO.framework */,
 				373B448616E633CD0003C3D7 /* SDWebImage.framework */,
 				37EE409A16E1F9C9008AE7A8 /* Security.framework */,
@@ -431,7 +439,6 @@
 				37EE406816DE8BBE008AE7A8 /* SVProgressHUD */,
 				37AB1D4516DCDD7200789092 /* libz.dylib */,
 				37EE406416DE2308008AE7A8 /* SKBounceAnimation */,
-				37AB1D3D16DCDD5500789092 /* TestFlightSDK1.1 */,
 				37AB1D2C16DB97FF00789092 /* AdSupport.framework */,
 				37AB1D2A16DB97DD00789092 /* SystemConfiguration.framework */,
 				37AB1D2816DB97AB00789092 /* AudioToolbox.framework */,
@@ -451,6 +458,7 @@
 		378889EF16D2B64400C41C39 /* KongroNews */ = {
 			isa = PBXGroup;
 			children = (
+				37D1256A16FCB35B005C0695 /* Tutorial */,
 				3748F22216D6BB7400C3CDB0 /* Fonts */,
 				3748F1C216D6685C00C3CDB0 /* Graphics */,
 				3748F1C116D65CC600C3CDB0 /* Constants */,
@@ -548,17 +556,6 @@
 			name = AdMob;
 			sourceTree = "<group>";
 		};
-		37AB1D3D16DCDD5500789092 /* TestFlightSDK1.1 */ = {
-			isa = PBXGroup;
-			children = (
-				37AB1D3E16DCDD5500789092 /* libTestFlight.a */,
-				37AB1D3F16DCDD5500789092 /* README.md */,
-				37AB1D4016DCDD5500789092 /* release_notes.md */,
-				37AB1D4116DCDD5500789092 /* TestFlight.h */,
-			);
-			path = TestFlightSDK1.1;
-			sourceTree = "<group>";
-		};
 		37D1254D16FB52AE005C0695 /* SettingsIcons */ = {
 			isa = PBXGroup;
 			children = (
@@ -572,6 +569,36 @@
 				37D1255B16FB5C21005C0695 /* twitter@2x.png */,
 			);
 			name = SettingsIcons;
+			sourceTree = "<group>";
+		};
+		37D1256A16FCB35B005C0695 /* Tutorial */ = {
+			isa = PBXGroup;
+			children = (
+				37D1256B16FCB3A0005C0695 /* TutorialViewController.h */,
+				37D1256C16FCB3A0005C0695 /* TutorialViewController.m */,
+				37D1256D16FCB3A0005C0695 /* TutorialViewController.xib */,
+			);
+			name = Tutorial;
+			sourceTree = "<group>";
+		};
+		37D1257016FCBF0A005C0695 /* CMPopTipView */ = {
+			isa = PBXGroup;
+			children = (
+				37D1257116FCBF0A005C0695 /* CMPopTipView.h */,
+				37D1257216FCBF0A005C0695 /* CMPopTipView.m */,
+			);
+			path = CMPopTipView;
+			sourceTree = "<group>";
+		};
+		37D1257416FDE7FA005C0695 /* TestFlightSDK1.2.4 */ = {
+			isa = PBXGroup;
+			children = (
+				37D1257516FDE7FA005C0695 /* libTestFlight.a */,
+				37D1257616FDE7FA005C0695 /* README.md */,
+				37D1257716FDE7FA005C0695 /* release_notes.md */,
+				37D1257816FDE7FA005C0695 /* TestFlight.h */,
+			);
+			path = TestFlightSDK1.2.4;
 			sourceTree = "<group>";
 		};
 		37EE406416DE2308008AE7A8 /* SKBounceAnimation */ = {
@@ -610,6 +637,8 @@
 		37EE40AD16E4B30E008AE7A8 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */,
+				373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */,
 				373B448A16E69F140003C3D7 /* Default-568h@2x.png */,
 				37EE40AB16E4B2FA008AE7A8 /* Default@2x.png */,
 				37EE40A916E4B2F3008AE7A8 /* Default.png */,
@@ -695,8 +724,6 @@
 				37AB1D1616DB824B00789092 /* shareButtonS.png in Resources */,
 				37AB1D1716DB824B00789092 /* shareButtonS@2x.png in Resources */,
 				37AB1D2416DB975400789092 /* README.txt in Resources */,
-				37AB1D4316DCDD5500789092 /* README.md in Resources */,
-				37AB1D4416DCDD5500789092 /* release_notes.md in Resources */,
 				37EE406C16DE8BBE008AE7A8 /* SVProgressHUD.bundle in Resources */,
 				37EE40AA16E4B2F4008AE7A8 /* Default.png in Resources */,
 				37EE40AC16E4B2FA008AE7A8 /* Default@2x.png in Resources */,
@@ -724,6 +751,9 @@
 				37D1256116FB5C21005C0695 /* twitter@2x.png in Resources */,
 				37D1256416FB5DA7005C0695 /* gmail.png in Resources */,
 				37D1256516FB5DA7005C0695 /* gmail@2x.png in Resources */,
+				37D1256F16FCB3A0005C0695 /* TutorialViewController.xib in Resources */,
+				37D1257A16FDE7FA005C0695 /* README.md in Resources */,
+				37D1257B16FDE7FA005C0695 /* release_notes.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -759,6 +789,8 @@
 				37EE40A416E3A4F6008AE7A8 /* NSDate+TimeSince.m in Sources */,
 				373B448316E4CBCC0003C3D7 /* SettingsViewController.m in Sources */,
 				372F3FBD16FB1CC300724100 /* NewsPageViewController.m in Sources */,
+				37D1256E16FCB3A0005C0695 /* TutorialViewController.m in Sources */,
+				37D1257316FCBF0A005C0695 /* CMPopTipView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -856,12 +888,12 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../libraries/iOS/GoogleAdMobAdsSdkiOS-6.3.0\"",
-					"\"$(SRCROOT)/TestFlightSDK1.1\"",
+					"\"$(SRCROOT)/TestFlightSDK1.2.4\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -883,13 +915,13 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"\"$(SRCROOT)/../../libraries/iOS/GoogleAdMobAdsSdkiOS-6.3.0\"",
-					"\"$(SRCROOT)/TestFlightSDK1.1\"",
+					"\"$(SRCROOT)/TestFlightSDK1.2.4\"",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "755A2C17-A7A8-4EF8-A290-1EB42235E37C";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "755A2C17-A7A8-4EF8-A290-1EB42235E37C";
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

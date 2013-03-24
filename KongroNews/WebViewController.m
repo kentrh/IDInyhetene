@@ -9,12 +9,15 @@
 #import "WebViewController.h"
 #import "SKBounceAnimation.h"
 #import "Constants.h"
+#import "RootViewController.h"
+#import "Colors.h"
 
 #define ADMOB_PUBLISHER_ID @"a1512b63e1b9dcd"
 
 @interface WebViewController (){
     UIButton *nextBut;
     UIButton *prevBut;
+    UIButton *closeBut;
     float reverseDegree;
     BOOL isPlayingVideo;
 }
@@ -95,7 +98,7 @@
     UIBarButtonItem *nextButton = [[UIBarButtonItem alloc] initWithCustomView:nextBut];
     
     UIImage *closeImage = [[UIImage imageNamed:@"shareButtonS"] resizableImageWithCapInsets:UIEdgeInsetsMake(0, 0, 0, 0)];
-    UIButton *closeBut = [UIButton buttonWithType:UIButtonTypeCustom];
+    closeBut = [UIButton buttonWithType:UIButtonTypeCustom];
     [closeBut setFrame:CGRectMake(0, 0, closeImage.size.width, closeImage.size.height)];
     [closeBut setImage:closeImage forState:UIControlStateNormal];
     [closeBut addTarget:self action:@selector(closeButtonPressed) forControlEvents:UIControlEventTouchUpInside];
@@ -178,7 +181,7 @@
 {
     //testbanner
     GADRequest *request = [GADRequest request];
-    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
     
     _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(self.view.frame.origin.x, self.view.frame.size.height)];
     _adBannerView.delegate = self;
@@ -196,8 +199,8 @@
     [UIView animateWithDuration:0.3f animations:^{
         CGRect rect = [[UIScreen mainScreen] bounds];
         _webView.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-_adBannerView.frame.size.height);
-        _navToolbar.center = CGPointMake(_navToolbar.center.x, _navToolbar.center.y - _adBannerView.frame.size.height);
         _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
+        _navToolbar.frame = CGRectMake(rect.origin.x, (rect.size.height - _adBannerView.frame.size.height - _navToolbar.frame.size.height), _navToolbar.frame.size.width, _navToolbar.frame.size.height);
     }];
 }
 
