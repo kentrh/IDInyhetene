@@ -71,7 +71,7 @@
         [_pageViewController setViewControllers:viewControllers direction:UIPageViewControllerNavigationDirectionForward animated:NO completion:nil];
         
         [self addChildViewController:_pageViewController];
-        _pageViewController.view.frame = CGRectMake(0, 0, 320, 480);
+        _pageViewController.view.frame = [UIScreen mainScreen].bounds;
         [self.view addSubview:_pageViewController.view];
         [_pageViewController didMoveToParentViewController:self];
         self.view.gestureRecognizers = _pageViewController.gestureRecognizers;
@@ -283,8 +283,8 @@
     //testbanner
     GADRequest *request = [GADRequest request];
 //    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
-    
-    _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(self.view.frame.origin.x, self.view.frame.size.height)];
+    CGRect rect = [UIScreen mainScreen].bounds;
+    _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(rect.origin.x, rect.size.height)];
     _adBannerView.delegate = self;
     _adBannerView.adUnitID = ADMOB_PUBLISHER_ID;
     _adBannerView.rootViewController = self;

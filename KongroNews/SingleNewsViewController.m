@@ -67,7 +67,6 @@
 - (void)viewDidAppear:(BOOL)animated
 {
     _timeSinceLabel.text = [_newsArticle.pubDate timeSinceFromDate];
-    [self setTextViewSize];
 }
 
 - (void)setUpUi
@@ -129,19 +128,21 @@
     }
 }
 
-- (void)setTextViewSize
-{
-//    CGRect frame = _textView.frame;
-//    frame.size.height = _textView.contentSize.height < 180.0f ? _textView.contentSize.height : _textView.frame.size.height;
-//    _textView.frame = frame;
-}
-
 - (void)trimLeadText
 {
-    if (_newsArticle.leadText.length > 280) {
-        NSString *text = [_newsArticle.leadText substringToIndex:280];
-        _newsArticle.leadText = [NSString stringWithFormat:@"%@%@", text, @"..."];
+    if (IS_IPHONE_5) {
+        if (_newsArticle.leadText.length > 460) {
+            NSString *text = [_newsArticle.leadText substringToIndex:460];
+            _newsArticle.leadText = [NSString stringWithFormat:@"%@%@", text, @"..."];
+        }
     }
+    else {
+        if (_newsArticle.leadText.length > 280) {
+            NSString *text = [_newsArticle.leadText substringToIndex:280];
+            _newsArticle.leadText = [NSString stringWithFormat:@"%@%@", text, @"..."];
+        }
+    }
+    
 }
 
 - (void)initShareFlower

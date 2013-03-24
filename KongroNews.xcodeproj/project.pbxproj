@@ -27,8 +27,8 @@
 		373B44DB16E746D80003C3D7 /* 10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 373B44CF16E746D60003C3D7 /* 10.jpg */; };
 		373B44DC16E746D80003C3D7 /* 11.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 373B44D016E746D60003C3D7 /* 11.jpg */; };
 		373B44DD16E746D80003C3D7 /* 12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 373B44D116E746D70003C3D7 /* 12.jpg */; };
-		373B44E216E75B110003C3D7 /* nyheteneIconShiny114.png in Resources */ = {isa = PBXBuildFile; fileRef = 373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */; };
-		373B44E316E75B110003C3D7 /* nyheteneIconShiny57.png in Resources */ = {isa = PBXBuildFile; fileRef = 373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */; };
+		3747D8B916FF302500C00CDF /* nyheteneIconShiny57.png in Resources */ = {isa = PBXBuildFile; fileRef = 373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */; };
+		3747D8BA16FF302B00C00CDF /* nyheteneIconShiny114.png in Resources */ = {isa = PBXBuildFile; fileRef = 373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */; };
 		3748F1B816D6502600C3CDB0 /* FrontPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3748F1B616D6502600C3CDB0 /* FrontPageViewController.m */; };
 		3748F1B916D6502600C3CDB0 /* FrontPageViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 3748F1B716D6502600C3CDB0 /* FrontPageViewController.xib */; };
 		3748F1C016D65CB700C3CDB0 /* Colors.m in Sources */ = {isa = PBXBuildFile; fileRef = 3748F1BF16D65CB700C3CDB0 /* Colors.m */; };
@@ -698,8 +698,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				373B44E216E75B110003C3D7 /* nyheteneIconShiny114.png in Resources */,
-				373B44E316E75B110003C3D7 /* nyheteneIconShiny57.png in Resources */,
 				378889F416D2B64400C41C39 /* InfoPlist.strings in Resources */,
 				37888A1416D2B91900C41C39 /* Petal Data.plist in Resources */,
 				37888A1516D2B91900C41C39 /* petal-email@2x.png in Resources */,
@@ -754,6 +752,8 @@
 				37D1256F16FCB3A0005C0695 /* TutorialViewController.xib in Resources */,
 				37D1257A16FDE7FA005C0695 /* README.md in Resources */,
 				37D1257B16FDE7FA005C0695 /* release_notes.md in Resources */,
+				3747D8B916FF302500C00CDF /* nyheteneIconShiny57.png in Resources */,
+				3747D8BA16FF302B00C00CDF /* nyheteneIconShiny114.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -919,8 +919,8 @@
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				PROVISIONING_PROFILE = "755A2C17-A7A8-4EF8-A290-1EB42235E37C";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "755A2C17-A7A8-4EF8-A290-1EB42235E37C";
+				PROVISIONING_PROFILE = "AECE99B0-E7B0-4A18-9044-8250A973D4A2";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "AECE99B0-E7B0-4A18-9044-8250A973D4A2";
 				TARGETED_DEVICE_FAMILY = 1;
 				WRAPPER_EXTENSION = app;
 			};
