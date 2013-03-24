@@ -253,7 +253,7 @@
 }
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender {
-    [TestFlight passCheckpoint:@"Frontpage show top stories clicked headline"];
+    [TestFlight passCheckpoint:@"FrontpageView: Headline clicked."];
     [NewsParser setLastViewedArticleByCategoryTag:CATEGORY_TAG_TOP_STORIES lastViewedArticleUrlString:@""];
     [self showTopStories];
 }
@@ -285,13 +285,13 @@
 
 - (IBAction)swipeDownTriggered:(UISwipeGestureRecognizer *)swipe
 {
-    [TestFlight passCheckpoint:@"Frontpage show top stories swipe"];
+    [TestFlight passCheckpoint:@"FrontpageView: Show top stories swipe."];
     [self showTopStories];
 }
 
 - (IBAction)swipeUpTriggered:(UISwipeGestureRecognizer *)swipe
 {
-    [TestFlight passCheckpoint:@"Frontpage show settings"];
+    [TestFlight passCheckpoint:@"FrontpageView: Show settings."];
     [self showSettings];
 }
 
@@ -355,7 +355,7 @@
         counter++;
     }
     else if (counter == 1) {
-        [popTip setMessage:@"Klikke her for å søke blant de siste nyhetene i alle kategorier."];
+        [popTip setMessage:@"Klikk her for å søke blant de siste nyhetene i alle kategorier."];
         [popTip presentPointingAtView:_searchField inView:self.view animated:YES];
         counter++;
     }

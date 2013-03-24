@@ -207,7 +207,7 @@
 - (void)expandingSelector:(id)expandingSelect didSelectItemAtIndexPath:(NSIndexPath *)indexPath {
     
     if (indexPath.row == kIndexEmail) {
-        [TestFlight passCheckpoint:@"SingleNews shareFlower mail clicked"];
+        [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower mail clicked."];
         if ([MFMailComposeViewController canSendMail])
         {
             MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
@@ -231,18 +231,18 @@
             case kIndexEmail:
                 break;
             case kIndexFaceBook:
-                [TestFlight passCheckpoint:@"SingleNews shareFlower Facebook clicked"];
+                [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Facebook clicked."];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
                 shareText = @"Via http://fb.com/nyheteneapp - ";
                 break;
             case kIndexTwitter:
-                [TestFlight passCheckpoint:@"SingleNews shareFlower Twitter clicked"];
+                [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Twitter clicked."];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
                 shareText = @"Via @nyheteneapp - ";
                 break;
             case kIndexFavorite:
                 //Handle favorites
-                [TestFlight passCheckpoint:@"SingleNews shareFlower Star clicked"];
+                [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Star clicked."];
                 [self starArticle];
                 return;
             default:
@@ -318,13 +318,6 @@
     [self dismissViewControllerAnimated:YES completion:^{
         //        _shouldAnimate = YES;
     }];
-}
-
-//Called after the animations have completed
-- (void)expandingSelector:(id)expandingSelect didFinishExpandingAtPoint:(CGPoint) point {
-    [TestFlight passCheckpoint:@"SingleNews shareflower triggered"];
-}
-- (void)expandingSelector:(id)expandingSelect didFinishCollapsingAtPoint:(CGPoint) point {
 }
 
 - (void)didReceiveMemoryWarning

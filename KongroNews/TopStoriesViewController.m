@@ -220,7 +220,7 @@
 
 - (void)showNewsArticleInWebView
 {
-    [TestFlight passCheckpoint:@"SingleNews show web article swipe"];
+    [TestFlight passCheckpoint:@"TopStoriesView: Show web article swipe."];
     _shouldAnimateFromMainView = NO;
     _shouldAnimateFromWebView = YES;
     NSString *status = [HelpMethods randomLoadText];
@@ -259,6 +259,7 @@
 
 - (void)doubleTapAction:(UITapGestureRecognizer *)tap
 {
+    [TestFlight passCheckpoint:@"TopStoriesView: Update called."];
     [self performSelectorInBackground:@selector(updateData) withObject:nil];
 }
 

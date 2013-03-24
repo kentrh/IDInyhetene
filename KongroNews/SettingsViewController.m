@@ -157,6 +157,7 @@
 
 - (void)startHelpSession
 {
+    [TestFlight passCheckpoint:@"SettingsView: Start help session clicked."];
     FrontPageViewController *fpvc;
     CategoriesViewController *cvc;
     for (UIViewController *vc in self.parentViewController.childViewControllers) {
@@ -176,7 +177,7 @@
 
 - (void)sendFeedback
 {
-    [TestFlight passCheckpoint:@"Send Feedback clicked"];
+    [TestFlight passCheckpoint:@"SettingsView: Send Feedback clicked."];
     if ([MFMailComposeViewController canSendMail])
     {
         modalIsShowing = YES;
@@ -197,14 +198,14 @@
 
 - (void)rateApp
 {
-    [TestFlight passCheckpoint:@"Rate app clicked"];
+    [TestFlight passCheckpoint:@"SettingsView: Rate app clicked."];
     NSString* url = [NSString stringWithFormat: @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", @"608290153"];
     [[UIApplication sharedApplication] openURL: [NSURL URLWithString: url]];
 }
 
 - (void)followOnTwitter
 {
-    [TestFlight passCheckpoint:@"Follow on Twitter clicked"];
+    [TestFlight passCheckpoint:@"SettingsView: Follow on Twitter clicked."];
     BOOL canOpenUrl = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter://user?screen_name=nyheteneapp"]];
     if (canOpenUrl)
     {
@@ -218,7 +219,7 @@
 
 - (void)likeOnFacebook
 {
-    [TestFlight passCheckpoint:@"Like on Facebook clicked"];
+    [TestFlight passCheckpoint:@"SettingsView: Like on Facebook clicked."];
     BOOL canOpenUrl = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb://profile/358349337615099"]];
     if (canOpenUrl)
     {

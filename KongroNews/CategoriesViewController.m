@@ -223,6 +223,7 @@
 {
     [sender setEnabled:NO];
     int tag = sender.view.tag;
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Update category, tag: %d", tag]];
     UIActivityIndicatorView *activityIndicator;
     UILabel *counter;
     for (UIView *view in sender.view.subviews) {
@@ -247,7 +248,7 @@
 - (void)showNewsArticles:(UIGestureRecognizer *)sender
 {
     int tag = sender.view.tag;
-    [TestFlight passCheckpoint:[NSString stringWithFormat:@"Show news articles clicked, tag: %d", tag]];
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Show news articles clicked, tag: %d", tag]];
     if (tag == 1) {
         [_parentScrollView setContentOffset:CGPointZero animated:YES];
         return;
