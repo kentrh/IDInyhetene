@@ -151,7 +151,7 @@
             _adBannerView.frame = rect;
         }
             break;
-            
+
         default:
             break;
     }
