@@ -9,11 +9,6 @@
 #import <UIKit/UIKit.h>
 #import <MessageUI/MessageUI.h>
 
-@interface SettingsViewController : UIViewController <MFMailComposeViewControllerDelegate>
-@property (strong, nonatomic) IBOutlet UIView *feedbackView;
-@property (strong, nonatomic) IBOutlet UIView *rateView;
-@property (strong, nonatomic) IBOutlet UIView *facebookView;
-@property (strong, nonatomic) IBOutlet UIView *twitterView;
-@property (strong, nonatomic) IBOutlet UIView *helpView;
+@interface SettingsViewController : UIViewController
 
 @end

@@ -37,8 +37,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self setStartPositionForAnimation];
-    [self setButtonAlpha];
-    [self addButtonTapRecognizers];
     [self addGestureRecognizer];
 }
 
@@ -55,48 +53,6 @@
         [self setStartPositionForAnimation];
         [self startBounceInAnimation];
     }
-}
-
-- (void)setButtonAlpha
-{
-    float buttonAlpha = 0.7f;
-    float whiteness = 0.3f;
-    _feedbackView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
-    _rateView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
-    _facebookView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
-    _twitterView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
-    _helpView.backgroundColor = [UIColor colorWithWhite:whiteness alpha:buttonAlpha];
-    
-}
-
-- (void)addButtonTapRecognizers
-{
-    UITapGestureRecognizer *feedbackTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(sendFeedback)];
-    feedbackTap.numberOfTapsRequired = 1;
-    feedbackTap.numberOfTouchesRequired = 1;
-    [_feedbackView addGestureRecognizer:feedbackTap];
-    
-    UITapGestureRecognizer *rateTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(rateApp)];
-    rateTap.numberOfTapsRequired = 1;
-    rateTap.numberOfTouchesRequired = 1;
-    [_rateView addGestureRecognizer:rateTap];
-    
-    UITapGestureRecognizer *facebookTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(likeOnFacebook)];
-    facebookTap.numberOfTapsRequired = 1;
-    facebookTap.numberOfTouchesRequired = 1;
-    [_facebookView addGestureRecognizer:facebookTap];
-    
-    UITapGestureRecognizer *twitterTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(followOnTwitter)];
-    twitterTap.numberOfTapsRequired = 1;
-    twitterTap.numberOfTouchesRequired = 1;
-    [_twitterView addGestureRecognizer:twitterTap];
-    
-    UITapGestureRecognizer *helpTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(startHelpSession)];
-    helpTap.numberOfTapsRequired = 1;
-    helpTap.numberOfTouchesRequired = 1;
-    [_helpView addGestureRecognizer:helpTap];
-    
-    
 }
 
 - (void)addGestureRecognizer
@@ -193,41 +149,6 @@
     {
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Send tilbakemelding" message:@"Ingen mailkonto er lagt inn på enheten. Registrer en mailkonto og prøv igjen." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
         [alertView show];
-    }
-}
-
-- (void)rateApp
-{
-    [TestFlight passCheckpoint:@"SettingsView: Rate app clicked."];
-    NSString* url = [NSString stringWithFormat: @"itms-apps://ax.itunes.apple.com/WebObjects/MZStore.woa/wa/viewContentsUserReviews?type=Purple+Software&id=%@", @"608290153"];
-    [[UIApplication sharedApplication] openURL: [NSURL URLWithString: url]];
-}
-
-- (void)followOnTwitter
-{
-    [TestFlight passCheckpoint:@"SettingsView: Follow on Twitter clicked."];
-    BOOL canOpenUrl = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"twitter://user?screen_name=nyheteneapp"]];
-    if (canOpenUrl)
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"twitter://user?screen_name=nyheteneapp"]];
-    }
-    else
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/nyheteneapp"]];
-    }
-}
-
-- (void)likeOnFacebook
-{
-    [TestFlight passCheckpoint:@"SettingsView: Like on Facebook clicked."];
-    BOOL canOpenUrl = [[UIApplication sharedApplication] canOpenURL:[NSURL URLWithString:@"fb://profile/358349337615099"]];
-    if (canOpenUrl)
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"fb://profile/358349337615099"]];
-    }
-    else
-    {
-        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://www.facebook.com/pages/Nyhetene/358349337615099"]];
     }
 }
 

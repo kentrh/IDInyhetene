@@ -17,14 +17,11 @@
 #import "SVPullToRefresh.h"
 #import "WebViewController.h"
 
-#define ADMOB_PUBLISHER_ID @"a1512b63e1b9dcd"
-
 @interface TopStoriesViewController (){
     NSArray *newsArray;
     UIAlertView *alertViewForDismissingViewController;
     BOOL isAnimating;
     UIScrollView *pageScrollView;
-    BOOL adBannerHasReceivedAd;
 }
 
 @end
@@ -50,7 +47,6 @@
     [self addSwipeUpGestureRecognizer];
     [self addSwipeDownGestureRecognizer];
     [self addDoubleTapGestureRecognizer];
-    [self setUpAdBanner];
 //    [self setUpPullToRefresh];
 }
 
@@ -119,9 +115,9 @@
         [self initNewsArrayAndUpdate:YES];
         if (newsArray.count > 0) {
             for (UIView *view in self.view.subviews) {
-                if (view != _adBannerView) {
-                    [view removeFromSuperview];
-                }
+                
+                [view removeFromSuperview];
+                
             }
             [NewsParser setLastViewedArticleByCategoryTag:_categoryTag lastViewedArticleUrlString:@""];
             [_pageViewController removeFromParentViewController];
@@ -131,9 +127,6 @@
             [self addSwipeUpGestureRecognizer];
             [self addSwipeDownGestureRecognizer];
             [self addDoubleTapGestureRecognizer];
-            if (adBannerHasReceivedAd) {
-                [self showAdBannerAnimated];
-            }
             [SVProgressHUD dismiss];
         }
         
@@ -278,21 +271,6 @@
     }];
 }
 
-- (void)setUpAdBanner
-{
-    //testbanner
-    GADRequest *request = [GADRequest request];
-//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
-    CGRect rect = [UIScreen mainScreen].bounds;
-    _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(rect.origin.x, rect.size.height)];
-    _adBannerView.delegate = self;
-    _adBannerView.adUnitID = ADMOB_PUBLISHER_ID;
-    _adBannerView.rootViewController = self;
-    [self.view addSubview:_adBannerView];
-    [_adBannerView loadRequest:request];
-    
-}
-
 - (void)loadFavorites
 {
     NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"starredArticles"];
@@ -323,29 +301,6 @@
 {
     isAnimating = NO;
     [self.view setUserInteractionEnabled:YES];
-}
-
-- (void)showAdBannerAnimated
-{
-    [UIView animateWithDuration:0.3f animations:^{
-        CGRect rect = [[UIScreen mainScreen] bounds];
-        _pageViewController.view.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height-_adBannerView.frame.size.height);
-        _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height - _adBannerView.frame.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
-    }];
-}
-
-#pragma mark - GADBannerViewDelegate methods
-
-- (void)adViewDidReceiveAd:(GADBannerView *)view
-{
-    adBannerHasReceivedAd = YES;
-    [self showAdBannerAnimated];
-    
-}
-
-- (void)adView:(GADBannerView *)view didFailToReceiveAdWithError:(GADRequestError *)error
-{
-    adBannerHasReceivedAd = NO;
 }
 
 #pragma mark - UIAlertViewDelegate methods
