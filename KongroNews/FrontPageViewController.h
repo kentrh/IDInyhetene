@@ -18,9 +18,13 @@
 @property (strong, nonatomic) IBOutlet UITextField *searchField;
 @property (assign, nonatomic) BOOL settingsIsShowing;
 @property (strong, nonatomic) IBOutlet UIActivityIndicatorView *activityIndicator;
+@property (strong, nonatomic) IBOutlet UITextField *usernameField;
+@property (strong, nonatomic) IBOutlet UITextField *passwordField;
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender;
 - (IBAction)searchAction:(UITextField *)sender;
+- (IBAction)usernameDoneTyping:(UITextField *)sender;
+- (IBAction)passwordDoneTyping:(UITextField *)sender;
 - (void)updateFrontPageNews;
 - (void)setUpPopUp;
 @end

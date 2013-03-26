@@ -231,6 +231,8 @@
     [_timeSinceLabel sizeToFit];
     
     [_searchField setDelegate:self];
+    [_usernameField setDelegate:self];
+    [_passwordField setDelegate:self];
 }
 
 - (void)addGestureRecognizer
@@ -259,13 +261,13 @@
 }
 
 - (IBAction)searchAction:(UITextField *)sender {
-    if (sender.text.length > 0 || ![sender.text isEqualToString:@""]){
+    if (_searchField.text.length > 0){
         NSString *query = sender.text;
         NSString *baseUrl = @"http://pipes.yahoo.com/kongronews/allnews?_render=json&query=";
         NSString *queryString = [NSString stringWithFormat:@"%@%@", baseUrl, query];
         queryString = [queryString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
-        sender.text = @"";
+        _searchField.text = @"";
         
         NSString *status = [HelpMethods randomLoadText];
         [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
@@ -280,7 +282,27 @@
             [self presentViewController:topStoriesViewController animated:NO completion:nil];
         }];
     }
+}
+
+- (IBAction)usernameDoneTyping:(UITextField *)sender {
+    if (_usernameField.text.length > 0) {
+    }
+}
+
+- (IBAction)passwordDoneTyping:(UITextField *)sender {
+    if (_usernameField.text.length > 0 && _passwordField.text.length > 0) {
+        [self login];
+    }
+}
+
+- (void)login
+{
+    _usernameField.text = @"";
+    [_usernameField setHidden:YES];
+    _passwordField.text = @"";
+    [_passwordField setHidden:YES];
     
+    NSLog(@"Login called");
 }
 
 - (IBAction)swipeDownTriggered:(UISwipeGestureRecognizer *)swipe
@@ -329,13 +351,18 @@
 #pragma mark - UITextFieldDelegate
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
-    [textField resignFirstResponder];
+    [textField endEditing:YES];
+    if (textField == _usernameField && _usernameField.text.length > 0) {
+        [_passwordField becomeFirstResponder];
+    }
     return YES;
 }
 
 - (void)removeTextFieldKeyboard
 {
-    [_searchField resignFirstResponder];
+    [_searchField endEditing:YES];
+    [_usernameField endEditing:YES];
+    [_passwordField endEditing:YES];
 }
 
 #pragma mark - CMPopTipViewDelegate Methods
