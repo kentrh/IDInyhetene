@@ -13,6 +13,7 @@
 #import "NSDate+TimeSince.h"
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RootViewController.h"
+#import "NSString+HTML.h"
 
 #define kIndexTwitter 0
 #define kIndexFavorite 1
@@ -50,6 +51,38 @@
         [self setUpPopUp];
     }
 }
+
+//- (NSString *)getSummarizedNews
+//{
+//    NSString *apiUrl = @"http://clipped.me/algorithm/clippedapi.php?url=";
+//    apiUrl = [apiUrl stringByAppendingString:_newsArticle.link.absoluteString];
+//    
+//    NSURL *url = [NSURL URLWithString:apiUrl];
+//    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+//    NSURLResponse *response;
+//    NSError *error;
+//    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+//    if (data == nil || (error != nil && [error code] != noErr)) {
+//        // If there was a no data received, or an error...
+//        NSLog(@"Error fetching json");
+//        NSLog(@"URL: %@", apiUrl);
+//        //            dispatch_async(dispatch_get_main_queue(), ^{
+//        //
+//        //            });
+//    } else {
+//        // Handle the data
+//        NSError *error;
+//        NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
+//        NSArray *queryResponse = [jsonData objectForKey:@"summary"];
+//        NSString *cliffNotes = @"";
+//        for (int i=0; i<queryResponse.count; i++) {
+//            cliffNotes = [cliffNotes stringByAppendingString:[NSString stringWithFormat:@"- %@\n\n", [queryResponse objectAtIndex:i]]];
+//        }
+//        cliffNotes = [cliffNotes stringByConvertingHTMLToPlainText];
+//        return cliffNotes;
+//    }
+//    return _newsArticle.leadText;
+//}
 
 - (void)setUpPopUp
 {
