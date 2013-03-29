@@ -1,8 +1,8 @@
 //
-//  TopStoriesViewController.h
+//  ArticlesViewController.h
 //  KongroNews
 //
-//  Created by Kent Robin Haugen on 18.02.13.
+//  Created by Kent Robin Haugen on 27.03.13.
 //  Copyright (c) 2013 Kent Robin Haugen. All rights reserved.
 //
 
@@ -11,12 +11,11 @@
 #import <MessageUI/MessageUI.h>
 #import "NewsPageViewController.h"
 
-@interface TopStoriesViewController : UIViewController <UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate>
+@interface ArticlesViewController : UIViewController <UIAlertViewDelegate, UIPageViewControllerDataSource, UIPageViewControllerDelegate, UIGestureRecognizerDelegate, UIScrollViewDelegate>
 
-@property (assign, nonatomic) NSString *category;
-@property (strong, nonatomic) NSString *query;
 @property (assign, nonatomic) BOOL shouldAnimateFromMainView;
 @property (assign, nonatomic) BOOL shouldAnimateFromWebView;
+@property (strong, nonatomic) News *newsArticle;
 
 //pageviewcontroller stuff
 @property (strong, nonatomic) NewsPageViewController *pageViewController;

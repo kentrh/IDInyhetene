@@ -10,19 +10,41 @@
 
 @implementation News
 
-- (id)initWithTitle:(NSString *)title leadText:(NSString *)leadText link:(NSURL *)link pubDate:(NSDate *)pubDate imageType:(NSString *)imageType imageUrl:(NSURL *)imageUrl publisher:(NSString *)publisher
+
+- (id) initWithArticleId:(int)articleId
+                   title:(NSString *)title
+                leadText:(NSString *)leadText
+                bodyText:(NSString *)bodyText
+               publisher:(NSString *)publisher
+                  author:(NSString *)author
+               published:(NSDate *)published
+                    tags:(NSArray *)tags
+              categories:(NSArray *)categories
+                  images:(NSArray *)images
+               sourceUrl:(NSURL *)sourceUrl
+               locations:(NSArray *)locations
+            geoLocations:(NSArray *)geoLocations
+          sentimentValue:(float)sentimentValue
 {
     self = [super init];
     if (self)
     {
+        _articleId = articleId;
         _title = title;
         _leadText = leadText;
-        _link = link;
-        _pubDate = pubDate;
-        _imageType = imageType;
-        _imageUrl = imageUrl;
+        _bodyText = bodyText;
         _publisher = publisher;
+        _author = author;
+        _published = published;
+        _tags = tags;
+        _categories = categories;
+        _images = images;
+        _sourceUrl = sourceUrl;
+        _locations = locations;
+        _geoLocations = geoLocations;
+        _sentimentValue = sentimentValue;
     }
+    
     return self;
 }
 
@@ -30,26 +52,40 @@
 {
     if(self = [super init])
     {
+        _articleId = [decoder decodeIntForKey:@"articleId"];
         _title = [decoder decodeObjectForKey:@"title"];
         _leadText = [decoder decodeObjectForKey:@"leadText"];
-        _link = [decoder decodeObjectForKey:@"link"];
-        _pubDate = [decoder decodeObjectForKey:@"pubDate"];
-        _imageType = [decoder decodeObjectForKey:@"imageType"];
-        _imageUrl = [decoder decodeObjectForKey:@"imageUrl"];
+        _bodyText = [decoder decodeObjectForKey:@"bodyText"];
         _publisher = [decoder decodeObjectForKey:@"publisher"];
+        _author = [decoder decodeObjectForKey:@"author"];
+        _published = [decoder decodeObjectForKey:@"published"];
+        _tags = [decoder decodeObjectForKey:@"tags"];
+        _categories = [decoder decodeObjectForKey:@"categories"];
+        _images = [decoder decodeObjectForKey:@"images"];
+        _sourceUrl = [decoder decodeObjectForKey:@"sourceUrl"];
+        _locations = [decoder decodeObjectForKey:@"locations"];
+        _geoLocations = [decoder decodeObjectForKey:@"geoLocations"];
+        _sentimentValue = [decoder decodeFloatForKey:@"sentimentValue"];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)encoder
 {
+    [encoder encodeInt:_articleId forKey:@"articleId"];
     [encoder encodeObject:_title forKey:@"title"];
     [encoder encodeObject:_leadText forKey:@"leadText"];
-    [encoder encodeObject:_link forKey:@"link"];
-    [encoder encodeObject:_pubDate forKey:@"pubDate"];
-    [encoder encodeObject:_imageType forKey:@"imageType"];
-    [encoder encodeObject:_imageUrl forKey:@"imageUrl"];
+    [encoder encodeObject:_bodyText forKey:@"bodyText"];
     [encoder encodeObject:_publisher forKey:@"publisher"];
+    [encoder encodeObject:_author forKey:@"author"];
+    [encoder encodeObject:_published forKey:@"published"];
+    [encoder encodeObject:_tags forKey:@"tags"];
+    [encoder encodeObject:_categories forKey:@"categories"];
+    [encoder encodeObject:_images forKey:@"images"];
+    [encoder encodeObject:_sourceUrl forKey:@"sourceUrl"];
+    [encoder encodeObject:_locations forKey:@"locations"];
+    [encoder encodeObject:_geoLocations forKey:@"geoLocations"];
+    [encoder encodeFloat:_sentimentValue forKey:@"sentimentValue"];
 }
 
 @end

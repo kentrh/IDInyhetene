@@ -13,6 +13,7 @@
 #import "HelpMethods.h"
 #import "SettingsViewController.h"
 #import "SVPullToRefresh.h"
+#import "GeoLocation.h"
 
 @interface RootViewController (){
     FrontPageViewController *frontPageViewController;
@@ -25,6 +26,7 @@
 @implementation RootViewController
 
 static bool isFirstRun;
+static CLLocation *lastUpdatedLocation;
 
 + (BOOL)isFirstRun
 {
@@ -36,11 +38,21 @@ static bool isFirstRun;
     isFirstRun = firstRun;
 }
 
++ (CLLocation *)lastUpdatedLocation
+{
+    return lastUpdatedLocation;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        locationManager = [[CLLocationManager alloc] init];
+        locationManager.delegate = self;
+        locationManager.distanceFilter = kCLDistanceFilterNone;
+        locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        [locationManager startUpdatingLocation];
     }
     return self;
 }
@@ -78,9 +90,6 @@ static bool isFirstRun;
         [rvc performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
     }];
     [_rootScrollView.pullToRefreshView setArrowColor:[UIColor whiteColor]];
-//    NSLog(@"%@", _rootScrollView.frame);
-//    NSLog(@"%@", _rootScrollView.contentSize);
-    
 }
 
 - (void)updateFrontPageNews
@@ -105,6 +114,11 @@ static bool isFirstRun;
 - (void)addFrontPageView
 {
     [SVProgressHUD showWithStatus:[HelpMethods randomLoadText] maskType:SVProgressHUDMaskTypeBlack];
+    if (!lastUpdatedLocation) {
+        NSData *locationData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_LOCATION];
+        CLLocation *storedLocation = [NSKeyedUnarchiver unarchiveObjectWithData:locationData];
+        lastUpdatedLocation = storedLocation;
+    }
     dispatch_async(dispatch_get_main_queue(), ^{
         frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
         frontPageViewController.parentScrollView = _rootScrollView;
@@ -155,6 +169,12 @@ static bool isFirstRun;
 - (BOOL)shouldAutorotate
 {
     return NO;
+}
+
+#pragma mark - CLLocationManagerDelegate methods
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
+    lastUpdatedLocation = [locations lastObject];
 }
 
 @end

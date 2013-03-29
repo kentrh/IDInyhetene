@@ -7,21 +7,31 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "NewsCategory.h"
+#import <CoreLocation/CoreLocation.h>
 
 @interface NewsParser : NSObject
 
-+ (NSArray *)newsListFromCategoryTag:(int)categoryTag shouldUpdate:(BOOL)shouldUpdate;
+//Array with similar News to articleId
++ (NSArray *)similarNewsWithUserId:(NSString *)userId articleId:(int)articleId location:(CLLocationCoordinate2D)location;
 
-+ (NSArray *)categories;
+//Array with relevant News
++ (NSArray *)relevantNewsWithUserId:(NSString *)userId location:(CLLocationCoordinate2D)location shouldUpdate:(BOOL)shouldUpdate;
 
-+ (int)numberOfNewsFromTag:(int)tag;
+//Array with relevant News by search query
++ (NSArray *)relevantNewsWithUserId:(NSString *)userId location:(CLLocationCoordinate2D)location query:(NSString *)query;
 
-+ (NSString *)lastViewedArticleByCategoryTag:(int)tag;
-+ (void)setLastViewedArticleByCategoryTag:(int)tag lastViewedArticleUrlString:(NSString *)lastArticleUrlString;
+//Array with relevant News by category
++ (NSArray *)relevantNewsWithUserId:(NSString *)userId location:(CLLocationCoordinate2D)location category:(NSString *)category shouldUpdate:(BOOL)shouldUpdate;
 
-+ (NewsCategory *)newsCategoryFromTag:(int)tag;
++ (int)numberOfArticlesForCategory:(NSString *)category;
 
-+ (NSArray *)queryResult:(NSString *)queryUrl;
++ (int)numberOfUnseenArticlesByCategory:(NSString *)newsCategory;
+
+//Array with available categories
++ (NSArray *)availableCategories;
+
++ (int)lastViewedArticleByCategory:(NSString *)category;
+
++ (void)setLastViewedArticleByCategory:(NSString *)category lastViewedArticleId:(int)lastArticleId;
 
 @end

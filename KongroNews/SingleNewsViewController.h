@@ -23,5 +23,6 @@
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
 @property (strong, nonatomic) IBOutlet UILabel *providerLabel;
 @property (strong, nonatomic) IBOutlet UILabel *pageNumber;
+@property (strong, nonatomic) IBOutlet UILabel *categoryLabel;
 @property (assign, nonatomic) int pageIndex;
 @end

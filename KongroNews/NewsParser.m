@@ -9,98 +9,28 @@
 #import "NewsParser.h"
 #import "News.h"
 #import "NSString+HTML.h"
-#import <Parse/Parse.h>
+#import "GeoLocation.h"
 #import "Constants.h"
 
+//(NSString *)userId (float)latitude (float)longitude
+#define JSON_BASE_URL_RELEVANT_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f"
+//(NSString *)userId (int)articleId (float)latitude (float)longitude
+#define JSON_BASE_URL_SIMILAR_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getMoreLikeThis?userId=\"%@\"&articleId=%d&geoLocation=%f,%f"
+//(NSString *)userId (float)latitude (float)longitude (NSString *)category
+#define JSON_BASE_URL_CATEGORY_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f&categoryQuery=[\"%@\"]"
+//(NSString *)userId (float)latitude (float)longitude (NSString *)query
+#define JSON_BASE_URL_QUERY_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f&contentQuery=[\"%@\"]"
 
 @implementation NewsParser
 
-static NSArray *categoryList;
+static NSMutableArray *categories;
 static NSMutableDictionary *numberOfNews;
 
-+ (int)numberOfNewsFromTag:(int)tag
-{
-    if (tag == CATEGORY_TAG_FAVORITES) {
-        NSArray *newsArray;
-        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:@"starredArticles"];
-        if (data) {
-            newsArray = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        }
-        return newsArray.count;
-    }
-    NSNumber *number = (NSNumber *)[numberOfNews objectForKey:[NewsParser newsCategoryFromTag:tag].name];
-    int num = number.intValue;
-    return num;
-}
-
-+ (NSString *)lastViewedArticleByCategoryTag:(int)tag
-{
-    NSMutableDictionary *previousArticles;
-    NSData *previousArticlesData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
-    if (previousArticlesData) {
-        previousArticles = [NSKeyedUnarchiver unarchiveObjectWithData:previousArticlesData];
-    }
-    NSNumber *tagNumber = [NSNumber numberWithInt:tag];
-    NSString *articleUrl = [previousArticles objectForKey:tagNumber];
-    return articleUrl;
-}
-
-+ (void)setLastViewedArticleByCategoryTag:(int)tag lastViewedArticleUrlString:(NSString *)lastArticleUrlString;
-{
-    NSMutableDictionary *previousArticles;
-    NSData *previousArticlesData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
-    if (previousArticlesData) {
-        previousArticles = [NSKeyedUnarchiver unarchiveObjectWithData:previousArticlesData];
-    }
-    else previousArticles = [[NSMutableDictionary alloc] initWithCapacity:categoryList.count];
-    NSNumber *key = [NSNumber numberWithInt:tag];
-    [previousArticles setObject:lastArticleUrlString forKey:key];
-    
-    previousArticlesData = [NSKeyedArchiver archivedDataWithRootObject:previousArticles];
-    [[NSUserDefaults standardUserDefaults] setObject:previousArticlesData forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
-}
-
-+ (NewsCategory *)newsCategoryFromTag:(int)tag
-{
-    for (NewsCategory *cat in categoryList) {
-        if (tag == cat.tag) {
-            return cat;
-        }
-    }
-    return nil;
-}
-
-+ (NSArray *)queryResult:(NSString *)queryUrl
++ (NSArray *)relevantNewsWithUserId:(NSString *)userId location:(CLLocationCoordinate2D)location shouldUpdate:(BOOL)shouldUpdate
 {
     NSArray *newsList;
-    NSURL *url = [NSURL URLWithString:queryUrl];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-    NSURLResponse *response;
-    NSError *error;
-    NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-    if (data == nil || (error != nil && [error code] != noErr)) {
-        // If there was a no data received, or an error...
-        NSLog(@"Error fetching json");
-        NSLog(@"URL: %@", queryUrl);
-        //            dispatch_async(dispatch_get_main_queue(), ^{
-        //
-        //            });
-    } else {
-        // Handle the data
-        newsList = [NewsParser sortedNewsArrayFromData:data];
-    }
-    return newsList;
-}
-
-+ (NSArray *)newsListFromCategoryTag:(int)categoryTag shouldUpdate:(BOOL)shouldUpdate
-{
-    NSArray *newsList;
-    NewsCategory *category = [NewsParser newsCategoryFromTag:categoryTag];
-    NSString *queryString = category.url;
-    
     if (!shouldUpdate) {
-        NSString *categoryName = category.name;
-        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:categoryName];
+        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:CATEGORY_RELEVANT_NEWS];
         if (data) {
             newsList = [NSKeyedUnarchiver unarchiveObjectWithData:data];
         }
@@ -108,153 +38,297 @@ static NSMutableDictionary *numberOfNews;
     
     if (!newsList || newsList.count == 0 || shouldUpdate)
     {
-        newsList = nil;
-        NSURL *url = [NSURL URLWithString:queryString];
-        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
-        NSURLResponse *response;
-        NSError *error;
-        NSData *data = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
-        if (data == nil || (error != nil && [error code] != noErr)) {
-            // If there was a no data received, or an error...
-            NSLog(@"Error fetching json");
-            NSLog(@"URL: %@", queryString);
-            //            dispatch_async(dispatch_get_main_queue(), ^{
-            //
-            //            });
-        } else {
-            // Handle the data
-            newsList = [NewsParser sortedNewsArrayFromData:data];
-        }
-        NSData *data2 = [NSKeyedArchiver archivedDataWithRootObject:newsList];
-        [[NSUserDefaults standardUserDefaults] setObject:data2 forKey:category.name];
+        NSLog(@"lat: %f, long: %f", location.latitude, location.longitude);
+        NSString *urlString = [NSString stringWithFormat:JSON_BASE_URL_RELEVANT_NEWS, userId, location.latitude, location.longitude];
+        urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL *queryUrl = [NSURL URLWithString:urlString];
+        
+        NSData *newsData = [NewsParser executeQueryWithUrl:queryUrl];
+        if (!newsData) return nil;
+        
+        newsList = [NewsParser newsArrayWithData:newsData];
+        
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:newsList];
+        [[NSUserDefaults standardUserDefaults] setObject:data forKey:CATEGORY_RELEVANT_NEWS];
     }
     
-    if (!numberOfNews) numberOfNews = [[NSMutableDictionary alloc] initWithCapacity:categoryList.count];
+    if (!numberOfNews) numberOfNews = [[NSMutableDictionary alloc] initWithCapacity:categories.count];
     NSNumber *newsCount = [NSNumber numberWithInt:newsList.count];
-    [numberOfNews setObject:newsCount forKey:category.name];
+    [numberOfNews setObject:newsCount forKey:CATEGORY_RELEVANT_NEWS];
     
     return newsList;
 }
 
-+ (NSArray *)sortedNewsArrayFromData:(NSData *)data
++ (NSArray *)relevantNewsWithUserId:(NSString *)userId location:(CLLocationCoordinate2D)location query:(NSString *)query
 {
+    NSString *urlString = [NSString stringWithFormat:JSON_BASE_URL_QUERY_NEWS, userId, location.latitude, location.longitude, query];
+    urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *queryUrl = [NSURL URLWithString:urlString];
     
-    NSError *error;
-    NSDictionary *jsonData = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:&error];
-    NSDictionary *queryResponse = [jsonData objectForKey:@"value"];
-    NSMutableArray *unsortedArray = [[NSMutableArray alloc] init];
+    NSData *newsData = [NewsParser executeQueryWithUrl:queryUrl];
+    if (!newsData) return nil;
     
-    for (NSDictionary *singleNews in [queryResponse objectForKey:@"items"]) {
-        
-        News *news = [NewsParser parseSingleJSONObjectFromDictionary:singleNews];
-        if (!news) {
-            continue;
-        }
-        [unsortedArray addObject:news];
-    }
-    return [unsortedArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-        return [[(News *)obj2 pubDate] compare:[(News *)obj1 pubDate]];
-    }];
+    NSArray *queryArray = [NewsParser newsArrayWithData:newsData];
+    return queryArray;
 }
 
-+ (News *)parseSingleJSONObjectFromDictionary:(NSDictionary *)singleNews
++ (NSArray *)relevantNewsWithUserId:(NSString *)userId location:(CLLocationCoordinate2D)location category:(NSString *)category shouldUpdate:(BOOL)shouldUpdate
 {
-    NSString *title = [singleNews objectForKey:@"title"];
-    NSString *leadText = [singleNews objectForKey:@"description"];
-    NSString *tempLink = [singleNews objectForKey:@"link"];
-    NSString *date = [singleNews objectForKey:@"pubDate"];
-    NSString *publisher = [singleNews objectForKey:@"author"];
-    if (!title || !leadText || !link || !date || !publisher)
+    NSArray *newsList;
+    if (!shouldUpdate) {
+        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:category];
+        if (data) {
+            newsList = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        }
+    }
+    
+    if (!newsList || newsList.count == 0 || shouldUpdate)
     {
-        return nil;
+        NSString *urlString = [NSString stringWithFormat:JSON_BASE_URL_CATEGORY_NEWS, userId, location.latitude, location.longitude, category];
+        urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL *queryUrl = [NSURL URLWithString:urlString];
         
+        NSData *newsData = [NewsParser executeQueryWithUrl:queryUrl];
+        if (!newsData) return nil;
+        
+        newsList = [NewsParser newsArrayWithData:newsData];
+        
+        NSData *data = [NSKeyedArchiver archivedDataWithRootObject:newsList];
+        [[NSUserDefaults standardUserDefaults] setObject:data forKey:category];
     }
     
-    if ([title isEqual:[NSNull null]] || [leadText isEqual:[NSNull null]] || [date isEqual:[NSNull null]] || [tempLink isEqual:[NSNull null]] || [publisher isEqual:[NSNull null]]) {
+    if (!numberOfNews) numberOfNews = [[NSMutableDictionary alloc] initWithCapacity:categories.count];
+    NSNumber *newsCount = [NSNumber numberWithInt:newsList.count];
+    [numberOfNews setObject:newsCount forKey:category];
+    
+    return newsList;
+}
+
++ (int)numberOfArticlesForCategory:(NSString *)category
+{
+    if ([category isEqualToString:CATEGORY_FAVORITE_NEWS]) {
+        NSArray *newsArray;
+        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_STARRED_ARTICLES];
+        if (data) {
+            newsArray = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        }
+        return newsArray.count;
+    }
+    NSNumber *number = (NSNumber *)[numberOfNews objectForKey:category];
+    int num = number.intValue;
+    return num;
+}
+
++ (int)numberOfUnseenArticlesByCategory:(NSString *)newsCategory
+{
+    NSArray *newsList;
+    if ([newsCategory isEqualToString:CATEGORY_FAVORITE_NEWS]) {
+        NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_STARRED_ARTICLES];
+        if (data) {
+            newsList = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        }
+        return newsList.count;
+    }
+    
+    int articleIdOfLastViewedArticle = [NewsParser lastViewedArticleByCategory:newsCategory];
+    NSData *data = [[NSUserDefaults standardUserDefaults] objectForKey:newsCategory];
+    if (data) {
+        newsList = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    }
+    
+    int numberOfUnseenNews = newsList.count;
+    for (int i=0; i<newsList.count; i++) {
+        News *newsArticle = [newsList objectAtIndex:i];
+        if (newsArticle.articleId == articleIdOfLastViewedArticle) {
+            numberOfUnseenNews = i;
+            break;
+        }
+    }
+    return numberOfUnseenNews;
+}
+
++ (NSArray *)similarNewsWithUserId:(NSString *)userId articleId:(int)articleId location:(CLLocationCoordinate2D)location
+{
+    NSString *urlString = [NSString stringWithFormat:JSON_BASE_URL_SIMILAR_NEWS, userId, articleId, location.latitude, location.longitude];
+    urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *queryUrl = [NSURL URLWithString:urlString];
+    
+    NSData *newsData = [NewsParser executeQueryWithUrl:queryUrl];
+    if (!newsData) return nil;
+    
+    NSArray *newsArray = [NewsParser newsArrayWithData:newsData];
+    
+    return newsArray;
+}
+
++ (int)lastViewedArticleByCategory:(NSString *)category
+{
+    NSMutableDictionary *previousArticles;
+    NSData *previousArticlesData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    if (previousArticlesData) {
+        previousArticles = [NSKeyedUnarchiver unarchiveObjectWithData:previousArticlesData];
+    }
+    NSNumber *articleIdNumber = [previousArticles objectForKey:category];
+    int articleId = [articleIdNumber integerValue];
+    return articleId;
+}
+
++ (void)setLastViewedArticleByCategory:(NSString *)category lastViewedArticleId:(int)lastArticleId
+{
+    NSMutableDictionary *previousArticles;
+    NSData *previousArticlesData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+    if (previousArticlesData) {
+        previousArticles = [NSKeyedUnarchiver unarchiveObjectWithData:previousArticlesData];
+    }
+    else previousArticles = [[NSMutableDictionary alloc] initWithCapacity:categories.count];
+    NSNumber *articleId = [NSNumber numberWithInt:lastArticleId];
+    [previousArticles setObject:articleId forKey:category];
+    
+    previousArticlesData = [NSKeyedArchiver archivedDataWithRootObject:previousArticles];
+    [[NSUserDefaults standardUserDefaults] setObject:previousArticlesData forKey:USER_DEFAULTS_PREVIOUS_ARTICLE];
+}
+
+
++ (NSArray *)availableCategories
+{
+    return categories;
+}
+
++ (NSData *)executeQueryWithUrl:(NSURL *)queryUrl
+{
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:queryUrl];
+    NSURLResponse *response;
+    NSError *error;
+    NSData *newsData = [NSURLConnection sendSynchronousRequest:request returningResponse:&response error:&error];
+    if (newsData == nil || (error != nil && [error code] != noErr)) {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Error" message:@"Nyhetsdata kunne ikke hentes" delegate:nil cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+        [alertView show];
         return nil;
     }
-    NSURL *link = [NSURL URLWithString:tempLink];
+    return newsData;
+}
+
++ (NSArray *)newsArrayWithData:(NSData *)newsData
+{
+    NSError *error;
+    NSArray *jsonData = [NSJSONSerialization JSONObjectWithData:newsData options:kNilOptions error:&error];
+    
+    NSMutableArray *newsArray = [[NSMutableArray alloc] init];
+    for (NSDictionary *newsArticle in jsonData) {
+        News *news = [NewsParser newsArticleFromDictionary:newsArticle];
+        if (news.title.length == 0 || news.leadText.length == 0) {
+            continue;
+        }
+        [newsArray addObject:news];
+    }
+    return [NSArray arrayWithArray:newsArray];
+}
+
++ (News *)newsArticleFromDictionary:(NSDictionary *)newsArticle
+{
+    int articleId = [[newsArticle objectForKey:@"articleId"] integerValue];
+    
+    NSString *title = [newsArticle objectForKey:@"title"];
     title = [title stringByConvertingHTMLToPlainText];
+    title = [title stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    
+    NSString *leadText = [newsArticle objectForKey:@"leadText"];
     leadText = [leadText stringByConvertingHTMLToPlainText];
+    leadText = [leadText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-    if (date.length == 31){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"EEE, d MMM y HH:mm:ss Z"];
-    }
-    else if (date.length == 22){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mmZZZZ"];
-    }
-    else if (date.length == 25){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"yyyy-MM-dd'T'HH:mm:ssZZZZ"];
-        //                    date = [date stringByReplacingOccurrencesOfString:@"+02:00" withString:@"+01:00"];
-    }
-    else if (date.length == 16){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-    }
-    else if (date.length == 29){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"EEE, d MMM y HH:mm:ss Z"];
-    }
-    else if (date.length == 19){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss"];
-    }
-    else if (date.length == 21){
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"yyyy-MM-dd HH:mm:ss.S"];
-    }
-    else if (date.length == 30){
-        //Sun, 3 Mar 2013 16:35:45 +0100
-        [formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_GB"]];
-        [formatter setDateFormat:@"EEE, d MMM y HH:mm:ss Z"];
-    }
-    else {
-        NSLog(@"%@",title);
-    }
-    NSDate *pubDate = [formatter dateFromString:date];
-    //                [formatter setDateFormat:@"yyyy-MM-dd HH:mm"];
-    //                NSString *tempDate = [formatter stringFromDate:pubDate];
-    //                pubDate = [formatter dateFromString:tempDate];
+    NSString *bodyText = [newsArticle objectForKey:@"bodyText"];
+    bodyText = [bodyText stringByConvertingHTMLToPlainText];
+    bodyText = [bodyText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    NSDictionary *enclosure = [singleNews objectForKey:@"enclosure"];
-    NSString *imageType = [enclosure objectForKey:@"type"];
-    NSString *tempUrl = [enclosure objectForKey:@"url"];
-    NSURL *imageUrl = [[NSURL alloc] init];
-    if (![tempUrl isEqual:[NSNull null]] && tempUrl) {
-        imageUrl = [NSURL URLWithString:tempUrl];
+    NSString *publisher = [newsArticle objectForKey:@"publisher"];
+    
+    NSString *author = [newsArticle objectForKey:@"author"];
+    double time = [[newsArticle objectForKey:@"published"] doubleValue];
+    NSDate *published = [NSDate dateWithTimeIntervalSince1970:time/1000.0f];
+    
+    NSArray *tags = [newsArticle objectForKey:@"tags"];
+    
+    NSArray *categoryStrings = [newsArticle objectForKey:@"categories"];
+    [NewsParser addCategoryToCategories:categoryStrings];
+    
+    
+    NSArray *images = [newsArticle objectForKey:@"images"];
+    NSMutableArray *imageUrls = [[NSMutableArray alloc] init];
+    if (images && ![images isEqual:[NSNull null]]) {
+        for (NSString *urlString in images) {
+            NSURL *url = [NSURL URLWithString:urlString];
+            [imageUrls addObject:url];
+        }
     }
     
-    News *news = [[News alloc] initWithTitle:title leadText:leadText link:link pubDate:pubDate imageType:imageType imageUrl:imageUrl publisher:publisher];
+    NSString *sourceUrlString = [[newsArticle objectForKey:@"sourceUrl"] objectAtIndex:0];
+    NSURL *sourceUrl = [NSURL URLWithString:sourceUrlString];
+    
+    NSArray *locations = [newsArticle objectForKey:@"locations"];
+    NSMutableArray *tempLocations = [[NSMutableArray alloc] init];
+    if (locations && ![locations isEqual:[NSNull null]]) {
+        for (NSString *location in locations) {
+            float latitude = [[[location componentsSeparatedByString:@","] objectAtIndex:0] floatValue];
+            float longitude = [[[location componentsSeparatedByString:@","] lastObject] floatValue];
+            GeoLocation *loc = [[GeoLocation alloc] initWithLatitude:latitude longitude:longitude];
+            [tempLocations addObject:loc];
+        }
+    }
+    
+    NSArray *geoLocations = [newsArticle objectForKey:@"geoLocations"];
+    NSMutableArray *tempGeoLocations = [[NSMutableArray alloc] init];
+    if (geoLocations && ![geoLocations isEqual:[NSNull null]])
+    {
+        for (NSDictionary *geoLocation in geoLocations) {
+            GeoLocation *location = [[GeoLocation alloc] initWithLatitude:[[geoLocation objectForKey:@"latitude"] floatValue] longitude:[[geoLocation objectForKey:@"longitude"] floatValue] nameOfLocation:[geoLocation objectForKey:@"name"]];
+            [tempGeoLocations addObject:location];
+        }
+    }
+    
+    float sentimentValue = [[newsArticle objectForKey:@"sentimentValue"] floatValue];
+    
+    News *news = [[News alloc]
+                  initWithArticleId:articleId
+                  title:title
+                  leadText:leadText
+                  bodyText:bodyText
+                  publisher:publisher
+                  author:author
+                  published:published
+                  tags:tags
+                  categories:categoryStrings
+                  images:[NSArray arrayWithArray:imageUrls]
+                  sourceUrl:sourceUrl
+                  locations:[NSArray arrayWithArray:tempLocations]
+                  geoLocations:[NSArray arrayWithArray:tempGeoLocations]
+                  sentimentValue:sentimentValue];
     
     return news;
 }
 
-+ (NSArray *) categories
+#warning CHRASHES ALL THE TIME! FIX IT!
++ (void)makeCategoriesUnique
 {
-    if (!categoryList) {
-        PFQuery *query = [PFQuery queryWithClassName:@"Categories"];
-        NSError *error;
-        NSArray *categories = [query findObjects:(&error)];
-        if(!error)
-        {
-            NSMutableArray *tempArray = [[NSMutableArray alloc] initWithCapacity:[categories count]];
-            for (PFObject *category in categories) {
-                
-                NewsCategory *newsCategory = [[NewsCategory alloc] initWithName:[category objectForKey:@"name"] displayName:[category objectForKey:@"displayName"] tag:[[category objectForKey:@"tag"] intValue] url:[category objectForKey:@"url"]];
-                [tempArray addObject:newsCategory];
-            }
-            categoryList = [tempArray sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
-                NSNumber *one = [[NSNumber alloc] initWithInt:[(NewsCategory *)obj1 tag]];
-                NSNumber *two = [[NSNumber alloc] initWithInt:[(NewsCategory *)obj2 tag]];
-                return [one compare:two];
-            }];
+    NSArray *a = [NSArray arrayWithArray:categories];
+    NSMutableArray *unique = [NSMutableArray array];
+    NSMutableSet *processed = [NSMutableSet set];
+    for (NSString *string in a) {
+        if ([processed containsObject:string] == NO) {
+            [unique addObject:string];
+            [processed addObject:string];
         }
     }
-    return categoryList;
+    categories = unique;
 }
 
++ (void)addCategoryToCategories:(NSArray *)categoryStrings
+{
+    if (!categories) {
+        categories = [[NSMutableArray alloc] initWithObjects:CATEGORY_FAVORITE_NEWS, CATEGORY_RELEVANT_NEWS, nil];
+    }
+    for (NSString *cat in categoryStrings) {
+        [categories addObject:cat];
+    }
+    [NewsParser makeCategoriesUnique];
+}
 @end

@@ -47,7 +47,7 @@
 {
     _webView.delegate = self;
     [_webView setScalesPageToFit:YES];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_news.link];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:_news.sourceUrl];
     [request setValue:[NSString stringWithFormat:@"%@ Safari/528.16", [request valueForHTTPHeaderField:@"User-Agent"]] forHTTPHeaderField:@"User_Agent"];
     [_webView loadRequest:request];
 }

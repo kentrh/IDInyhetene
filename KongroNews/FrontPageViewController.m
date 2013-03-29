@@ -15,7 +15,6 @@
 #import "TopStoriesViewController.h"
 #import "SKBounceAnimation.h"
 #import "HelpMethods.h"
-#import "NewsCategory.h"
 #import "NSDate+TimeSince.h"
 #import "SettingsViewController.h"
 #import "SVPullToRefresh.h"
@@ -23,7 +22,6 @@
 
 @interface FrontPageViewController (){
     News *frontPageNewsArticle;
-    NewsCategory *topStoriesCategory;
     BOOL fromSettingsView;
     int counter;
 }
@@ -93,7 +91,6 @@
 
 - (void)appDelegateDidBecomeActive:(NSNotification *)notification
 {
-    [_activityIndicator startAnimating];
     NSLog(@"application did become active");
     [self performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
 }
@@ -124,21 +121,21 @@
     if (!frontPageNewsArticle) {
         [self triggerNoNetworkMode];
     }
-    [_activityIndicator startAnimating];
     [self performSelectorInBackground:@selector(checkIfFrontpageNewsHasUpdated) withObject:nil];
-    [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
-    [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d", [NewsParser numberOfNewsFromTag:topStoriesCategory.tag]]];
+    [_timeSinceLabel setText:[frontPageNewsArticle.published timeSinceFromDate]];
+    [self setNumberOfFrontPageNews];
 }
 
 - (void)checkIfFrontpageNewsHasUpdated
 {
+    [_activityIndicator startAnimating];
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSArray *topStories = [NewsParser newsListFromCategoryTag:topStoriesCategory.tag shouldUpdate:NO];
+        NSArray *topStories = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] shouldUpdate:NO];
         News *tempNews = [topStories objectAtIndex:0];
-        if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
+        if (tempNews.articleId != frontPageNewsArticle.articleId){
             frontPageNewsArticle = tempNews;
             [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
-            [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
+            [_timeSinceLabel setText:[tempNews.published timeSinceFromDate]];
         }
         [_activityIndicator stopAnimating];
     });
@@ -189,31 +186,26 @@
 
 - (void)updateFrontPageNews
 {
+    [_activityIndicator startAnimating];
     dispatch_async(dispatch_get_main_queue(), ^{
-        NSArray *topStories = [NewsParser newsListFromCategoryTag:topStoriesCategory.tag shouldUpdate:YES];
+        NSArray *topStories = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] shouldUpdate:YES];
         News *tempNews = [topStories objectAtIndex:0];
-        if (![frontPageNewsArticle.link.absoluteString isEqualToString:tempNews.link.absoluteString]){
+        if (frontPageNewsArticle.articleId != tempNews.articleId){
             frontPageNewsArticle = tempNews;
             [_headlineButton setTitle:tempNews.title forState:UIControlStateNormal];
         }
         [_parentScrollView.pullToRefreshView stopAnimating];
-        [_timeSinceLabel setText:[tempNews.pubDate timeSinceFromDate]];
+        [_timeSinceLabel setText:[tempNews.published timeSinceFromDate]];
         [_activityIndicator stopAnimating];
-        [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d", [NewsParser numberOfNewsFromTag:topStoriesCategory.tag]]];
+        [self setNumberOfFrontPageNews];
     });
     
 }
 
 - (void)setUpUi
 {
-    NSArray *categories = [NewsParser categories];
-    for (NewsCategory *cat in categories) {
-        if (cat.tag == CATEGORY_TAG_TOP_STORIES) {
-            topStoriesCategory = cat;
-        }
-    }
-    NSArray *newsArray = [NewsParser newsListFromCategoryTag:topStoriesCategory.tag shouldUpdate:YES];
-    frontPageNewsArticle = [newsArray objectAtIndex:0];
+    NSArray *newsArray = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] shouldUpdate:YES];
+    frontPageNewsArticle = newsArray.count > 0 ?[newsArray objectAtIndex:0] : nil;
     
     [_headlineButton setTitle:frontPageNewsArticle.title forState:UIControlStateNormal];
     [_headlineButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
@@ -222,17 +214,21 @@
     [_headlineButton.titleLabel setNumberOfLines:4];
     [_headlineButton.titleLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:22.0f]];
     
-    [_numberOfNewsLabel setText:[NSString stringWithFormat:@"%d",[NewsParser numberOfNewsFromTag:topStoriesCategory.tag]]];
-    [_numberOfNewsLabel sizeToFit];
+    [self setNumberOfFrontPageNews];
     
-    
-    [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
+    [_timeSinceLabel setText:[frontPageNewsArticle.published timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
     
     [_searchField setDelegate:self];
     [_usernameField setDelegate:self];
     [_passwordField setDelegate:self];
+}
+
+- (void)setNumberOfFrontPageNews
+{
+    int numberOfNews = [NewsParser numberOfUnseenArticlesByCategory:CATEGORY_RELEVANT_NEWS];
+    _numberOfNewsLabel.text = [NSString stringWithFormat:@"%d", numberOfNews];
 }
 
 - (void)addGestureRecognizer
@@ -256,17 +252,13 @@
 
 - (IBAction)headlineButtonPushed:(UIButton *)sender {
     [TestFlight passCheckpoint:@"FrontpageView: Headline clicked."];
-    [NewsParser setLastViewedArticleByCategoryTag:CATEGORY_TAG_TOP_STORIES lastViewedArticleUrlString:@""];
+    [NewsParser setLastViewedArticleByCategory:CATEGORY_RELEVANT_NEWS lastViewedArticleId:0];
     [self showTopStories];
 }
 
 - (IBAction)searchAction:(UITextField *)sender {
     if (_searchField.text.length > 0){
         NSString *query = sender.text;
-        NSString *baseUrl = @"http://pipes.yahoo.com/kongronews/allnews?_render=json&query=";
-        NSString *queryString = [NSString stringWithFormat:@"%@%@", baseUrl, query];
-        queryString = [queryString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
         _searchField.text = @"";
         
         NSString *status = [HelpMethods randomLoadText];
@@ -277,7 +269,7 @@
             self.view.frame = rect;
         } completion:^(BOOL finished) {
             TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
-            [topStoriesViewController setQueryUrl:queryString];
+            [topStoriesViewController setQuery:query];
             [topStoriesViewController setShouldAnimateFromMainView:YES];
             [self presentViewController:topStoriesViewController animated:NO completion:nil];
         }];
@@ -327,7 +319,7 @@
         self.view.frame = rect;
     } completion:^(BOOL finished) {
         TopStoriesViewController *topStoriesViewController = [[TopStoriesViewController alloc] initWithNibName:@"TopStoriesViewController" bundle:nil];
-        [topStoriesViewController setCategoryTag:topStoriesCategory.tag];
+        [topStoriesViewController setCategory:CATEGORY_RELEVANT_NEWS];
         [topStoriesViewController setShouldAnimateFromMainView:YES];
         [self.parentViewController presentViewController:topStoriesViewController animated:NO completion:nil];
     }];

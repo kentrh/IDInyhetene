@@ -20,8 +20,6 @@
 #define kIndexEmail 2
 #define kIndexFaceBook 3
 
-#define NUMBER_OF_GRADIENTS 5;
-
 @interface SingleNewsViewController (){
     KLExpandingSelect *shareFlower;
     NSArray *selectorData;
@@ -67,7 +65,7 @@
 
 - (void)viewDidAppear:(BOOL)animated
 {
-    _timeSinceLabel.text = [_newsArticle.pubDate timeSinceFromDate];
+    _timeSinceLabel.text = [_newsArticle.published timeSinceFromDate];
 }
 
 - (void)setUpUi
@@ -76,8 +74,9 @@
     [self trimLeadText];
     _textView.text = _newsArticle.leadText;
     _pageNumber.text = [NSString stringWithFormat:@"%d", _pageIndex];
-    if (_newsArticle.imageUrl) {
-        [_imageView setImageWithURL:_newsArticle.imageUrl];
+    _categoryLabel.text = _newsArticle.categories.count > 0 ?[_newsArticle.categories objectAtIndex:0] : @"";
+    if (_newsArticle.images.count > 0) {
+        [_imageView setImageWithURL:[_newsArticle.images objectAtIndex:0]];
 //        [_imageView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:_newsArticle.imageUrl]]];
         UIView *filterView = [[UIView alloc] initWithFrame:_imageView.frame];
         [filterView setBackgroundColor:[UIColor colorWithRed:0.0f green:0.0f blue:0.0f alpha:0.3f]];
@@ -114,7 +113,7 @@
         [_imageView insertSubview:filterView belowSubview:_titleLabel];
     }
     
-    [_timeSinceLabel setText:[_newsArticle.pubDate timeSinceFromDate]];
+    [_timeSinceLabel setText:[_newsArticle.published timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
     if ([_newsArticle.publisher isKindOfClass:[NSArray class]]) {
@@ -215,7 +214,7 @@
             MFMailComposeViewController *mailViewController = [[MFMailComposeViewController alloc] init];
             [mailViewController setMailComposeDelegate:self];
             [mailViewController setSubject:@"[via @nyheteneapp for iPhone]"];
-            [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", _newsArticle.title, [_newsArticle.link absoluteString]] isHTML:NO];
+            [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", _newsArticle.title, [_newsArticle.sourceUrl absoluteString]] isHTML:NO];
             [self presentViewController:mailViewController animated:YES completion:nil];
         }
         else
@@ -250,7 +249,7 @@
             default:
                 break;
         }
-        [shareViewController addURL: _newsArticle.link];
+        [shareViewController addURL: _newsArticle.sourceUrl];
         [shareViewController setInitialText:shareText];
         
         if ([SLComposeViewController isAvailableForServiceType:shareViewController.serviceType]) {
@@ -278,7 +277,7 @@
     }
     
     for (News *news in starred) {
-        if ([[news.link absoluteString] compare:[_newsArticle.link absoluteString]] == NSOrderedSame) {
+        if (news.articleId == _newsArticle.articleId) {
             return YES;
         }
     }
@@ -294,7 +293,7 @@
     }
     
     for (News *news in starred) {
-        if ([[news.link absoluteString] compare:[_newsArticle.link absoluteString]] == NSOrderedSame) {
+        if (news.articleId == _newsArticle.articleId) {
             
             [starred removeObject:news];
             NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:starred];

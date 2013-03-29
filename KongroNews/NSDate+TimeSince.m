@@ -52,7 +52,10 @@
         timeSinceText = @"7 dager siden";
     }
     else {
-        timeSinceText = @"Mer enn 1 uke siden";
+        NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+        [formatter setDateFormat:@"EEE d MMM y"];
+        
+        timeSinceText = [formatter stringFromDate:self];
     }
     
     return timeSinceText;
