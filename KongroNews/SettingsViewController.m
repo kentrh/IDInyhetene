@@ -127,7 +127,7 @@
     }
     [RootViewController setIsFirstRun:YES];
     [fpvc setUpPopUp];
-    [cvc setUpPopUp];
+//    [cvc setUpPopUp];
     [self closeSettingsView];
 }
 

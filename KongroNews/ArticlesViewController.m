@@ -16,6 +16,8 @@
 #import "SVPullToRefresh.h"
 #import "SingleArticleViewController.h"
 #import "RootViewController.h"
+#import "NewsReadingEvent.h"
+#import "GeoLocation.h"
 
 @interface ArticlesViewController (){
     NSArray *newsArray;
@@ -43,7 +45,7 @@
     
     [self initNewsArray];
     [self setUpPageViewController];
-//    [self addSwipeUpGestureRecognizer];
+    [self addSwipeUpGestureRecognizer];
 //    [self addDoubleTapGestureRecognizer];
 }
 
@@ -83,12 +85,15 @@
 {
     if (_shouldAnimateFromMainView) {
         [self setStartPositionForAnimationForTop];
+        [self startBounceInAnimation];
     }
     else if (_shouldAnimateFromWebView) {
         [self setStartPositionForAnimationForBottom];
+        [self startBounceInAnimation];
     }
-    [self startBounceInAnimation];
     [SVProgressHUD dismiss];
+    _shouldAnimateFromMainView = NO;
+    _shouldAnimateFromWebView = NO;
 }
 
 - (void)setStartPositionForAnimationForTop
@@ -179,6 +184,20 @@
     [self.view setUserInteractionEnabled:YES];
 }
 
+- (void)addViewedRelatedArticleToEventQueue:(id)relatedArticleId
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSNumber *relatedArtId = (NSNumber *)relatedArticleId;
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        NSString *artId = [NSString stringWithFormat:@"%d", _newsArticle.articleId];
+        NSString *similarArtId = [NSString stringWithFormat:@"%d", [relatedArtId intValue]];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:artId userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:NewsReadingEventViewedSimilarArticle timeStamp:[NSDate date] geoLocation:geoLocation properties:[[NSDictionary alloc] initWithObjectsAndKeys:similarArtId, @"similarArticleId", nil]];
+        [NewsReadingEvent addEventToQueue:event];
+    });
+}
+
 #pragma mark - UIAlertViewDelegate methods
 
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex
@@ -235,6 +254,12 @@
 {
     if (finished){
         [self setUserInteractionEnabledAgain];
+    }
+    if (completed) {
+        SingleArticleViewController *snvc = (SingleArticleViewController *)[[pageViewController viewControllers] lastObject];
+        if (_newsArticle.articleId != snvc.newsArticle.articleId) {
+            [self performSelectorInBackground:@selector(addViewedRelatedArticleToEventQueue:) withObject:[NSNumber numberWithInt:snvc.newsArticle.articleId]];
+        }
     }
 }
 

@@ -16,11 +16,12 @@
 #import "NewsParser.h"
 #import "CMPopTipView.h"
 #import "RootViewController.h"
+#import "NewsReadingEvent.h"
 
 @interface CategoriesViewController (){
     NSArray *newsCategories;
     NSMutableDictionary *buttons;
-    int numberOfLoadedCategories;
+//    int numberOfLoadedCategories;
 }
 
 @end
@@ -42,9 +43,9 @@
     // Do any additional setup after loading the view from its nib.
     [self addCategoryButtons];
     [self setStartPositionForAnimation];
-    if ([RootViewController isFirstRun]) {
-        [self setUpPopUp];
-    }
+//    if ([RootViewController isFirstRun]) {
+//        [self setUpPopUp];
+//    }
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -52,22 +53,22 @@
     _parentScrollView.scrollEnabled = YES;
     [self setStartPositionForAnimation];
     [self startBounceInAnimation];
-    if (numberOfLoadedCategories == newsCategories.count-1) {
-        [self updateNumberOfNewsCountOnButtons];
-    }
+//    if (numberOfLoadedCategories == newsCategories.count-1) {
+//        [self updateNumberOfNewsCountOnButtons];
+//    }
     
 }
 
-- (void)setUpPopUp
-{
-    CMPopTipView *popTip;
-    popTip = [[CMPopTipView alloc] initWithMessage:@"Hold nede kategoriknappen i ett sekund for å oppdatere nyhetene i denne kategorien. Gjelder ikke favoritter."];
-    [popTip setTextColor:[UIColor whiteColor]];
-    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
-    [popTip setBackgroundColor:[Colors help]];
-    [popTip setDismissTapAnywhere:YES];
-    [popTip presentPointingAtView:[buttons objectForKey:[newsCategories objectAtIndex:1]] inView:self.view animated:YES];
-}
+//- (void)setUpPopUp
+//{
+//    CMPopTipView *popTip;
+//    popTip = [[CMPopTipView alloc] initWithMessage:@"Hold nede kategoriknappen i ett sekund for å oppdatere nyhetene i denne kategorien. Gjelder ikke favoritter."];
+//    [popTip setTextColor:[UIColor whiteColor]];
+//    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+//    [popTip setBackgroundColor:[Colors help]];
+//    [popTip setDismissTapAnywhere:YES];
+//    [popTip presentPointingAtView:[buttons objectForKey:[newsCategories objectAtIndex:1]] inView:self.view animated:YES];
+//}
 
 - (void)setStartPositionForAnimation
 {
@@ -108,25 +109,25 @@
     
 }
 
-- (void)updateNumberOfNewsCountOnButtons
-{
-    for (NSString *cat in newsCategories) {
-        UIView *view = (UIView *)[buttons objectForKey:cat];
-        UILabel *countLabel;
-        for (UIView *subView in view.subviews) {
-            if (subView.tag == 2 && [subView isKindOfClass:[UILabel class]]) {
-                countLabel = (UILabel *)subView;
-            }
-        }
-        int numberOfNew = [NewsParser numberOfUnseenArticlesByCategory:cat];
-        countLabel.text = [NSString stringWithFormat:@"%d", numberOfNew];
-        countLabel.hidden = numberOfNew == 0 ? YES : NO;
-    }
-}
+//- (void)updateNumberOfNewsCountOnButtons
+//{
+//    for (NSString *cat in newsCategories) {
+//        UIView *view = (UIView *)[buttons objectForKey:cat];
+//        UILabel *countLabel;
+//        for (UIView *subView in view.subviews) {
+//            if (subView.tag == 2 && [subView isKindOfClass:[UILabel class]]) {
+//                countLabel = (UILabel *)subView;
+//            }
+//        }
+//        int numberOfNew = [NewsParser numberOfUnseenArticlesByCategory:cat];
+//        countLabel.text = [NSString stringWithFormat:@"%d", numberOfNew];
+//        countLabel.hidden = numberOfNew == 0 ? YES : NO;
+//    }
+//}
 
 - (void)addCategoryButtons{
     newsCategories = [NewsParser availableCategories];
-    numberOfLoadedCategories = 0;
+//    numberOfLoadedCategories = 0;
     buttons = [[NSMutableDictionary alloc] initWithCapacity:newsCategories.count];
     
     float buttonWidth = [[UIScreen mainScreen] bounds].size.width - 40.0f;
@@ -151,13 +152,13 @@
         [buttonTap setNumberOfTouchesRequired:1];
         [button addGestureRecognizer:buttonTap];
         
-        if (![newsCategory isEqualToString: CATEGORY_FAVORITE_NEWS]) {
-            UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(updateCategory:)];
-            longPress.numberOfTapsRequired = 0;
-            longPress.numberOfTouchesRequired = 1;
-            longPress.minimumPressDuration = 1;
-            [button addGestureRecognizer:longPress];
-        }
+//        if (![newsCategory isEqualToString: CATEGORY_FAVORITE_NEWS]) {
+//            UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(updateCategory:)];
+//            longPress.numberOfTapsRequired = 0;
+//            longPress.numberOfTouchesRequired = 1;
+//            longPress.minimumPressDuration = 1;
+//            [button addGestureRecognizer:longPress];
+//        }
         
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 24, buttonWidth - 80, 21)];
         titleLabel.text = newsCategory;
@@ -175,76 +176,73 @@
         [newsCountLabel setTextAlignment:NSTextAlignmentRight];
         [newsCountLabel setHidden:YES];
         
-        UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-        [activityView setCenter:newsCountLabel.center];
-        [activityView startAnimating];
+//        UIActivityIndicatorView *activityView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//        [activityView setCenter:newsCountLabel.center];
+//        [activityView startAnimating];
         
         [button addSubview:titleLabel];
         [button addSubview:newsCountLabel];
-        [button addSubview:activityView];
+//        [button addSubview:activityView];
         
         [_rootScrollView addSubview:button];
         [buttons setObject:button forKey:newsCategory];
         
-        dispatch_queue_t queue = dispatch_queue_create("com.kentrobin.nyhetene", NULL);
-        dispatch_async(queue, ^{
-            //Doesn't have to update because top stories was updated when initializing the main view.
-            if (![newsCategory isEqualToString:CATEGORY_RELEVANT_NEWS]) {
-                [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] category:newsCategory shouldUpdate:YES];
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                int numberOfNew = [NewsParser numberOfUnseenArticlesByCategory:newsCategory];
-                newsCountLabel.text = [NSString stringWithFormat:@"%d", numberOfNew];
-                [newsCountLabel setHidden:numberOfNew == 0 ? YES : NO];
-                [activityView stopAnimating];
-                numberOfLoadedCategories++;
-            });
-        });
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            //Doesn't have to update because top stories was updated when initializing the main view.
+//            if (![newsCategory isEqualToString:CATEGORY_RELEVANT_NEWS]) {
+//                [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] category:newsCategory shouldUpdate:YES];
+//            }
+//            int numberOfNew = [NewsParser numberOfUnseenArticlesByCategory:newsCategory];
+//            newsCountLabel.text = [NSString stringWithFormat:@"%d", numberOfNew];
+//            [newsCountLabel setHidden:numberOfNew == 0 ? YES : NO];
+//            [activityView stopAnimating];
+//            numberOfLoadedCategories++;
+//        });
         
         counter++;
     }
-        [_rootScrollView setContentSize:CGSizeMake(self.view.frame.size.width, (newsCategories.count*(BUTTON_HEIGHT + BUTTON_VERTICAL_SPACING))+BUTTON_VERTICAL_SPACING)];  
+    [_rootScrollView setContentSize:CGSizeMake(self.view.frame.size.width, (newsCategories.count*(BUTTON_HEIGHT + BUTTON_VERTICAL_SPACING))+BUTTON_VERTICAL_SPACING)];
 }
 
-- (IBAction)updateCategory:(UIGestureRecognizer *)sender
-{
-    if (sender.state == UIGestureRecognizerStateBegan) {
-        UIActivityIndicatorView *activityIndicator;
-        UILabel *counter;
-        NSString *cat;
-        for (UIView *view in sender.view.subviews) {
-            if ([view isKindOfClass:[UIActivityIndicatorView class]]) {
-                activityIndicator = (UIActivityIndicatorView *)view;
-            }
-            else if ([view isKindOfClass:[UILabel class]] && view.tag == 1) {
-                UILabel *title = (UILabel *)view;
-                cat = title.text;
-            }
-            else if ([view isKindOfClass:[UILabel class]] && view.tag == 2) {
-                counter = (UILabel *)view;
-            }
-        }
-
-        [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Update category: %@", cat]];
-        
-        [counter setHidden:YES];
-        [activityIndicator startAnimating];
-        dispatch_async(dispatch_get_main_queue(), ^{
-            NSArray *newsArray;
-            if ([cat  isEqualToString:CATEGORY_RELEVANT_NEWS]) {
-                newsArray = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] shouldUpdate:YES];
-            }
-            else {
-                newsArray = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] category:cat shouldUpdate:YES];
-            }
-            int numberOfNew = [NewsParser numberOfUnseenArticlesByCategory:cat];
-            counter.text = [NSString stringWithFormat:@"%d", numberOfNew];
-            [activityIndicator stopAnimating];
-            [counter setHidden:numberOfNew == 0 ? YES : NO];
-            [sender setEnabled:YES];
-        });
-    }
-}
+//- (IBAction)updateCategory:(UIGestureRecognizer *)sender
+//{
+//    if (sender.state == UIGestureRecognizerStateBegan) {
+//        UIActivityIndicatorView *activityIndicator;
+//        UILabel *counter;
+//        NSString *cat;
+//        for (UIView *view in sender.view.subviews) {
+//            if ([view isKindOfClass:[UIActivityIndicatorView class]]) {
+//                activityIndicator = (UIActivityIndicatorView *)view;
+//            }
+//            else if ([view isKindOfClass:[UILabel class]] && view.tag == 1) {
+//                UILabel *title = (UILabel *)view;
+//                cat = title.text;
+//            }
+//            else if ([view isKindOfClass:[UILabel class]] && view.tag == 2) {
+//                counter = (UILabel *)view;
+//            }
+//        }
+//
+//        [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Update category: %@", cat]];
+//        
+//        [counter setHidden:YES];
+//        [activityIndicator startAnimating];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSArray *newsArray;
+//            if ([cat  isEqualToString:CATEGORY_RELEVANT_NEWS]) {
+//                newsArray = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] shouldUpdate:YES];
+//            }
+//            else {
+//                newsArray = [NewsParser relevantNewsWithUserId:[[UIDevice currentDevice] uniqueDeviceIdentifier] location:[[RootViewController lastUpdatedLocation] coordinate] category:cat shouldUpdate:YES];
+//            }
+//            int numberOfNew = [NewsParser numberOfUnseenArticlesByCategory:cat];
+//            counter.text = [NSString stringWithFormat:@"%d", numberOfNew];
+//            [activityIndicator stopAnimating];
+//            [counter setHidden:numberOfNew == 0 ? YES : NO];
+//            [sender setEnabled:YES];
+//        });
+//    }
+//}
 
 - (void)showNewsArticles:(UIGestureRecognizer *)sender
 {
@@ -256,6 +254,7 @@
         }
     }
     [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Show news articles clicked: %@", cat]];
+    [self performSelectorInBackground:@selector(addClickedCategoryToEventQueue:) withObject:cat];
     if ([cat isEqualToString:CATEGORY_RELEVANT_NEWS]) {
         [_parentScrollView setContentOffset:CGPointZero animated:YES];
         return;
@@ -272,6 +271,18 @@
         [topStoriesViewController setShouldAnimateFromMainView:YES];
         [self.parentViewController presentViewController:topStoriesViewController animated:NO completion:nil];
     }];
+}
+
+- (void)addClickedCategoryToEventQueue:(id)obj
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *category = (NSString *)obj;
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:nil userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:NewsReadingEventClickedCategory timeStamp:[NSDate date] geoLocation:geoLocation properties:[NSDictionary dictionaryWithObjectsAndKeys:category, @"category", nil]];
+        [NewsReadingEvent addEventToQueue:event];
+    });
 }
 
 - (void)didReceiveMemoryWarning

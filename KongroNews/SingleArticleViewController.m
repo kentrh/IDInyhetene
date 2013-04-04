@@ -12,9 +12,18 @@
 #import "Constants.h"
 #import "MapViewController.h"
 #import "NSDate+TimeSince.h"
+#import "KRHTextView.h"
+#import "RootViewController.h"
+#import "GeoLocation.h"
+#import "NewsReadingEvent.h"
 
-@interface SingleArticleViewController ()
-
+@interface SingleArticleViewController (){
+    BOOL isFullScreen;
+    UIWindow *textWindow;
+    KRHTextView *textView;
+    int counter;
+    NSDate *timeLoaded;
+}
 @end
 
 @implementation SingleArticleViewController
@@ -24,6 +33,7 @@
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
         // Custom initialization
+        [self addNotificationObserverFromKRHTextView];
     }
     return self;
 }
@@ -35,20 +45,21 @@
     [self setUpUI];
     [self setUpScrollView];
     [self addDoubleTapGestureRecognizer];
+    [self addLongPressGestureRecognizer];
+    [self addNotificationObserverFromKRHTextView];
+    if ([RootViewController isFirstRun]) {
+        [self setUpPopUp];
+    }
+    
+    timeLoaded = [NSDate date];
     
     NSLog(@"number of locations: %d", _newsArticle.locations.count);
 }
 
-- (void)viewDidAppear:(BOOL)animated
+- (void)viewDidDisappear:(BOOL)animated
 {
-
+    [self performSelectorInBackground:@selector(addTimeSpentToEventQueue) withObject:nil];
 }
-
-//- (void)viewWillAppear:(BOOL)animated
-//{
-//    [self setBodyTextViewHeight];
-//    [self setScrollViewContentSize];
-//}
 
 - (void)setUpScrollView
 {
@@ -66,6 +77,7 @@
     _titleLabel.text = _newsArticle.title;
     _leadTextLabel.text = _newsArticle.leadText;
     _bodyTextView.text = _newsArticle.bodyText;
+    [self trimBodyTextViewText];
     _publisherLabel.text = _newsArticle.publisher;
     _timeSinceLabel.text = [_newsArticle.published timeSinceFromDate];
     NSString *cats = @"";
@@ -74,6 +86,7 @@
     }
     _categoryLabel.text = cats;
     
+    _mapButton.hidden = _newsArticle.locations.count > 0 ? NO : YES;
     if (_newsArticle.images.count > 0) {
         [_imageView setImageWithURL:[_newsArticle.images objectAtIndex:0]];
         //        [_imageView setImage:[UIImage imageWithData:[NSData dataWithContentsOfURL:_newsArticle.imageUrl]]];
@@ -114,17 +127,94 @@
     }
 }
 
-- (void)setBodyTextViewHeight
+- (void)setUpPopUp
 {
-    CGRect frame = _bodyTextView.frame;
-    frame.size.height = _bodyTextView.contentSize.height;
-    _bodyTextView.frame = frame;
+    CMPopTipView *popTip;
+    popTip = [[CMPopTipView alloc] initWithMessage:@"Dra til venstre for å lese relaterte artikler."];
+    [popTip setTextColor:[UIColor whiteColor]];
+    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+    [popTip setBackgroundColor:[Colors help]];
+    [popTip setDismissTapAnywhere:YES];
+    [popTip setDelegate:self];
+    [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+    counter = 0;
 }
 
-- (void)setScrollViewContentSize
+- (void)trimBodyTextViewText
 {
-    CGSize contentSize = CGSizeMake(_rootScrollView.contentSize.width, _bodyTextView.frame.origin.y + _bodyTextView.frame.size.height);
-    [_rootScrollView setContentSize:contentSize];
+    if (IS_IPHONE_5) {
+        if (_bodyTextView.text.length > 700) {
+            NSString *text = [_bodyTextView.text substringToIndex:700];
+            _bodyTextView.text = [NSString stringWithFormat:@"%@%@", text, @"..."];
+        }
+    }
+    else {
+        if (_bodyTextView.text.length > 500) {
+            NSString *text = [_bodyTextView.text substringToIndex:500];
+            _bodyTextView.text = [NSString stringWithFormat:@"%@%@", text, @"..."];
+        }
+    }
+    
+}
+
+- (void)addNotificationObserverFromKRHTextView
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLargeTextView) name:@"KRHTextViewPinchActionTriggered" object:nil];
+}
+
+- (void)addLongPressGestureRecognizer
+{
+    UILongPressGestureRecognizer *longPress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressAction:)];
+    longPress.delegate = self;
+    longPress.numberOfTouchesRequired = 1;
+    longPress.minimumPressDuration = 0.5f;
+    [self.view addGestureRecognizer:longPress];
+}
+
+- (IBAction)longPressAction:(UILongPressGestureRecognizer *)sender
+{
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [self showLargeTextView];
+    }
+}
+
+- (void)showLargeTextView
+{
+    isFullScreen = YES;
+    CGRect screen = [[UIScreen mainScreen] bounds];
+    screen.origin.x = screen.size.width/2;
+    screen.origin.y = screen.size.height/2;
+    screen.size.height = 0.0f;
+    screen.size.width = 0.0f;
+    
+    textWindow = [[UIWindow alloc] initWithFrame:screen];
+    textWindow.center = screen.origin;
+    [textWindow setWindowLevel:UIWindowLevelAlert];
+    [textWindow setHidden:NO];
+    textView = [[KRHTextView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
+    textView.text = _newsArticle.bodyText;
+    
+    [textWindow addSubview:textView];
+    [textWindow makeKeyAndVisible];
+    
+    [UIView animateWithDuration:0.5f animations:^{
+        textWindow.frame = [[UIScreen mainScreen] bounds];
+        textView.frame = [[UIScreen mainScreen] bounds];
+    }];
+    
+}
+
+- (void)hideLargeTextView
+{
+    isFullScreen = NO;
+    CABasicAnimation *ani = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    [ani setDuration:0.5];
+    [ani setDelegate:self];
+    [ani setRepeatCount:1];
+    [ani setFromValue:[NSNumber numberWithFloat:1.0]];
+    [ani setToValue:[NSNumber numberWithFloat:0.0]];
+    [ani setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [[textWindow layer] addAnimation:ani forKey:@"zoom"];
 }
 
 - (void)addDoubleTapGestureRecognizer
@@ -139,6 +229,7 @@
 - (IBAction)doubleTapAction:(id)sender
 {
     if (_newsArticle.locations.count > 0) {
+        [self performSelectorInBackground:@selector(addViewedMapToEventQueue) withObject:nil];
         [self showMapView];
     }
 }
@@ -161,4 +252,81 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+
+- (void)animationDidStop:(CAAnimation *)anim finished:(BOOL)flag
+{
+    if (flag && !isFullScreen) {
+        [textView removeFromSuperview];
+        [textWindow removeFromSuperview];
+        textView = nil;
+        textWindow = nil;
+    }
+}
+
+- (void)addTimeSpentToEventQueue
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        NSString *artId = [NSString stringWithFormat:@"%d", _newsArticle.articleId];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        float seconds = fabsf([timeLoaded timeIntervalSinceNow]);
+        NSString *secondsUsed = [NSString stringWithFormat:@"%f", seconds];
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:artId userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:NewsReadingEventTimeSpentArticleView timeStamp:[NSDate date] geoLocation:geoLocation properties:[[NSDictionary alloc] initWithObjectsAndKeys:secondsUsed, @"duration", nil]];
+        [NewsReadingEvent addEventToQueue:event];
+    });
+}
+
+- (void)addViewedMapToEventQueue
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        NSString *artId = [NSString stringWithFormat:@"%d", _newsArticle.articleId];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:artId userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:NewsReadingEventViewedMap timeStamp:[NSDate date] geoLocation:geoLocation properties:nil];
+        [NewsReadingEvent addEventToQueue:event];
+    });
+}
+
+#pragma mark - CMPopTipViewDelegate Methods
+- (void)popTipViewWasDismissedByUser:(CMPopTipView *)popTipView
+{
+    CMPopTipView *popTip = [[CMPopTipView alloc] init];
+    [popTip setTextColor:[UIColor whiteColor]];
+    [popTip setTextFont:[UIFont fontWithName:BUTTON_FONT_TYPE size:BUTTON_FONT_SIZE]];
+    [popTip setBackgroundColor:[Colors help]];
+    [popTip setDismissTapAnywhere:YES];
+    [popTip setDelegate:self];
+    
+    if (counter == 0) {
+        
+        [popTip setMessage:@"Hold nede én finger på teksten for å lese hele artikkelteksten. Hold nede én finger igjen for å lukke artikkelteksten."];
+        [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 1) {
+        [popTip setMessage:@"Dobbeltklikk med én finger for å vise hvor nyheten omhandler på kart. Dobbelklikk på kartet for å lukke det igjen."];
+        [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+        counter++;
+    }
+    else if (counter == 2) {
+        [popTip setMessage:@"Dra opp for å gå tilbake til forrige skjerm."];
+        [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+        [RootViewController setIsFirstRun:NO];
+        counter++;
+
+    }
+}
+
+- (IBAction)mapButtonAction:(UIButton *)sender {
+    if (_newsArticle.locations.count > 0) {
+        [self performSelectorInBackground:@selector(addViewedMapToEventQueue) withObject:nil];
+        [self showMapView];
+    }
+}
 @end

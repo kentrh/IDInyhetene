@@ -17,6 +17,8 @@
 #import "SVPullToRefresh.h"
 #import "ArticlesViewController.h"
 #import "RootViewController.h"
+#import "GeoLocation.h"
+#import "NewsReadingEvent.h"
 
 @interface TopStoriesViewController (){
     NSArray *newsArray;
@@ -136,12 +138,15 @@
 {
     if (_shouldAnimateFromMainView) {
         [self setStartPositionForAnimationForTop];
+        [self startBounceInAnimation];
     }
     else if (_shouldAnimateFromWebView) {
         [self setStartPositionForAnimationForBottom];
+        [self startBounceInAnimation];
     }
-    [self startBounceInAnimation];
     [SVProgressHUD dismiss];
+    _shouldAnimateFromWebView = NO;
+    _shouldAnimateFromMainView = NO;
 }
 
 - (void)setStartPositionForAnimationForTop
@@ -194,7 +199,11 @@
 
 - (void)showFullArticleView
 {
+    News *newsArticle = [newsArray objectAtIndex:_pageIndex];
+    
     [TestFlight passCheckpoint:@"TopStoriesView: Show full article swipe."];
+    [self performSelectorInBackground:@selector(addOpenedArticleToEventQueue:) withObject:[NSNumber numberWithInt:newsArticle.articleId]];
+    
     _shouldAnimateFromMainView = NO;
     _shouldAnimateFromWebView = YES;
     NSString *status = [HelpMethods randomLoadText];
@@ -204,9 +213,24 @@
         [self.view setFrame:CGRectMake(rect.origin.x, rect.size.height, rect.size.width, rect.size.height)];
     } completion:^(BOOL finished) {
         ArticlesViewController *articlesViewController = [[ArticlesViewController alloc] initWithNibName:@"ArticlesViewController" bundle:nil];
-        [articlesViewController setNewsArticle:[newsArray objectAtIndex:_pageIndex]];
+        [articlesViewController setNewsArticle:newsArticle];
+        [articlesViewController setShouldAnimateFromMainView:YES];
         [self presentViewController:articlesViewController animated:NO completion:nil];
     }];
+}
+
+- (void)addOpenedArticleToEventQueue:(id)obj
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSNumber *intValue = (NSNumber *)obj;
+        int articleId = [intValue intValue];
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        NSString *artId = [NSString stringWithFormat:@"%d", articleId];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:artId userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:NewsReadingEventOpenedArticleView timeStamp:[NSDate date] geoLocation:geoLocation properties:nil];
+        [NewsReadingEvent addEventToQueue:event];
+    });
 }
 
 - (void)addSwipeUpGestureRecognizer

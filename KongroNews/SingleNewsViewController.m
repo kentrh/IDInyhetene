@@ -14,6 +14,8 @@
 #import <SDWebImage/UIImageView+WebCache.h>
 #import "RootViewController.h"
 #import "NSString+HTML.h"
+#import "GeoLocation.h"
+#import "NewsReadingEvent.h"
 
 #define kIndexTwitter 0
 #define kIndexFavorite 1
@@ -24,6 +26,7 @@
     KLExpandingSelect *shareFlower;
     NSArray *selectorData;
     int counter;
+    NSDate *timeLoaded;
 }
 
 @end
@@ -48,6 +51,13 @@
     if ([RootViewController isFirstRun]) {
         [self setUpPopUp];
     }
+    
+    timeLoaded = [NSDate date];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+    [self performSelectorInBackground:@selector(addTimeSpentToEventQueue) withObject:nil];
 }
 
 - (void)setUpPopUp
@@ -215,6 +225,7 @@
             [mailViewController setMailComposeDelegate:self];
             [mailViewController setSubject:@"[via @nyheteneapp for iPhone]"];
             [mailViewController setMessageBody:[NSString stringWithFormat:@"%@ \n\n %@", _newsArticle.title, [_newsArticle.sourceUrl absoluteString]] isHTML:NO];
+            [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexEmail]];
             [self presentViewController:mailViewController animated:YES completion:nil];
         }
         else
@@ -233,11 +244,13 @@
                 break;
             case kIndexFaceBook:
                 [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Facebook clicked."];
+                [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexFaceBook]];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
                 shareText = @"Via http://fb.com/nyheteneapp - ";
                 break;
             case kIndexTwitter:
                 [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Twitter clicked."];
+                [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexTwitter]];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
                 shareText = @"Via @nyheteneapp - ";
                 break;
@@ -266,6 +279,51 @@
             [errorAlert show];
         }
     }
+}
+
+- (void)addShareFlowerActionToEventQueue:(id)obj
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSNumber  *index = (NSNumber *)obj;
+        int shareIndex = [index intValue];
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        NSString *artId = [NSString stringWithFormat:@"%d", _newsArticle.articleId];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        NSString *newsReadingEvent;
+        switch (shareIndex) {
+            case kIndexEmail:
+                newsReadingEvent = NewsReadingEventSharedMail;
+                break;
+            case kIndexFaceBook:
+                newsReadingEvent = NewsReadingEventSharedFacebook;
+                break;
+            case kIndexTwitter:
+                newsReadingEvent = NewsReadingEventSharedTwitter;
+                break;
+            case kIndexFavorite:
+                newsReadingEvent = NewsReadingEventStarredArticle;
+                
+            default:
+                break;
+        }
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:artId userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:newsReadingEvent timeStamp:[NSDate date] geoLocation:geoLocation properties:nil];
+        [NewsReadingEvent addEventToQueue:event];
+    });
+}
+
+- (void)addTimeSpentToEventQueue
+{
+    dispatch_async(dispatch_get_main_queue(), ^{
+        NSString *GUID = [[NSUUID UUID] UUIDString];
+        NSString *artId = [NSString stringWithFormat:@"%d", _newsArticle.articleId];
+        CLLocation *location = [RootViewController lastUpdatedLocation];
+        GeoLocation *geoLocation = [[GeoLocation alloc] initWithLatitude:location.coordinate.latitude longitude:location.coordinate.longitude];
+        float seconds = fabsf([timeLoaded timeIntervalSinceNow]);
+        NSString *secondsUsed = [NSString stringWithFormat:@"%f", seconds];
+        NewsReadingEvent *event = [[NewsReadingEvent alloc] initWithGlobalIdentifier:GUID articleId:artId userId:[[UIDevice currentDevice] uniqueDeviceIdentifier] eventType:NewsReadingEventTimeSpentPreview timeStamp:[NSDate date] geoLocation:geoLocation properties:[[NSDictionary alloc] initWithObjectsAndKeys:secondsUsed, @"duration", nil]];
+        [NewsReadingEvent addEventToQueue:event];
+    });
 }
 
 -(BOOL)isStarred
@@ -311,6 +369,8 @@
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:starred];
     [[NSUserDefaults standardUserDefaults] setObject:archiveData forKey:@"starredArticles"];
     
+    [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexFavorite]];
+    
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel lagt til" message:@"Artikkelen er nå lagt til i favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
     [alertView show];
 }
@@ -352,7 +412,6 @@
         [popTip setMessage:@"Dobbelklikk med én finger for oppdatere nyhetene og gå til nyeste artikkel."];
         [popTip presentPointingAtView:_textView inView:self.view animated:YES];
         counter++;
-        [RootViewController setIsFirstRun:NO];
     }
 }
 

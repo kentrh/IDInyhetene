@@ -13,6 +13,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import "Constants.h"
 #import "GeoLocation.h"
+#import "NewsReadingEvent.h"
 
 @implementation AppDelegate{
     RootViewController *rootViewController;

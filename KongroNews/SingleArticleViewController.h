@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "News.h"
+#import "CMPopTipView.h"
 
-@interface SingleArticleViewController : UIViewController <UIGestureRecognizerDelegate>
+@interface SingleArticleViewController : UIViewController <UIGestureRecognizerDelegate, CMPopTipViewDelegate>
 
 @property (strong, nonatomic) News *newsArticle;
 @property (strong, nonatomic) IBOutlet UILabel *titleLabel;
@@ -20,5 +21,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *timeSinceLabel;
 @property (strong, nonatomic) IBOutlet UILabel *publisherLabel;
 @property (strong, nonatomic) IBOutlet UILabel *categoryLabel;
+@property (strong, nonatomic) IBOutlet UIButton *mapButton;
+- (IBAction)mapButtonAction:(UIButton *)sender;
 
 @end

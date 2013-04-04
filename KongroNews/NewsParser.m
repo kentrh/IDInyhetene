@@ -11,6 +11,7 @@
 #import "NSString+HTML.h"
 #import "GeoLocation.h"
 #import "Constants.h"
+#import "NewsReadingEvent.h"
 
 //(NSString *)userId (float)latitude (float)longitude
 #define JSON_BASE_URL_RELEVANT_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f"
@@ -50,6 +51,9 @@ static NSMutableDictionary *numberOfNews;
         
         NSData *data = [NSKeyedArchiver archivedDataWithRootObject:newsList];
         [[NSUserDefaults standardUserDefaults] setObject:data forKey:CATEGORY_RELEVANT_NEWS];
+        
+        //Flush NewsReadingEvents
+        [NewsReadingEvent postEventQueue];
     }
     
     if (!numberOfNews) numberOfNews = [[NSMutableDictionary alloc] initWithCapacity:categories.count];
@@ -216,7 +220,7 @@ static NSMutableDictionary *numberOfNews;
     NSMutableArray *newsArray = [[NSMutableArray alloc] init];
     for (NSDictionary *newsArticle in jsonData) {
         News *news = [NewsParser newsArticleFromDictionary:newsArticle];
-        if (news.title.length == 0 || news.leadText.length == 0) {
+        if (news.title.length == 0 || news.leadText.length == 0 || news.bodyText.length == 0) {
             continue;
         }
         [newsArray addObject:news];
@@ -238,7 +242,7 @@ static NSMutableDictionary *numberOfNews;
     
     NSString *bodyText = [newsArticle objectForKey:@"bodyText"];
     bodyText = [bodyText stringByConvertingHTMLToPlainText];
-    bodyText = [bodyText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+//    bodyText = [bodyText stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
     NSString *publisher = [newsArticle objectForKey:@"publisher"];
     
