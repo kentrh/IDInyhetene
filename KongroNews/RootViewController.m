@@ -113,11 +113,14 @@ static CLLocation *lastUpdatedLocation;
 
 - (void)addFrontPageView
 {
+#warning PROBABLY NULL POINTER HERE
     [SVProgressHUD showWithStatus:[HelpMethods randomLoadText] maskType:SVProgressHUDMaskTypeBlack];
     if (!lastUpdatedLocation) {
         NSData *locationData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_LOCATION];
-        CLLocation *storedLocation = [NSKeyedUnarchiver unarchiveObjectWithData:locationData];
-        lastUpdatedLocation = storedLocation;
+        if (locationData) {
+            CLLocation *storedLocation = [NSKeyedUnarchiver unarchiveObjectWithData:locationData];
+            lastUpdatedLocation = storedLocation;
+        }
     }
     dispatch_async(dispatch_get_main_queue(), ^{
         frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
