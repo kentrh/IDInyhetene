@@ -120,10 +120,7 @@
         [self setStartPositionForAnimation];
         [self startBounceInAnimation];
     }
-    
-    if (!frontPageNewsArticle) {
-        [self triggerNoNetworkMode];
-    }
+
     [_activityIndicator startAnimating];
     [self performSelectorInBackground:@selector(checkIfFrontpageNewsHasUpdated) withObject:nil];
     [_timeSinceLabel setText:[frontPageNewsArticle.pubDate timeSinceFromDate]];
@@ -150,18 +147,6 @@
     tap.numberOfTapsRequired = 1;
     tap.numberOfTouchesRequired = 1;
     [self.view addGestureRecognizer:tap];
-}
-
-- (void)triggerNoNetworkMode
-{
-    _headlineButton.enabled = NO;
-    for (UIGestureRecognizer *gr in self.view.gestureRecognizers) {
-        [self.view removeGestureRecognizer:gr];
-    }
-    [_parentScrollView setScrollEnabled:NO];
-    [_parentScrollView setPagingEnabled:NO];
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Ingen nyheter kunne bli hentet, mest sannsynlig på grunn av en nettverksfeil. Sjekk at nettverk er tilgjengelig og start applikasjonen på nytt, eller hold 3 fingre nede på startskjermen for å laste inn på nytt!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
-    [alertView show];
 }
 
 - (void)startBounceInAnimation
@@ -267,7 +252,7 @@
         
         sender.text = @"";
         
-        NSString *status = [HelpMethods randomLoadText];
+        NSString *status = [HelpMethods loadText];
         [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
         _parentScrollView.scrollEnabled = NO;
         CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
@@ -297,7 +282,7 @@
 
 - (void)showTopStories
 {
-    NSString *status = [HelpMethods randomLoadText];
+    NSString *status = [HelpMethods loadText];
     [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     _parentScrollView.scrollEnabled = NO;
     CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);

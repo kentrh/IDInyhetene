@@ -331,8 +331,7 @@
             [starred removeObject:news];
             NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:starred];
             [[NSUserDefaults standardUserDefaults] setObject:archiveData forKey:@"starredArticles"];
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel fjernet" message:@"Artikkelen er nå fjernet fra favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
-            [alertView show];
+            [SVProgressHUD showSuccessWithStatus:@"Artikkel fjernet"];
             return;
         }
     }
@@ -344,8 +343,7 @@
     NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:starred];
     [[NSUserDefaults standardUserDefaults] setObject:archiveData forKey:@"starredArticles"];
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel lagt til" message:@"Artikkelen er nå lagt til i favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
-    [alertView show];
+    [SVProgressHUD showSuccessWithStatus:@"Artikkel lagret"];
 }
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {

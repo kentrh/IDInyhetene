@@ -26,7 +26,7 @@
     self.window.backgroundColor = [UIColor clearColor];
     
 //    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueIdentifier]];
-    [TestFlight takeOff:@"cd68b306-a673-460a-83e1-b5bffea4e2f3"];
+//    [TestFlight takeOff:@"cd68b306-a673-460a-83e1-b5bffea4e2f3"];
     
     [Parse setApplicationId:@"SK8Boe17LDovDyHc2GUHhK2neLjT3380PRBCdkbY"
                   clientKey:@"PlYaaZSuuLECBYjgVe5pZcandovIjIuwveZcclv6"];

@@ -21,6 +21,7 @@
     float reverseDegree;
     BOOL isPlayingVideo;
     BOOL hasAd;
+    UIDeviceOrientation previousOrientation;
 }
 
 @end
@@ -41,29 +42,13 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(youTubeStarted:) name:@"UIMoviePlayerControllerDidEnterFullscreenNotification" object:nil];
-//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(youTubeFinished:) name:@"UIMoviePlayerControllerDidExitFullscreenNotification" object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(orientationDidChange:) name:UIDeviceOrientationDidChangeNotification object:nil];
+    previousOrientation = [[UIDevice currentDevice] orientation];
     
     [self setUpWebView];
     [self setUpNavToolbar];
     [self setUpAdBanner];
 }
-
-//-(void)youTubeStarted:(NSNotification *)notification
-//{
-//    CGRect rect = [[UIScreen mainScreen] bounds];
-//    _webView.frame = CGRectMake(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-//    _navToolbar.center = CGPointMake(_navToolbar.center.x, rect.size.height - _navToolbar.frame.size.height / 2);
-//    _adBannerView.frame = CGRectMake(rect.origin.x, rect.size.height, _adBannerView.frame.size.width, _adBannerView.frame.size.height);
-//    isPlayingVideo = YES;
-//}
-//
-//-(void)youTubeFinished:(NSNotification *)notification
-//{
-//    isPlayingVideo = NO;
-//}
 
 - (void)orientationDidChange:(NSNotification *)notification
 {
@@ -73,87 +58,59 @@
 -(void)handleInterfaceRotation
 {
     UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
+    if (UIDeviceOrientationPortraitUpsideDown == orientation) {
+        return;
+    }
+    
     CGRect frame = [[UIScreen mainScreen] bounds];
-    switch (orientation) {
-        case UIDeviceOrientationPortrait:
-        {
-            [_adBannerView setAdSize:kGADAdSizeBanner];
-            //webview coordinates
-            float yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
-            CGRect rect = _webView.frame;
-            rect.size.height = yCoord;
-            _webView.frame = rect;
-            
-            //toolbar coordinates
-            yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height - _navToolbar.frame.size.height : frame.size.height - _navToolbar.frame.size.height;
-            rect = _navToolbar.frame;
-            rect.origin.y = yCoord;
-            _navToolbar.frame = rect;
-            
-            //adbanner coordinates
-            yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
-            rect = _adBannerView.frame;
-            rect.origin.y = yCoord;
-            _adBannerView.frame = rect;
-        }
-            break;
+    
+    if (UIDeviceOrientationIsPortrait(orientation) || (orientation == UIDeviceOrientationFaceUp && (!UIDeviceOrientationIsLandscape(previousOrientation)))) {
+        [_adBannerView setAdSize:kGADAdSizeBanner];
+        //webview coordinates
+        float yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
+        CGRect rect = _webView.frame;
+        rect.size.height = yCoord;
+        _webView.frame = rect;
         
-        case UIDeviceOrientationLandscapeLeft:
-        {
-            [_adBannerView setAdSize:kGADAdSizeSmartBannerLandscape];
-            float width = frame.size.height;
-            frame.size.height = frame.size.width;
-            frame.size.width = width;
-            
-            //webview coordinates
-            float yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
-            CGRect rect = _webView.frame;
-            rect.size.height = yCoord;
-            _webView.frame = rect;
-            
-            //toolbar coordinates
-            yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height - _navToolbar.frame.size.height : frame.size.height - _navToolbar.frame.size.height;
-            rect = _navToolbar.frame;
-            rect.origin.y = yCoord;
-            _navToolbar.frame = rect;
-            
-            //adbanner coordinates
-            yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
-            rect = _adBannerView.frame;
-            rect.origin.y = yCoord;
-            _adBannerView.frame = rect;
-        }
-            break;
-            
-        case UIDeviceOrientationLandscapeRight:
-        {
-            [_adBannerView setAdSize:kGADAdSizeSmartBannerLandscape];
-            float width = frame.size.height;
-            frame.size.height = frame.size.width;
-            frame.size.width = width;
-            
-            //webview coordinates
-            float yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
-            CGRect rect = _webView.frame;
-            rect.size.height = yCoord;
-            _webView.frame = rect;
-            
-            //toolbar coordinates
-            yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height - _navToolbar.frame.size.height : frame.size.height - _navToolbar.frame.size.height;
-            rect = _navToolbar.frame;
-            rect.origin.y = yCoord;
-            _navToolbar.frame = rect;
-            
-            //adbanner coordinates
-            yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
-            rect = _adBannerView.frame;
-            rect.origin.y = yCoord;
-            _adBannerView.frame = rect;
-        }
-            break;
-
-        default:
-            break;
+        //toolbar coordinates
+        yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height - _navToolbar.frame.size.height : frame.size.height - _navToolbar.frame.size.height;
+        rect = _navToolbar.frame;
+        rect.origin.y = yCoord;
+        _navToolbar.frame = rect;
+        
+        //adbanner coordinates
+        yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
+        rect = _adBannerView.frame;
+        rect.origin.y = yCoord;
+        _adBannerView.frame = rect;
+    }
+    
+    else if (UIDeviceOrientationIsLandscape(orientation) || (orientation == UIDeviceOrientationFaceUp && (UIDeviceOrientationIsLandscape(previousOrientation)))) {
+        [_adBannerView setAdSize:kGADAdSizeSmartBannerLandscape];
+        float width = frame.size.height;
+        frame.size.height = frame.size.width;
+        frame.size.width = width;
+        
+        //webview coordinates
+        float yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
+        CGRect rect = _webView.frame;
+        rect.size.height = yCoord;
+        _webView.frame = rect;
+        
+        //toolbar coordinates
+        yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height - _navToolbar.frame.size.height : frame.size.height - _navToolbar.frame.size.height;
+        rect = _navToolbar.frame;
+        rect.origin.y = yCoord;
+        _navToolbar.frame = rect;
+        
+        //adbanner coordinates
+        yCoord = hasAd ? frame.size.height - _adBannerView.frame.size.height : frame.size.height;
+        rect = _adBannerView.frame;
+        rect.origin.y = yCoord;
+        _adBannerView.frame = rect;
+    }
+    if (UIDeviceOrientationIsValidInterfaceOrientation(orientation)) {
+        previousOrientation = orientation;
     }
 }
 
@@ -279,7 +236,7 @@
 {
     //testbanner
     GADRequest *request = [GADRequest request];
-//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+    request.testDevices = [NSArray arrayWithObjects: GAD_SIMULATOR_ID, nil];
     CGRect rect = [UIScreen mainScreen].bounds;
     _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(rect.origin.x, rect.size.height)];
     _adBannerView.delegate = self;

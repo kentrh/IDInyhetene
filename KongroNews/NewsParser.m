@@ -11,6 +11,7 @@
 #import "NSString+HTML.h"
 #import <Parse/Parse.h>
 #import "Constants.h"
+#import "RootViewController.h"
 
 
 @implementation NewsParser
@@ -253,6 +254,7 @@ static NSMutableDictionary *numberOfNews;
                 return [one compare:two];
             }];
         }
+        
     }
     return categoryList;
 }

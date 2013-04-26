@@ -13,11 +13,13 @@
 #import "HelpMethods.h"
 #import "SettingsViewController.h"
 #import "SVPullToRefresh.h"
+#import "Reachability.h"
 
 @interface RootViewController (){
     FrontPageViewController *frontPageViewController;
     CategoriesViewController *categoriesViewController;
     SettingsViewController *settingsViewController;
+    Reachability *networkReachability;
 }
 
 @end
@@ -49,11 +51,18 @@ static bool isFirstRun;
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
+    [self testInternetConnection];
     [self addBackground];
     [self setUpScrollView];
     [self addRefreshGesture];
     [self setIsFirstRun];
-    [self performSelectorInBackground:@selector(addFrontPageView) withObject:nil];
+    if ([networkReachability isReachable]) {
+        [self performSelectorInBackground:@selector(addFrontPageView) withObject:nil];
+    }
+    else {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Ingen nyheter kunne bli hentet, mest sannsynlig på grunn av en nettverksfeil. Sjekk at nettverk er tilgjengelig og start applikasjonen på nytt, eller hold 3 fingre nede på startskjermen for å laste inn på nytt!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+        [alertView show];
+    }
 }
 
 - (void)setIsFirstRun
@@ -104,7 +113,7 @@ static bool isFirstRun;
 
 - (void)addFrontPageView
 {
-    [SVProgressHUD showWithStatus:[HelpMethods randomLoadText] maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:[HelpMethods loadText] maskType:SVProgressHUDMaskTypeBlack];
     dispatch_async(dispatch_get_main_queue(), ^{
         frontPageViewController = [[FrontPageViewController alloc] initWithNibName:@"FrontPageViewController" bundle:nil];
         frontPageViewController.parentScrollView = _rootScrollView;
@@ -125,25 +134,37 @@ static bool isFirstRun;
 
 - (void)refreshMainPages
 {
-
-    for (UIView *view in _rootScrollView.subviews) {
-        [view removeFromSuperview];
+    if (self.childViewControllers.count > 0) return;
+    if ([networkReachability isReachable]) {
+        for (UIView *view in _rootScrollView.subviews) {
+            [view removeFromSuperview];
+        }
+        categoriesViewController = nil;
+        frontPageViewController = nil;
+        __weak RootViewController *rvc = self;
+        [_rootScrollView addPullToRefreshWithActionHandler:^{
+            [rvc performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
+        }];
+        [self addFrontPageView];
     }
-    categoriesViewController = nil;
-    frontPageViewController = nil;
-    __weak RootViewController *rvc = self;
-    [_rootScrollView addPullToRefreshWithActionHandler:^{
-        [rvc performSelectorInBackground:@selector(updateFrontPageNews) withObject:nil];
-    }];
-    [self addFrontPageView];
+    else {
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Ingen nyheter" message:@"Ingen nyheter kunne bli hentet, mest sannsynlig på grunn av en nettverksfeil. Sjekk at nettverk er tilgjengelig og start applikasjonen på nytt, eller hold 3 fingre nede på startskjermen for å laste inn på nytt!" delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles: nil];
+        [alertView show];
+    }
     
 }
 
 - (void)addRefreshGesture
 {
-    UILongPressGestureRecognizer *doubletouch = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(refreshMainPages)];
+    UILongPressGestureRecognizer *doubletouch = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(refreshGestureTriggered:)];
     doubletouch.numberOfTouchesRequired = 3;
     [self.view addGestureRecognizer:doubletouch];
+}
+
+- (IBAction)refreshGestureTriggered:(UILongPressGestureRecognizer *)sender{
+    if (sender.state == UIGestureRecognizerStateBegan) {
+        [self refreshMainPages];
+    }
 }
 
 - (void)didReceiveMemoryWarning
@@ -155,6 +176,31 @@ static bool isFirstRun;
 - (BOOL)shouldAutorotate
 {
     return NO;
+}
+
+- (void)testInternetConnection
+{
+    networkReachability = [Reachability reachabilityWithHostname:@"www.google.com"];
+    
+    // Internet is reachable
+    networkReachability.reachableBlock = ^(Reachability*reach)
+    {
+        // Update the UI on the main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"Yayyy, we have the interwebs!");
+        });
+    };
+    
+    // Internet is not reachable
+    networkReachability.unreachableBlock = ^(Reachability*reach)
+    {
+        // Update the UI on the main thread
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"Someone broke the internet :(");
+        });
+    };
+    
+    [networkReachability startNotifier];
 }
 
 @end

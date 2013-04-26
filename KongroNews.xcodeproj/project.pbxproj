@@ -27,6 +27,7 @@
 		373B44DB16E746D80003C3D7 /* 10.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 373B44CF16E746D60003C3D7 /* 10.jpg */; };
 		373B44DC16E746D80003C3D7 /* 11.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 373B44D016E746D60003C3D7 /* 11.jpg */; };
 		373B44DD16E746D80003C3D7 /* 12.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 373B44D116E746D70003C3D7 /* 12.jpg */; };
+		373E3570172A8E01001699BA /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 373E356F172A8E01001699BA /* Reachability.m */; };
 		3747D8B916FF302500C00CDF /* nyheteneIconShiny57.png in Resources */ = {isa = PBXBuildFile; fileRef = 373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */; };
 		3747D8BA16FF302B00C00CDF /* nyheteneIconShiny114.png in Resources */ = {isa = PBXBuildFile; fileRef = 373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */; };
 		3748F1B816D6502600C3CDB0 /* FrontPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3748F1B616D6502600C3CDB0 /* FrontPageViewController.m */; };
@@ -140,6 +141,8 @@
 		373B44D116E746D70003C3D7 /* 12.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = 12.jpg; path = Graphics/BackgroundsOriginals5/12.jpg; sourceTree = SOURCE_ROOT; };
 		373B44DE16E759C50003C3D7 /* nyheteneIconShiny57.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nyheteneIconShiny57.png; path = ../nyheteneIconShiny57.png; sourceTree = "<group>"; };
 		373B44E016E759CB0003C3D7 /* nyheteneIconShiny114.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = nyheteneIconShiny114.png; path = ../nyheteneIconShiny114.png; sourceTree = "<group>"; };
+		373E356E172A8E01001699BA /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
+		373E356F172A8E01001699BA /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		3748F1B516D6502500C3CDB0 /* FrontPageViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrontPageViewController.h; sourceTree = "<group>"; };
 		3748F1B616D6502600C3CDB0 /* FrontPageViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrontPageViewController.m; sourceTree = "<group>"; };
 		3748F1B716D6502600C3CDB0 /* FrontPageViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FrontPageViewController.xib; sourceTree = "<group>"; };
@@ -303,6 +306,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		373E356D172A8DEB001699BA /* Reachability */ = {
+			isa = PBXGroup;
+			children = (
+				373E356E172A8E01001699BA /* Reachability.h */,
+				373E356F172A8E01001699BA /* Reachability.m */,
+			);
+			name = Reachability;
+			sourceTree = "<group>";
+		};
 		3748F1B416D64FDD00C3CDB0 /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
@@ -423,6 +435,7 @@
 		378889E816D2B64400C41C39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				373E356D172A8DEB001699BA /* Reachability */,
 				37D1257416FDE7FA005C0695 /* TestFlightSDK1.2.4 */,
 				37D1257016FCBF0A005C0695 /* CMPopTipView */,
 				373B448816E633FB0003C3D7 /* ImageIO.framework */,
@@ -791,6 +804,7 @@
 				372F3FBD16FB1CC300724100 /* NewsPageViewController.m in Sources */,
 				37D1256E16FCB3A0005C0695 /* TutorialViewController.m in Sources */,
 				37D1257316FCBF0A005C0695 /* CMPopTipView.m in Sources */,
+				373E3570172A8E01001699BA /* Reachability.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

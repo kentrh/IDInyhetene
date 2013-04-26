@@ -81,12 +81,12 @@
 
 - (int)getStartIndex
 {
-    if (_queryUrl) return 0;
+    if (_queryUrl.length > 0) return 0;
     NSString *previousArticleUrl = [NewsParser lastViewedArticleByCategoryTag:_categoryTag];
-    if (previousArticleUrl){
+    if (previousArticleUrl.length > 0){
         for (int i=0; i<newsArray.count; i++) {
             News *news = (News *)[newsArray objectAtIndex:i];
-            if ([[news.link absoluteString] compare:previousArticleUrl] == NSOrderedSame) {
+            if ([[news.link absoluteString] isEqualToString:previousArticleUrl]) {
                 return i;
             }
         }
@@ -168,6 +168,8 @@
     }
     [self startBounceInAnimation];
     [SVProgressHUD dismiss];
+    _shouldAnimateFromMainView = NO;
+    _shouldAnimateFromWebView = NO;
 }
 
 - (void)setStartPositionForAnimationForTop
@@ -223,7 +225,7 @@
     [TestFlight passCheckpoint:@"TopStoriesView: Show web article swipe."];
     _shouldAnimateFromMainView = NO;
     _shouldAnimateFromWebView = YES;
-    NSString *status = [HelpMethods randomLoadText];
+    NSString *status = [HelpMethods loadText];
     [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     CGRect rect = self.view.frame;
     [UIView animateWithDuration:0.3f animations:^{
@@ -265,7 +267,7 @@
 
 - (void)closeViewSliding
 {
-    if (newsArray.count > 0 && !_queryUrl) {
+    if (newsArray.count > 0 && _queryUrl.length == 0) {
         News *news = [newsArray objectAtIndex:_pageIndex];
         [NewsParser setLastViewedArticleByCategoryTag:_categoryTag lastViewedArticleUrlString:[news.link absoluteString]];
     }
@@ -282,7 +284,7 @@
 {
     //testbanner
     GADRequest *request = [GADRequest request];
-//    request.testDevices = [NSArray arrayWithObjects:@"45bb0197558362b5510cb23b37188af6", GAD_SIMULATOR_ID, nil];
+    request.testDevices = [NSArray arrayWithObjects:GAD_SIMULATOR_ID, nil];
     CGRect rect = [UIScreen mainScreen].bounds;
     _adBannerView = [[GADBannerView alloc] initWithAdSize:kGADAdSizeBanner origin:CGPointMake(rect.origin.x, rect.size.height)];
     _adBannerView.delegate = self;

@@ -30,8 +30,13 @@
                             @"Bitrain",
                             @"Et lite blikk",
                             nil];
-    
     int index = arc4random() % [randomTexts count];
     return [randomTexts objectAtIndex:index];
 }
+
++ (NSString *)loadText
+{
+    return @"Laster";
+}
+
 @end

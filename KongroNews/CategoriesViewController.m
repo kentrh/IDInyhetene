@@ -248,7 +248,7 @@
 - (void)showNewsArticles:(UIGestureRecognizer *)sender
 {
     int tag = sender.view.tag;
-    [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Show news articles clicked, tag: %d", tag]];
+    [TestFlight passCheckpoint:[NSString stringWithFormat:@"CategoriesView: Show news articles clicked, category: %@", [[NewsParser newsCategoryFromTag:tag] name]]];
     if (tag == 1) {
         [_parentScrollView setContentOffset:CGPointZero animated:YES];
         return;
@@ -260,7 +260,7 @@
             break;
         }
     }
-    NSString *status = [HelpMethods randomLoadText];
+    NSString *status = [HelpMethods loadText];
     [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     _parentScrollView.scrollEnabled = NO;
     CGRect rect = CGRectMake(self.view.frame.origin.x, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
