@@ -43,7 +43,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     [self setUpUI];
-    [self setUpScrollView];
     [self addDoubleTapGestureRecognizer];
     [self addLongPressGestureRecognizer];
     [self addNotificationObserverFromKRHTextView];
@@ -59,17 +58,6 @@
 - (void)viewDidDisappear:(BOOL)animated
 {
     [self performSelectorInBackground:@selector(addTimeSpentToEventQueue) withObject:nil];
-}
-
-- (void)setUpScrollView
-{
-    
-    [_rootScrollView setBackgroundColor:[UIColor whiteColor]];
-    _rootScrollView.indicatorStyle = UIScrollViewIndicatorStyleBlack;
-    _rootScrollView.clipsToBounds = NO;
-    _rootScrollView.scrollEnabled = YES;
-    _rootScrollView.pagingEnabled = YES;
-    
 }
 
 - (void)setUpUI

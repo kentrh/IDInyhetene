@@ -310,7 +310,6 @@ static NSMutableDictionary *numberOfNews;
     return news;
 }
 
-#warning CHRASHES ALL THE TIME! FIX IT!
 + (void)makeCategoriesUnique
 {
     NSArray *a = [NSArray arrayWithArray:categories];
