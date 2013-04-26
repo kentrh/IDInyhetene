@@ -8,7 +8,6 @@
 
 #import "AppDelegate.h"
 #import "RootViewController.h"
-#import <Parse/Parse.h>
 #import "NewsParser.h"
 #import <QuartzCore/QuartzCore.h>
 #import "Constants.h"
@@ -30,15 +29,6 @@
     
 //    [TestFlight setDeviceIdentifier:[[UIDevice currentDevice] uniqueDeviceIdentifier]];
 //    [TestFlight takeOff:@"cd68b306-a673-460a-83e1-b5bffea4e2f3"];
-    
-//    [Parse setApplicationId:@"SK8Boe17LDovDyHc2GUHhK2neLjT3380PRBCdkbY"
-//                  clientKey:@"PlYaaZSuuLECBYjgVe5pZcandovIjIuwveZcclv6"];
-//    
-//    // Register for push notifications
-//    [application registerForRemoteNotificationTypes:
-//     UIRemoteNotificationTypeBadge |
-//     UIRemoteNotificationTypeAlert |
-//     UIRemoteNotificationTypeSound];
     
     rootViewController = [[RootViewController alloc] initWithNibName:@"RootViewController" bundle:nil];
     
@@ -81,19 +71,5 @@
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     [[NSNotificationCenter defaultCenter] postNotificationName:@"applicationWillTerminate" object:nil];
 }
-
-//- (void)application:(UIApplication *)application
-//didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)newDeviceToken
-//{
-//    // Store the deviceToken in the current installation and save it to Parse.
-//    PFInstallation *currentInstallation = [PFInstallation currentInstallation];
-//    [currentInstallation setDeviceTokenFromData:newDeviceToken];
-//    [currentInstallation saveInBackground];
-//}
-//
-//- (void)application:(UIApplication *)application
-//didReceiveRemoteNotification:(NSDictionary *)userInfo {
-//    [PFPush handlePush:userInfo];
-//}
 
 @end
