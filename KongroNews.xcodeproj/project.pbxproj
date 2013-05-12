@@ -43,13 +43,6 @@
 		378889F616D2B64400C41C39 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 378889F516D2B64400C41C39 /* main.m */; };
 		378889FA16D2B64400C41C39 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 378889F916D2B64400C41C39 /* AppDelegate.m */; };
 		37888A0716D2B70300C41C39 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37888A0616D2B70300C41C39 /* QuartzCore.framework */; };
-		37888A0C16D2B8DD00C41C39 /* KLExpandingSelect.m in Sources */ = {isa = PBXBuildFile; fileRef = 37888A0B16D2B8DD00C41C39 /* KLExpandingSelect.m */; };
-		37888A1416D2B91900C41C39 /* Petal Data.plist in Resources */ = {isa = PBXBuildFile; fileRef = 37888A0E16D2B91900C41C39 /* Petal Data.plist */; };
-		37888A1516D2B91900C41C39 /* petal-email@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37888A0F16D2B91900C41C39 /* petal-email@2x.png */; };
-		37888A1616D2B91900C41C39 /* petal-facebook@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37888A1016D2B91900C41C39 /* petal-facebook@2x.png */; };
-		37888A1716D2B91900C41C39 /* petal-save@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37888A1116D2B91900C41C39 /* petal-save@2x.png */; };
-		37888A1816D2B91900C41C39 /* petal-twitter@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37888A1216D2B91900C41C39 /* petal-twitter@2x.png */; };
-		37888A1916D2B91900C41C39 /* petal-unsave@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37888A1316D2B91900C41C39 /* petal-unsave@2x.png */; };
 		37888A1D16D2C75700C41C39 /* TopStoriesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 37888A1B16D2C75700C41C39 /* TopStoriesViewController.m */; };
 		37888A1E16D2C75700C41C39 /* TopStoriesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 37888A1C16D2C75700C41C39 /* TopStoriesViewController.xib */; };
 		37888A2016D3843100C41C39 /* MessageUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37888A1F16D3843100C41C39 /* MessageUI.framework */; };
@@ -105,12 +98,7 @@
 		37D1257916FDE7FA005C0695 /* libTestFlight.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 37D1257516FDE7FA005C0695 /* libTestFlight.a */; };
 		37D1257A16FDE7FA005C0695 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 37D1257616FDE7FA005C0695 /* README.md */; };
 		37D1257B16FDE7FA005C0695 /* release_notes.md in Resources */ = {isa = PBXBuildFile; fileRef = 37D1257716FDE7FA005C0695 /* release_notes.md */; };
-		37EE406716DE231A008AE7A8 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406616DE231A008AE7A8 /* SKBounceAnimation.m */; };
-		37EE406C16DE8BBE008AE7A8 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 37EE406916DE8BBE008AE7A8 /* SVProgressHUD.bundle */; };
-		37EE406D16DE8BBE008AE7A8 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406B16DE8BBE008AE7A8 /* SVProgressHUD.m */; };
 		37EE407016DE96E3008AE7A8 /* HelpMethods.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE406F16DE96E3008AE7A8 /* HelpMethods.m */; };
-		37EE408816DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE408516DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m */; };
-		37EE408916DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE408716DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m */; };
 		37EE408F16E1F97D008AE7A8 /* Accounts.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE408E16E1F97D008AE7A8 /* Accounts.framework */; };
 		37EE409116E1F989008AE7A8 /* CFNetwork.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409016E1F989008AE7A8 /* CFNetwork.framework */; };
 		37EE409316E1F99C008AE7A8 /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 37EE409216E1F99C008AE7A8 /* CoreLocation.framework */; };
@@ -121,6 +109,18 @@
 		37EE40A416E3A4F6008AE7A8 /* NSDate+TimeSince.m in Sources */ = {isa = PBXBuildFile; fileRef = 37EE40A316E3A4F6008AE7A8 /* NSDate+TimeSince.m */; };
 		37EE40AA16E4B2F4008AE7A8 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 37EE40A916E4B2F3008AE7A8 /* Default.png */; };
 		37EE40AC16E4B2FA008AE7A8 /* Default@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37EE40AB16E4B2FA008AE7A8 /* Default@2x.png */; };
+		37F509571740154D0047CFC0 /* KLExpandingSelect.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F5094F1740154D0047CFC0 /* KLExpandingSelect.m */; };
+		37F509581740154D0047CFC0 /* Petal Data.plist in Resources */ = {isa = PBXBuildFile; fileRef = 37F509511740154D0047CFC0 /* Petal Data.plist */; };
+		37F509591740154D0047CFC0 /* petal-email@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F509521740154D0047CFC0 /* petal-email@2x.png */; };
+		37F5095A1740154D0047CFC0 /* petal-facebook@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F509531740154D0047CFC0 /* petal-facebook@2x.png */; };
+		37F5095B1740154D0047CFC0 /* petal-save@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F509541740154D0047CFC0 /* petal-save@2x.png */; };
+		37F5095C1740154D0047CFC0 /* petal-twitter@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F509551740154D0047CFC0 /* petal-twitter@2x.png */; };
+		37F5095D1740154D0047CFC0 /* petal-unsave@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 37F509561740154D0047CFC0 /* petal-unsave@2x.png */; };
+		37F50960174015C60047CFC0 /* SKBounceAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F5095F174015C60047CFC0 /* SKBounceAnimation.m */; };
+		37F509681740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F509651740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.m */; };
+		37F509691740167A0047CFC0 /* UIScrollView+SVPullToRefresh.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F509671740167A0047CFC0 /* UIScrollView+SVPullToRefresh.m */; };
+		37F5096D174016B00047CFC0 /* SVProgressHUD.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 37F5096A174016B00047CFC0 /* SVProgressHUD.bundle */; };
+		37F5096E174016B00047CFC0 /* SVProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 37F5096C174016B00047CFC0 /* SVProgressHUD.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -172,14 +172,6 @@
 		378889FF16D2B64400C41C39 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
 		37888A0616D2B70300C41C39 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		37888A0816D2B73F00C41C39 /* nb */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = nb; path = nb.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		37888A0A16D2B8DD00C41C39 /* KLExpandingSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KLExpandingSelect.h; path = ../../libraries/iOS/ShareFlower/KLExpandingSelect/Classes/KLExpandingSelect.h; sourceTree = "<group>"; };
-		37888A0B16D2B8DD00C41C39 /* KLExpandingSelect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KLExpandingSelect.m; path = ../../libraries/iOS/ShareFlower/KLExpandingSelect/Classes/KLExpandingSelect.m; sourceTree = "<group>"; };
-		37888A0E16D2B91900C41C39 /* Petal Data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Petal Data.plist"; sourceTree = "<group>"; };
-		37888A0F16D2B91900C41C39 /* petal-email@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-email@2x.png"; sourceTree = "<group>"; };
-		37888A1016D2B91900C41C39 /* petal-facebook@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-facebook@2x.png"; sourceTree = "<group>"; };
-		37888A1116D2B91900C41C39 /* petal-save@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-save@2x.png"; sourceTree = "<group>"; };
-		37888A1216D2B91900C41C39 /* petal-twitter@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-twitter@2x.png"; sourceTree = "<group>"; };
-		37888A1316D2B91900C41C39 /* petal-unsave@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-unsave@2x.png"; sourceTree = "<group>"; };
 		37888A1A16D2C75700C41C39 /* TopStoriesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TopStoriesViewController.h; sourceTree = "<group>"; };
 		37888A1B16D2C75700C41C39 /* TopStoriesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TopStoriesViewController.m; sourceTree = "<group>"; };
 		37888A1C16D2C75700C41C39 /* TopStoriesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = TopStoriesViewController.xib; sourceTree = "<group>"; };
@@ -258,18 +250,8 @@
 		37D1257616FDE7FA005C0695 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = README.md; sourceTree = "<group>"; };
 		37D1257716FDE7FA005C0695 /* release_notes.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = release_notes.md; sourceTree = "<group>"; };
 		37D1257816FDE7FA005C0695 /* TestFlight.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestFlight.h; sourceTree = "<group>"; };
-		37EE406516DE231A008AE7A8 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SKBounceAnimation.h; path = ../../libraries/iOS/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation.h; sourceTree = "<group>"; };
-		37EE406616DE231A008AE7A8 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SKBounceAnimation.m; path = ../../libraries/iOS/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation/SKBounceAnimation.m; sourceTree = "<group>"; };
-		37EE406916DE8BBE008AE7A8 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
-		37EE406A16DE8BBE008AE7A8 /* SVProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressHUD.h; sourceTree = "<group>"; };
-		37EE406B16DE8BBE008AE7A8 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 		37EE406E16DE96E3008AE7A8 /* HelpMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HelpMethods.h; sourceTree = "<group>"; };
 		37EE406F16DE96E3008AE7A8 /* HelpMethods.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = HelpMethods.m; sourceTree = "<group>"; };
-		37EE408316DF7A3C008AE7A8 /* SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPullToRefresh.h; sourceTree = "<group>"; };
-		37EE408416DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVInfiniteScrolling.h"; sourceTree = "<group>"; };
-		37EE408516DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVInfiniteScrolling.m"; sourceTree = "<group>"; };
-		37EE408616DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
-		37EE408716DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
 		37EE408E16E1F97D008AE7A8 /* Accounts.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accounts.framework; path = System/Library/Frameworks/Accounts.framework; sourceTree = SDKROOT; };
 		37EE409016E1F989008AE7A8 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		37EE409216E1F99C008AE7A8 /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
@@ -281,6 +263,24 @@
 		37EE40A316E3A4F6008AE7A8 /* NSDate+TimeSince.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSDate+TimeSince.m"; sourceTree = "<group>"; };
 		37EE40A916E4B2F3008AE7A8 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Default.png; path = ../Default.png; sourceTree = "<group>"; };
 		37EE40AB16E4B2FA008AE7A8 /* Default@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default@2x.png"; path = "../Default@2x.png"; sourceTree = "<group>"; };
+		37F5094E1740154D0047CFC0 /* KLExpandingSelect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KLExpandingSelect.h; sourceTree = "<group>"; };
+		37F5094F1740154D0047CFC0 /* KLExpandingSelect.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KLExpandingSelect.m; sourceTree = "<group>"; };
+		37F509511740154D0047CFC0 /* Petal Data.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Petal Data.plist"; sourceTree = "<group>"; };
+		37F509521740154D0047CFC0 /* petal-email@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-email@2x.png"; sourceTree = "<group>"; };
+		37F509531740154D0047CFC0 /* petal-facebook@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-facebook@2x.png"; sourceTree = "<group>"; };
+		37F509541740154D0047CFC0 /* petal-save@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-save@2x.png"; sourceTree = "<group>"; };
+		37F509551740154D0047CFC0 /* petal-twitter@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-twitter@2x.png"; sourceTree = "<group>"; };
+		37F509561740154D0047CFC0 /* petal-unsave@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "petal-unsave@2x.png"; sourceTree = "<group>"; };
+		37F5095E174015C60047CFC0 /* SKBounceAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SKBounceAnimation.h; sourceTree = "<group>"; };
+		37F5095F174015C60047CFC0 /* SKBounceAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SKBounceAnimation.m; sourceTree = "<group>"; };
+		37F509631740167A0047CFC0 /* SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVPullToRefresh.h; sourceTree = "<group>"; };
+		37F509641740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVInfiniteScrolling.h"; sourceTree = "<group>"; };
+		37F509651740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVInfiniteScrolling.m"; sourceTree = "<group>"; };
+		37F509661740167A0047CFC0 /* UIScrollView+SVPullToRefresh.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScrollView+SVPullToRefresh.h"; sourceTree = "<group>"; };
+		37F509671740167A0047CFC0 /* UIScrollView+SVPullToRefresh.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScrollView+SVPullToRefresh.m"; sourceTree = "<group>"; };
+		37F5096A174016B00047CFC0 /* SVProgressHUD.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = SVProgressHUD.bundle; sourceTree = "<group>"; };
+		37F5096B174016B00047CFC0 /* SVProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVProgressHUD.h; sourceTree = "<group>"; };
+		37F5096C174016B00047CFC0 /* SVProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SVProgressHUD.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -462,6 +462,9 @@
 		378889E816D2B64400C41C39 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				37F509621740161E0047CFC0 /* SVPullToRefresh */,
+				37F509611740160C0047CFC0 /* SVProgressHud */,
+				37F508AC174015090047CFC0 /* SKBounceAnimation */,
 				37B36BE317061825004EA9A0 /* MapKit.framework */,
 				37D1257416FDE7FA005C0695 /* TestFlightSDK1.2.4 */,
 				37D1257016FCBF0A005C0695 /* CMPopTipView */,
@@ -474,10 +477,7 @@
 				37EE409216E1F99C008AE7A8 /* CoreLocation.framework */,
 				37EE409016E1F989008AE7A8 /* CFNetwork.framework */,
 				37EE408E16E1F97D008AE7A8 /* Accounts.framework */,
-				37EE408216DF7A3C008AE7A8 /* SVPullToRefresh */,
-				37EE406816DE8BBE008AE7A8 /* SVProgressHUD */,
 				37AB1D4516DCDD7200789092 /* libz.dylib */,
-				37EE406416DE2308008AE7A8 /* SKBounceAnimation */,
 				37AB1D2A16DB97DD00789092 /* SystemConfiguration.framework */,
 				37AB1D2816DB97AB00789092 /* AudioToolbox.framework */,
 				37AB1D2616DB97A400789092 /* StoreKit.framework */,
@@ -526,25 +526,11 @@
 		37888A0916D2B8BD00C41C39 /* ShareFlower */ = {
 			isa = PBXGroup;
 			children = (
-				37888A0D16D2B91900C41C39 /* Resources */,
-				37888A0A16D2B8DD00C41C39 /* KLExpandingSelect.h */,
-				37888A0B16D2B8DD00C41C39 /* KLExpandingSelect.m */,
+				37F5094E1740154D0047CFC0 /* KLExpandingSelect.h */,
+				37F5094F1740154D0047CFC0 /* KLExpandingSelect.m */,
+				37F509501740154D0047CFC0 /* Resources */,
 			);
 			name = ShareFlower;
-			sourceTree = "<group>";
-		};
-		37888A0D16D2B91900C41C39 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				37888A0E16D2B91900C41C39 /* Petal Data.plist */,
-				37888A0F16D2B91900C41C39 /* petal-email@2x.png */,
-				37888A1016D2B91900C41C39 /* petal-facebook@2x.png */,
-				37888A1116D2B91900C41C39 /* petal-save@2x.png */,
-				37888A1216D2B91900C41C39 /* petal-twitter@2x.png */,
-				37888A1316D2B91900C41C39 /* petal-unsave@2x.png */,
-			);
-			name = Resources;
-			path = ../../libraries/iOS/ShareFlower/KLExpandingSelect/Resources;
 			sourceTree = "<group>";
 		};
 		37888A2316D3CD8D00C41C39 /* Models */ = {
@@ -619,39 +605,6 @@
 			path = TestFlightSDK1.2.4;
 			sourceTree = "<group>";
 		};
-		37EE406416DE2308008AE7A8 /* SKBounceAnimation */ = {
-			isa = PBXGroup;
-			children = (
-				37EE406516DE231A008AE7A8 /* SKBounceAnimation.h */,
-				37EE406616DE231A008AE7A8 /* SKBounceAnimation.m */,
-			);
-			name = SKBounceAnimation;
-			sourceTree = "<group>";
-		};
-		37EE406816DE8BBE008AE7A8 /* SVProgressHUD */ = {
-			isa = PBXGroup;
-			children = (
-				37EE406916DE8BBE008AE7A8 /* SVProgressHUD.bundle */,
-				37EE406A16DE8BBE008AE7A8 /* SVProgressHUD.h */,
-				37EE406B16DE8BBE008AE7A8 /* SVProgressHUD.m */,
-			);
-			name = SVProgressHUD;
-			path = ../../libraries/iOS/SVProgressHUD/SVProgressHUD;
-			sourceTree = "<group>";
-		};
-		37EE408216DF7A3C008AE7A8 /* SVPullToRefresh */ = {
-			isa = PBXGroup;
-			children = (
-				37EE408316DF7A3C008AE7A8 /* SVPullToRefresh.h */,
-				37EE408416DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.h */,
-				37EE408516DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m */,
-				37EE408616DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.h */,
-				37EE408716DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m */,
-			);
-			name = SVPullToRefresh;
-			path = ../../libraries/iOS/SVPullToRefresh/SVPullToRefresh;
-			sourceTree = "<group>";
-		};
 		37EE40AD16E4B30E008AE7A8 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
@@ -662,6 +615,50 @@
 				37EE40A916E4B2F3008AE7A8 /* Default.png */,
 			);
 			name = Icons;
+			sourceTree = "<group>";
+		};
+		37F508AC174015090047CFC0 /* SKBounceAnimation */ = {
+			isa = PBXGroup;
+			children = (
+				37F5095E174015C60047CFC0 /* SKBounceAnimation.h */,
+				37F5095F174015C60047CFC0 /* SKBounceAnimation.m */,
+			);
+			path = SKBounceAnimation;
+			sourceTree = "<group>";
+		};
+		37F509501740154D0047CFC0 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				37F509511740154D0047CFC0 /* Petal Data.plist */,
+				37F509521740154D0047CFC0 /* petal-email@2x.png */,
+				37F509531740154D0047CFC0 /* petal-facebook@2x.png */,
+				37F509541740154D0047CFC0 /* petal-save@2x.png */,
+				37F509551740154D0047CFC0 /* petal-twitter@2x.png */,
+				37F509561740154D0047CFC0 /* petal-unsave@2x.png */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		37F509611740160C0047CFC0 /* SVProgressHud */ = {
+			isa = PBXGroup;
+			children = (
+				37F5096A174016B00047CFC0 /* SVProgressHUD.bundle */,
+				37F5096B174016B00047CFC0 /* SVProgressHUD.h */,
+				37F5096C174016B00047CFC0 /* SVProgressHUD.m */,
+			);
+			name = SVProgressHud;
+			sourceTree = "<group>";
+		};
+		37F509621740161E0047CFC0 /* SVPullToRefresh */ = {
+			isa = PBXGroup;
+			children = (
+				37F509631740167A0047CFC0 /* SVPullToRefresh.h */,
+				37F509641740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.h */,
+				37F509651740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.m */,
+				37F509661740167A0047CFC0 /* UIScrollView+SVPullToRefresh.h */,
+				37F509671740167A0047CFC0 /* UIScrollView+SVPullToRefresh.m */,
+			);
+			name = SVPullToRefresh;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -717,12 +714,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				378889F416D2B64400C41C39 /* InfoPlist.strings in Resources */,
-				37888A1416D2B91900C41C39 /* Petal Data.plist in Resources */,
-				37888A1516D2B91900C41C39 /* petal-email@2x.png in Resources */,
-				37888A1616D2B91900C41C39 /* petal-facebook@2x.png in Resources */,
-				37888A1716D2B91900C41C39 /* petal-save@2x.png in Resources */,
-				37888A1816D2B91900C41C39 /* petal-twitter@2x.png in Resources */,
-				37888A1916D2B91900C41C39 /* petal-unsave@2x.png in Resources */,
 				37888A1E16D2C75700C41C39 /* TopStoriesViewController.xib in Resources */,
 				3748F1B916D6502600C3CDB0 /* FrontPageViewController.xib in Resources */,
 				3748F22516D760C000C3CDB0 /* blackFilter.png in Resources */,
@@ -739,7 +730,6 @@
 				37AB1D1516DB824B00789092 /* forwardButtonS@2x.png in Resources */,
 				37AB1D1616DB824B00789092 /* shareButtonS.png in Resources */,
 				37AB1D1716DB824B00789092 /* shareButtonS@2x.png in Resources */,
-				37EE406C16DE8BBE008AE7A8 /* SVProgressHUD.bundle in Resources */,
 				37EE40AA16E4B2F4008AE7A8 /* Default.png in Resources */,
 				37EE40AC16E4B2FA008AE7A8 /* Default@2x.png in Resources */,
 				373B448416E4CBCC0003C3D7 /* SettingsViewController.xib in Resources */,
@@ -775,6 +765,13 @@
 				37B36BDF1706104F004EA9A0 /* MapViewController.xib in Resources */,
 				3708F312170D9FAC00146645 /* mapMarker.png in Resources */,
 				3708F313170D9FAC00146645 /* mapMarker@2x.png in Resources */,
+				37F509581740154D0047CFC0 /* Petal Data.plist in Resources */,
+				37F509591740154D0047CFC0 /* petal-email@2x.png in Resources */,
+				37F5095A1740154D0047CFC0 /* petal-facebook@2x.png in Resources */,
+				37F5095B1740154D0047CFC0 /* petal-save@2x.png in Resources */,
+				37F5095C1740154D0047CFC0 /* petal-twitter@2x.png in Resources */,
+				37F5095D1740154D0047CFC0 /* petal-unsave@2x.png in Resources */,
+				37F5096D174016B00047CFC0 /* SVProgressHUD.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -787,7 +784,6 @@
 			files = (
 				378889F616D2B64400C41C39 /* main.m in Sources */,
 				378889FA16D2B64400C41C39 /* AppDelegate.m in Sources */,
-				37888A0C16D2B8DD00C41C39 /* KLExpandingSelect.m in Sources */,
 				37888A1D16D2C75700C41C39 /* TopStoriesViewController.m in Sources */,
 				37888A2616D3CDBC00C41C39 /* News.m in Sources */,
 				37888A2916D3CDD000C41C39 /* NewsParser.m in Sources */,
@@ -801,11 +797,7 @@
 				37AB1D3A16DCD6D000789092 /* NSDate+InternetDateTime.m in Sources */,
 				37AB1D3B16DCD6D000789092 /* NSString+HTML.m in Sources */,
 				37AB1D3C16DCD6D000789092 /* NSString+XMLEntities.m in Sources */,
-				37EE406716DE231A008AE7A8 /* SKBounceAnimation.m in Sources */,
-				37EE406D16DE8BBE008AE7A8 /* SVProgressHUD.m in Sources */,
 				37EE407016DE96E3008AE7A8 /* HelpMethods.m in Sources */,
-				37EE408816DF7A3C008AE7A8 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
-				37EE408916DF7A3C008AE7A8 /* UIScrollView+SVPullToRefresh.m in Sources */,
 				37EE40A416E3A4F6008AE7A8 /* NSDate+TimeSince.m in Sources */,
 				373B448316E4CBCC0003C3D7 /* SettingsViewController.m in Sources */,
 				372F3FBD16FB1CC300724100 /* NewsPageViewController.m in Sources */,
@@ -819,6 +811,11 @@
 				37B36BE217061292004EA9A0 /* Annotation.m in Sources */,
 				37B36BE817096820004EA9A0 /* KRHTextView.m in Sources */,
 				37B36BEB170AC3BD004EA9A0 /* NewsReadingEvent.m in Sources */,
+				37F509571740154D0047CFC0 /* KLExpandingSelect.m in Sources */,
+				37F50960174015C60047CFC0 /* SKBounceAnimation.m in Sources */,
+				37F509681740167A0047CFC0 /* UIScrollView+SVInfiniteScrolling.m in Sources */,
+				37F509691740167A0047CFC0 /* UIScrollView+SVPullToRefresh.m in Sources */,
+				37F5096E174016B00047CFC0 /* SVProgressHUD.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
