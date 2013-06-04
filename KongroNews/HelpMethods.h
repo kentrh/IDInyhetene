@@ -11,4 +11,5 @@
 @interface HelpMethods : NSObject
 
 + (NSString *)randomLoadText;
++ (NSString *)loadText;
 @end

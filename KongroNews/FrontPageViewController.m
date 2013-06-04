@@ -123,7 +123,6 @@
     }
     [self performSelectorInBackground:@selector(checkIfFrontpageNewsHasUpdated) withObject:nil];
     [_timeSinceLabel setText:[frontPageNewsArticle.published timeSinceFromDate]];
-    [self setNumberOfFrontPageNews];
 }
 
 - (void)checkIfFrontpageNewsHasUpdated
@@ -197,7 +196,6 @@
         [_parentScrollView.pullToRefreshView stopAnimating];
         [_timeSinceLabel setText:[tempNews.published timeSinceFromDate]];
         [_activityIndicator stopAnimating];
-        [self setNumberOfFrontPageNews];
     });
     
 }
@@ -214,8 +212,6 @@
     [_headlineButton.titleLabel setNumberOfLines:4];
     [_headlineButton.titleLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:22.0f]];
     
-    [self setNumberOfFrontPageNews];
-    
     [_timeSinceLabel setText:[frontPageNewsArticle.published timeSinceFromDate]];
     [_timeSinceLabel setFont:[UIFont fontWithName:@"AmericanTypewriter" size:14.0f]];
     [_timeSinceLabel sizeToFit];
@@ -223,12 +219,6 @@
     [_searchField setDelegate:self];
     [_usernameField setDelegate:self];
     [_passwordField setDelegate:self];
-}
-
-- (void)setNumberOfFrontPageNews
-{
-    int numberOfNews = [NewsParser numberOfUnseenArticlesByCategory:CATEGORY_RELEVANT_NEWS];
-    _numberOfNewsLabel.text = [NSString stringWithFormat:@"%d", numberOfNews];
 }
 
 - (void)addGestureRecognizer
@@ -261,7 +251,7 @@
         NSString *query = sender.text;
         _searchField.text = @"";
         
-        NSString *status = [HelpMethods randomLoadText];
+        NSString *status = [HelpMethods loadText];
         [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
         _parentScrollView.scrollEnabled = NO;
         CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);
@@ -311,7 +301,7 @@
 
 - (void)showTopStories
 {
-    NSString *status = [HelpMethods randomLoadText];
+    NSString *status = [HelpMethods loadText];
     [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     _parentScrollView.scrollEnabled = NO;
     CGRect rect = CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);

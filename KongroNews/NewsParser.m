@@ -14,13 +14,13 @@
 #import "NewsReadingEvent.h"
 
 //(NSString *)userId (float)latitude (float)longitude
-#define JSON_BASE_URL_RELEVANT_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f"
+#define JSON_BASE_URL_RELEVANT_NEWS @"http://vm-6120.idi.ntnu.no/news-rec-service/getRelevantNews?userId=%@&geoLocation=%f,%f"
 //(NSString *)userId (int)articleId (float)latitude (float)longitude
-#define JSON_BASE_URL_SIMILAR_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getMoreLikeThis?userId=\"%@\"&articleId=%d&geoLocation=%f,%f"
+#define JSON_BASE_URL_SIMILAR_NEWS @"http://vm-6120.idi.ntnu.no/news-rec-service/getMoreLikeThis?userId=%@&articleId=%d&geoLocation=%f,%f"
 //(NSString *)userId (float)latitude (float)longitude (NSString *)category
-#define JSON_BASE_URL_CATEGORY_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f&categoryQuery=[\"%@\"]"
+#define JSON_BASE_URL_CATEGORY_NEWS @"http://vm-6120.idi.ntnu.no/news-rec-service/getRelevantNews?userId=%@&geoLocation=%f,%f&categoryQuery=[\"%@\"]"
 //(NSString *)userId (float)latitude (float)longitude (NSString *)query
-#define JSON_BASE_URL_QUERY_NEWS @"http://vm-6120.idi.ntnu.no:8080/news-rec-service/getRelevantNews?userId=\"%@\"&geoLocation=%f,%f&contentQuery=[\"%@\"]"
+#define JSON_BASE_URL_QUERY_NEWS @"http://vm-6120.idi.ntnu.no/news-rec-service/getRelevantNews?userId=%@&geoLocation=%f,%f&contentQuery=[\"%@\"]"
 
 @implementation NewsParser
 

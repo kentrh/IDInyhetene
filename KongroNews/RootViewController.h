@@ -20,4 +20,5 @@
 + (void)setIsFirstRun:(BOOL)firstRun;
 
 + (CLLocation *)lastUpdatedLocation;
++ (void)setLastLocation:(CLLocation *)location;
 @end

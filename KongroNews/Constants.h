@@ -35,4 +35,12 @@
 
 #define NUMBER_OF_GRADIENTS 5;
 
+#define JSON_USER_PROFILE_USER_ID @"userId"
+#define JSON_USER_PROFILE_CATEGORY_INTERESTS @"categoryWeights"
+#define JSON_USER_PROFILE_CONTENT_INTERESTS @"contentWeights"
+#define JSON_USER_PROFILE_CATEGORY_INTEREST_WEIGHT @"rankByCategoryInterestsWeight"
+#define JSON_USER_PROFILE_CONTENT_INTEREST_WEIGHT @"rankByContentInterestsWeight"
+#define JSON_USER_PROFILE_FRESHNESS_WEIGHT @"rankByFreshnessWeight"
+#define JSON_USER_PROFILE_GEO_DISTANCE_WEIGHT @"rankByGeoDistanceWeight"
+
 #endif

@@ -51,8 +51,6 @@
     }
     
     timeLoaded = [NSDate date];
-    
-    NSLog(@"number of locations: %d", _newsArticle.locations.count);
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -124,7 +122,7 @@
     [popTip setBackgroundColor:[Colors help]];
     [popTip setDismissTapAnywhere:YES];
     [popTip setDelegate:self];
-    [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+    [popTip presentPointingAtView:_leadTextLabel inView:self.view animated:YES];
     counter = 0;
 }
 
@@ -147,7 +145,7 @@
 
 - (void)addNotificationObserverFromKRHTextView
 {
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLargeTextView) name:@"KRHTextViewPinchActionTriggered" object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideLargeTextView) name:@"KRHTextViewLongPressActionTriggered" object:nil];
 }
 
 - (void)addLongPressGestureRecognizer
@@ -170,25 +168,25 @@
 {
     isFullScreen = YES;
     CGRect screen = [[UIScreen mainScreen] bounds];
-    screen.origin.x = screen.size.width/2;
-    screen.origin.y = screen.size.height/2;
-    screen.size.height = 0.0f;
-    screen.size.width = 0.0f;
-    
     textWindow = [[UIWindow alloc] initWithFrame:screen];
-    textWindow.center = screen.origin;
     [textWindow setWindowLevel:UIWindowLevelAlert];
     [textWindow setHidden:NO];
-    textView = [[KRHTextView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 0.0f, 0.0f)];
+    textView = [[KRHTextView alloc] initWithFrame:screen];
     textView.text = _newsArticle.bodyText;
     
     [textWindow addSubview:textView];
     [textWindow makeKeyAndVisible];
-    
-    [UIView animateWithDuration:0.5f animations:^{
-        textWindow.frame = [[UIScreen mainScreen] bounds];
-        textView.frame = [[UIScreen mainScreen] bounds];
-    }];
+    CABasicAnimation *ani = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    [ani setDuration:0.5];
+    [ani setDelegate:self];
+    [ani setRepeatCount:1];
+    [ani setFromValue:[NSNumber numberWithFloat:0.0]];
+    [ani setToValue:[NSNumber numberWithFloat:1.0]];
+    [ani setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    ani.fillMode = kCAFillModeForwards;
+    ani.autoreverses = NO;
+    ani.removedOnCompletion = NO;
+    [[textWindow layer] addAnimation:ani forKey:@"transform"];
     
 }
 
@@ -202,7 +200,10 @@
     [ani setFromValue:[NSNumber numberWithFloat:1.0]];
     [ani setToValue:[NSNumber numberWithFloat:0.0]];
     [ani setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    [[textWindow layer] addAnimation:ani forKey:@"zoom"];
+    ani.fillMode = kCAFillModeForwards;
+    ani.autoreverses = NO;
+    ani.removedOnCompletion = NO;
+    [[textWindow layer] addAnimation:ani forKey:@"transform"];
 }
 
 - (void)addDoubleTapGestureRecognizer
@@ -294,17 +295,17 @@
     if (counter == 0) {
         
         [popTip setMessage:@"Hold nede én finger på teksten for å lese hele artikkelteksten. Hold nede én finger igjen for å lukke artikkelteksten."];
-        [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+        [popTip presentPointingAtView:_leadTextLabel inView:self.view animated:YES];
         counter++;
     }
     else if (counter == 1) {
         [popTip setMessage:@"Dobbeltklikk med én finger for å vise hvor nyheten omhandler på kart. Dobbelklikk på kartet for å lukke det igjen."];
-        [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+        [popTip presentPointingAtView:_leadTextLabel inView:self.view animated:YES];
         counter++;
     }
     else if (counter == 2) {
         [popTip setMessage:@"Dra opp for å gå tilbake til forrige skjerm."];
-        [popTip presentPointingAtView:_bodyTextView inView:self.view animated:YES];
+        [popTip presentPointingAtView:_leadTextLabel inView:self.view animated:YES];
         [RootViewController setIsFirstRun:NO];
         counter++;
 

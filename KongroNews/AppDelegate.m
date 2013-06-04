@@ -50,9 +50,6 @@
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     NSLog(@"did enter background");
-    CLLocation *location = [RootViewController lastUpdatedLocation];
-    NSData *locationData = [NSKeyedArchiver archivedDataWithRootObject:location];
-    [[NSUserDefaults standardUserDefaults] setObject:locationData forKey:USER_DEFAULTS_PREVIOUS_LOCATION];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application

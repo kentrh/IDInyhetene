@@ -24,7 +24,6 @@
 
 @interface SingleNewsViewController (){
     KLExpandingSelect *shareFlower;
-    NSArray *selectorData;
     int counter;
     NSDate *timeLoaded;
 }
@@ -69,7 +68,7 @@
     [popTip setBackgroundColor:[Colors help]];
     [popTip setDismissTapAnywhere:YES];
     [popTip setDelegate:self];
-    [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+    [popTip presentPointingAtView:_titleLabel inView:self.view animated:YES];
     counter = 0;
 }
 
@@ -157,11 +156,7 @@
 
 - (void)initShareFlower
 {
-    //Initialize the table data
-    NSString* plistPath = [[NSBundle mainBundle] pathForResource: @"Petal Data"
-                                                          ofType: @"plist"];
     // Build the array from the plist
-    selectorData = [[NSArray alloc] initWithContentsOfFile:plistPath];
     
     shareFlower = [[KLExpandingSelect alloc] initWithDelegate:self dataSource:self];
     [self.view setExpandingSelect:shareFlower];
@@ -187,21 +182,36 @@
 #pragma mark - KLExpandingSelectDataSource
 
 - (NSInteger)expandingSelector:(id) expandingSelect numberOfRowsInSection:(NSInteger)section{
-    return [selectorData count];
+    return 4;
 }
 - (KLExpandingPetal *)expandingSelector:(id) expandingSelect itemForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSDictionary* dictForPetal = [selectorData objectAtIndex:indexPath.row];
     NSString* imageName;
-    if (indexPath.row == kIndexFavorite) {
-        if ([self isStarred]) {
-            imageName = [dictForPetal objectForKey:@"image2"];
+    switch (indexPath.row) {
+        case kIndexEmail:
+            imageName = @"petal-email";
+            break;
+            
+        case kIndexFaceBook:
+            imageName = @"petal-facebook";
+            break;
+            
+        case kIndexTwitter:
+            imageName = @"petal-twitter";
+            break;
+            
+        case kIndexFavorite:
+        {
+            if ([self isStarred]) {
+                imageName = @"petal-unsave";
+            }
+            else {
+                imageName = @"petal-save";
+            }
         }
-        else {
-            imageName = [dictForPetal objectForKey:@"image"];
-        }
-    }
-    else {
-        imageName = [dictForPetal objectForKey:@"image"];
+            break;
+            
+        default:
+            break;
     }
     KLExpandingPetal* petal = [[KLExpandingPetal alloc] initWithImage:[UIImage imageNamed:imageName]];
     return petal;
@@ -246,13 +256,13 @@
                 [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Facebook clicked."];
                 [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexFaceBook]];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeFacebook];
-                shareText = @"Via http://fb.com/nyheteneapp - ";
+                shareText = _newsArticle.title;
                 break;
             case kIndexTwitter:
                 [TestFlight passCheckpoint:@"SingleNewsView: ShareFlower Twitter clicked."];
                 [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexTwitter]];
                 shareViewController = [SLComposeViewController composeViewControllerForServiceType:SLServiceTypeTwitter];
-                shareText = @"Via @nyheteneapp - ";
+                shareText = _newsArticle.title;
                 break;
             case kIndexFavorite:
                 //Handle favorites
@@ -356,8 +366,7 @@
             [starred removeObject:news];
             NSData *archiveData = [NSKeyedArchiver archivedDataWithRootObject:starred];
             [[NSUserDefaults standardUserDefaults] setObject:archiveData forKey:@"starredArticles"];
-            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel fjernet" message:@"Artikkelen er nå fjernet fra favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
-            [alertView show];
+            [SVProgressHUD showSuccessWithStatus:@"Artikkel fjernet"];
             return;
         }
     }
@@ -371,8 +380,7 @@
     
     [self performSelectorInBackground:@selector(addShareFlowerActionToEventQueue:) withObject:[NSNumber numberWithInt:kIndexFavorite]];
     
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Artikkel lagt til" message:@"Artikkelen er nå lagt til i favoritter." delegate:self cancelButtonTitle:@"Lukk" otherButtonTitles:nil];
-    [alertView show];
+    [SVProgressHUD showSuccessWithStatus:@"Artikkel lagret"];
 }
 
 - (void)mailComposeController:(MFMailComposeViewController *)controller didFinishWithResult:(MFMailComposeResult)result error:(NSError *)error {
@@ -400,17 +408,17 @@
     if (counter == 0) {
         
         [popTip setMessage:@"Dra ned for å lese hele artikkelen."];
-        [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+        [popTip presentPointingAtView:_titleLabel inView:self.view animated:YES];
         counter++;
     }
     else if (counter == 1) {
         [popTip setMessage:@"Hold nede én finger for å åpne delemenyen."];
-        [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+        [popTip presentPointingAtView:_titleLabel inView:self.view animated:YES];
         counter++;
     }
     else if (counter == 2) {
         [popTip setMessage:@"Dobbelklikk med én finger for oppdatere nyhetene og gå til nyeste artikkel."];
-        [popTip presentPointingAtView:_textView inView:self.view animated:YES];
+        [popTip presentPointingAtView:_titleLabel inView:self.view animated:YES];
         counter++;
     }
 }

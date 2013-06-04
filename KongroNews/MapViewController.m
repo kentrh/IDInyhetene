@@ -32,12 +32,12 @@
     [self addAnnotations];
     [self setContentRegionForMap];
     [self addDoubleTapGestureRecognizer];
+    [self setUpMapView];
 }
 
 - (void)setUpMapView
 {
     _mapView.delegate = self;
-    [_mapView setShowsUserLocation:YES];
 }
 
 - (void)addAnnotations
@@ -45,33 +45,32 @@
     
     for (int i=0; i<[_newsArticle.locations count]; i++)
     {
-//        CLGeocoder *geoCoder = [[CLGeocoder alloc] init];
+        CLGeocoder *geoCoder = [[CLGeocoder alloc] init];
         
         GeoLocation *geoLocation = [_newsArticle.locations objectAtIndex:i];
         CLLocationCoordinate2D coord = CLLocationCoordinate2DMake(geoLocation.latitude, geoLocation.longitude);
         Annotation *annotation = [[Annotation alloc] init];
         [annotation setCoordinate:coord];
-        [_mapView addAnnotation:annotation];
-//        CLLocation *location = [[CLLocation alloc] initWithLatitude:coord.latitude longitude:coord.longitude];
-//        [geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
-//            if (!error) {
-//                NSString *locationHeader;
+        CLLocation *location = [[CLLocation alloc] initWithLatitude:coord.latitude longitude:coord.longitude];
+        [geoCoder reverseGeocodeLocation:location completionHandler:^(NSArray *placemarks, NSError *error) {
+            if (!error) {
+                NSString *locationHeader;
 //                NSString *locationSubtitle;
-//                for (CLPlacemark *placemark in placemarks) {
-//                    locationHeader = [placemark locality];
+                for (CLPlacemark *placemark in placemarks) {
+                    locationHeader = [placemark locality];
 //                    locationSubtitle = [placemark name];
-//                }
-//                if (locationHeader.length > 0) [annotation setTitle:locationHeader];
+                }
+                if (locationHeader.length > 0) [annotation setTitle:locationHeader];
 //                if (locationSubtitle.length > 0) [annotation setSubtitle:locationSubtitle];
-//                [_mapView addAnnotation:annotation];
-//                
-//            }
-//            else {
-//                NSLog(@"There was a reverse geocoding error\n%@", [error localizedDescription]);
-//            }
-//            
-//        }];
-        
+                [_mapView addAnnotation:annotation];
+                
+            }
+            else {
+                NSLog(@"There was a reverse geocoding error\n%@", [error localizedDescription]);
+                [_mapView addAnnotation:annotation];
+            }
+            
+        }];
     }
 }
 
@@ -129,6 +128,18 @@
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;
+}
+
+#pragma mark - MKMapViewDelegate
+
+- (MKAnnotationView *) mapView:(MKMapView *)mapView viewForAnnotation:(Annotation *) annotation
+{
+    MKPinAnnotationView *newAnnotation = [[MKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"annotation1"];
+    newAnnotation.pinColor = MKPinAnnotationColorGreen;
+    newAnnotation.animatesDrop = YES;
+    newAnnotation.canShowCallout = YES;
+    [newAnnotation setSelected:YES animated:YES];
+    return newAnnotation;
 }
 
 @end

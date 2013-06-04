@@ -43,6 +43,11 @@ static CLLocation *lastUpdatedLocation;
     return lastUpdatedLocation;
 }
 
++ (void)setLastLocation:(CLLocation *)location
+{
+    lastUpdatedLocation = location;
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -113,7 +118,7 @@ static CLLocation *lastUpdatedLocation;
 
 - (void)addFrontPageView
 {
-    [SVProgressHUD showWithStatus:[HelpMethods randomLoadText] maskType:SVProgressHUDMaskTypeBlack];
+    [SVProgressHUD showWithStatus:[HelpMethods loadText] maskType:SVProgressHUDMaskTypeBlack];
     if (!lastUpdatedLocation) {
         NSData *locationData = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_LOCATION];
         CLLocation *storedLocation = [NSKeyedUnarchiver unarchiveObjectWithData:locationData];
@@ -174,7 +179,18 @@ static CLLocation *lastUpdatedLocation;
 #pragma mark - CLLocationManagerDelegate methods
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
-    lastUpdatedLocation = [locations lastObject];
+    NSData *storedLocation = [[NSUserDefaults standardUserDefaults] objectForKey:USER_DEFAULTS_PREVIOUS_LOCATION];
+    if (!storedLocation) {
+        lastUpdatedLocation = [locations lastObject];
+        NSData *locationData = [NSKeyedArchiver archivedDataWithRootObject:lastUpdatedLocation];
+        [[NSUserDefaults standardUserDefaults] setObject:locationData forKey:USER_DEFAULTS_PREVIOUS_LOCATION];
+    }
+    else {
+        lastUpdatedLocation = [NSKeyedUnarchiver unarchiveObjectWithData:storedLocation];
+    }
+    
+    [locationManager stopUpdatingLocation];
+    locationManager = nil;
 }
 
 @end

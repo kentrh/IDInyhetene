@@ -46,7 +46,7 @@
 - (IBAction)longPressAction:(UILongPressGestureRecognizer *)sender
 {
     if (sender.state == UIGestureRecognizerStateBegan) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"KRHTextViewPinchActionTriggered" object:self];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"KRHTextViewLongPressActionTriggered" object:self];
     }
 }
 

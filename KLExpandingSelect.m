@@ -18,8 +18,8 @@
 
 //Animation Settings
 #define KAnimationFanOutDegrees 360.0   //Amount  for the control to fan out 360 = fully fanned out, 180 = half fanned out
-#define kAnimationGrowDuration 0.3
-#define kAnimationRotateDuration 0.3
+#define kAnimationGrowDuration 0.2
+#define kAnimationRotateDuration 0.2
 #define kAnimationPetalSpread 1.003     //A tuning parameter for determining how crowded petals are with respect to eachother
 #define kAnimationPetalDelay 0.1        //The amount of time between animating each petal
 
@@ -36,7 +36,7 @@
 #define kDefaultLeftMargin kPetalHeight*kAnimationPetalSpread  //Amount of space to reserve the left to ensure that the control doesnt get drawn off screen
 #define kDefaultRasterizationScale 5.0
 
-#define kLongPressDuration 1.0          //The length of time before a touch is registered and the control appears on the parent view
+#define kLongPressDuration 0.5          //The length of time before a touch is registered and the control appears on the parent view
 
 /** Degrees to Radian **/
 #define degreesToRadians( degrees ) ( ( degrees ) / 180.0 * M_PI )

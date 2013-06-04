@@ -259,7 +259,7 @@
         [_parentScrollView setContentOffset:CGPointZero animated:YES];
         return;
     }
-    NSString *status = [HelpMethods randomLoadText];
+    NSString *status = [HelpMethods loadText];
     [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     _parentScrollView.scrollEnabled = NO;
     CGRect rect = CGRectMake(self.view.frame.origin.x, self.view.frame.size.height, self.view.frame.size.width, self.view.frame.size.height);

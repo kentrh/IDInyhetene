@@ -147,6 +147,7 @@
     [SVProgressHUD dismiss];
     _shouldAnimateFromWebView = NO;
     _shouldAnimateFromMainView = NO;
+    _pageViewController.view.frame = [UIScreen mainScreen].bounds;
 }
 
 - (void)setStartPositionForAnimationForTop
@@ -206,7 +207,7 @@
     
     _shouldAnimateFromMainView = NO;
     _shouldAnimateFromWebView = YES;
-    NSString *status = [HelpMethods randomLoadText];
+    NSString *status = [HelpMethods loadText];
     [SVProgressHUD showWithStatus:status maskType:SVProgressHUDMaskTypeBlack];
     CGRect rect = self.view.frame;
     [UIView animateWithDuration:0.3f animations:^{
